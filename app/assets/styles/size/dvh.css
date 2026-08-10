@@ -1,0 +1,29 @@
+@theme default {
+  --dvh-0: 0dvh;
+  --dvh-5: 5dvh;
+  --dvh-10: 10dvh;
+  --dvh-15: 15dvh;
+  --dvh-20: 20dvh;
+  --dvh-25: 25dvh;
+  --dvh-30: 30dvh;
+  --dvh-35: 35dvh;
+  --dvh-40: 40dvh;
+  --dvh-45: 45dvh;
+  --dvh-50: 50dvh;
+  --dvh-55: 55dvh;
+  --dvh-60: 60dvh;
+  --dvh-65: 65dvh;
+  --dvh-70: 70dvh;
+  --dvh-75: 75dvh;
+  --dvh-80: 80dvh;
+  --dvh-85: 85dvh;
+  --dvh-90: 90dvh;
+  --dvh-95: 95dvh;
+  --dvh-100: 100dvh;
+}
+
+@utility dvh-* {
+  height: --value([integer]) dvh;
+  height: --value(--dvh- *);
+  height: calc(--value(integer) * 1dvh);
+}

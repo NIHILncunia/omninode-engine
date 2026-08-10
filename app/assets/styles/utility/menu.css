@@ -1,0 +1,18 @@
+@utility menu-base {
+  @apply flex-row-1 items-center justify-center px-2 py-1 border-b-2 border-transparent text-black-900 bg-white transition-colors duration-200 ease-in-out;
+}
+
+/* 언더라인 메뉴: menu-underline-{color}-{shade} */
+/* 예: menu-underline-red-500 → 글자색, 아래 테두리색이 red-500 */
+@utility menu-underline-* {
+  color: --value(--color- *);
+  border-bottom-color: --value(--color- *);
+  border-bottom-width: 2px;
+}
+
+/* 배경 메뉴: menu-fill-{color}-{shade} */
+/* 예: menu-fill-red-500 → 배경색이 red-500, 텍스트는 자동으로 대비 색상 적용 */
+@utility menu-fill-* {
+  background-color: --value(--color- *);
+  color: color-contrast(--value(--color- *) vs white, black);
+}

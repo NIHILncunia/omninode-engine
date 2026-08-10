@@ -1,0 +1,29 @@
+@theme default {
+  --dvw-0: 0dvw;
+  --dvw-5: 5dvw;
+  --dvw-10: 10dvw;
+  --dvw-15: 15dvw;
+  --dvw-20: 20dvw;
+  --dvw-25: 25dvw;
+  --dvw-30: 30dvw;
+  --dvw-35: 35dvw;
+  --dvw-40: 40dvw;
+  --dvw-45: 45dvw;
+  --dvw-50: 50dvw;
+  --dvw-55: 55dvw;
+  --dvw-60: 60dvw;
+  --dvw-65: 65dvw;
+  --dvw-70: 70dvw;
+  --dvw-75: 75dvw;
+  --dvw-80: 80dvw;
+  --dvw-85: 85dvw;
+  --dvw-90: 90dvw;
+  --dvw-95: 95dvw;
+  --dvw-100: 100dvw;
+}
+
+@utility dvw-* {
+  width: --value(--dvw- *);
+  width: --value([integer]) dvw;
+  width: calc(--value(integer) * 1dvw);
+}

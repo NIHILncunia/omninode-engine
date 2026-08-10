@@ -1,0 +1,58 @@
+@theme default {
+  --flex-size-0: 0;
+  --flex-size-px: 1px;
+  --flex-size-1: 0.25rem;
+  --flex-size-2: 0.5rem;
+  --flex-size-3: 0.75rem;
+  --flex-size-4: 1rem;
+  --flex-size-5: 1.25rem;
+  --flex-size-6: 1.5rem;
+  --flex-size-7: 1.75rem;
+  --flex-size-8: 2rem;
+  --flex-size-9: 2.25rem;
+  --flex-size-10: 2.5rem;
+  --flex-size-11: 2.75rem;
+  --flex-size-12: 3rem;
+  --flex-size-14: 3.5rem;
+  --flex-size-16: 4rem;
+  --flex-size-20: 5rem;
+  --flex-size-24: 6rem;
+  --flex-size-28: 7rem;
+  --flex-size-32: 8rem;
+  --flex-size-36: 9rem;
+  --flex-size-40: 10rem;
+  --flex-size-44: 11rem;
+  --flex-size-48: 12rem;
+  --flex-size-52: 13rem;
+  --flex-size-56: 14rem;
+  --flex-size-60: 15rem;
+  --flex-size-64: 16rem;
+  --flex-size-68: 17rem;
+  --flex-size-72: 18rem;
+  --flex-size-76: 19rem;
+  --flex-size-80: 20rem;
+  --flex-size-84: 21rem;
+  --flex-size-88: 22rem;
+  --flex-size-92: 23rem;
+  --flex-size-96: 24rem;
+  --flex-size-100: 25rem;
+  --flex-size-104: 26rem;
+  --flex-size-108: 27rem;
+  --flex-size-112: 28rem;
+  --flex-size-116: 29rem;
+  --flex-size-120: 30rem;
+}
+
+@utility flex-row-* {
+  display: flex;
+  flex-direction: row;
+  gap: calc(--value([integer]) * 0.25rem);
+  gap: --value(--flex-size- *);
+}
+
+@utility flex-col-* {
+  display: flex;
+  flex-direction: column;
+  gap: calc(--value([integer]) * 0.25rem);
+  gap: --value(--flex-size- *);
+}

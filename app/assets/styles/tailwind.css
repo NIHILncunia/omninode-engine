@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@import "./colors.css";
+@import "./size/dvh.css";
+@import "./size/dvw.css";
+@import "./size/radius.css";
+@import "./variant/child.css";
+@import "./layout/flex.css";
+
+@import "./utility/button.css";
+@import "./utility/layout.css";
+@import "./utility/menu.css";
+@import "./utility/scrollbar.css";
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+@plugin "tailwind-scrollbar";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme default {
+  --font-sans: "Noto Sans KR", sans-serif;
+  --font-fa: "Font Awesome 5 Free", sans-serif;
+  --font-code: "Cascadia Code", sans-serif;
+
+  /* TailwindCSS는 모바일 퍼스트를 기반으로 한다. */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+
+  --spacing: 0.25rem;
+
+  --animate-spin-2: spin 2s linear infinite;
+  --animate-spin-3: spin 3s linear infinite;
+
+  --font-weight-100: 100;
+  --font-weight-200: 200;
+  --font-weight-300: 300;
+  --font-weight-400: 400;
+  --font-weight-500: 500;
+  --font-weight-600: 600;
+  --font-weight-700: 700;
+  --font-weight-800: 800;
+  --font-weight-900: 900;
+
+  --text-*: initial;
+  --text-xs: 0.8rem;
+  --text-sm: 1rem;
+  --text-md: 1.2rem;
+  --text-lg: 1.4rem;
+  --text-h1: 2.4rem;
+  --text-h2: 2.2rem;
+  --text-h3: 2rem;
+  --text-h4: 1.8rem;
+  --text-h5: 1.6rem;
+  --text-h6: 1.4rem;
+}
+
+@layer base {
+  * {
+    @apply p-0 m-0 box-border font-sans font-500;
+  }
+
+  body {
+    @apply bg-black-100!;
+  }
+
+  button {
+    @apply cursor-pointer;
+
+    &:disabled {
+      @apply cursor-not-allowed;
+    }
+  }
+}
