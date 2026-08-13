@@ -1,10 +1,9 @@
 <script setup lang="ts">
 useSetMeta({
-  title: '홈',
-  url: '/',
+  title: '월드 검색',
+  url: '/projects/:projectId/worlds/:worldId/search',
 });
 </script>
-
 <template>
   <span hidden />
 </template>

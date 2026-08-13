@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSetMeta({
-  title: '홈',
-  url: '/',
+  title: '프로젝트 연표',
+  url: '/projects/:projectId/timeline',
 });
 </script>
 

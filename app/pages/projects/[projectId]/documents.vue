@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSetMeta({
-  title: '홈',
-  url: '/',
+  title: '프로젝트 문서',
+  url: '/projects/:projectId/documents',
 });
 </script>
 

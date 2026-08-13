@@ -1,10 +1,9 @@
 <script setup lang="ts">
 useSetMeta({
-  title: '홈',
-  url: '/',
+  title: '새 월드',
+  url: '/projects/:projectId/worlds/new',
 });
 </script>
-
 <template>
   <span hidden />
 </template>

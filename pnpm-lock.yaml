@@ -117,6 +117,9 @@ importers:
       '@vue/test-utils':
         specifier: ^2.4.11
         version: 2.4.11(@vue/compiler-dom@3.5.41)(@vue/server-renderer@3.5.41)(vue@3.5.41(typescript@6.0.3))
+      dotenv:
+        specifier: ^17.4.2
+        version: 17.4.2
       drizzle-kit:
         specifier: ^0.31.10
         version: 0.31.10
@@ -8632,7 +8635,7 @@ snapshots:
       local-pkg: 1.2.1
       mlly: 1.8.2
       nostics: 1.2.0
-      nypm: 0.6.8
+      nypm: 0.6.9
       vite: 8.2.1(@types/node@26.2.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.12)(yaml@2.9.0)
     transitivePeerDependencies:
       - '@modelcontextprotocol/sdk'
@@ -8814,7 +8817,7 @@ snapshots:
       '@vue/shared': 3.5.41
       estree-walker: 2.0.2
       magic-string: 0.30.21
-      postcss: 8.5.23
+      postcss: 8.5.25
       source-map-js: 1.2.1
 
   '@vue/compiler-ssr@3.5.40':
@@ -10715,8 +10718,8 @@ snapshots:
 
   magicast@0.5.4:
     dependencies:
-      '@babel/parser': 7.29.7
-      '@babel/types': 7.29.7
+      '@babel/parser': 7.29.8
+      '@babel/types': 7.29.8
       source-map-js: 1.2.1
 
   make-asynchronous@1.1.0:
@@ -12108,7 +12111,7 @@ snapshots:
   terser@5.49.0:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.17.0
+      acorn: 8.18.0
       commander: 2.20.3
       source-map-support: 0.5.21
 

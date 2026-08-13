@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSetMeta({
-  title: '홈',
-  url: '/',
+  title: '프로젝트 휴지통',
+  url: '/projects/:projectId/trash',
 });
 </script>
 

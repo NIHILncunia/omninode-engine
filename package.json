@@ -9,7 +9,11 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "test": "vitest run",
-    "icon:gen": "tsx app/scripts/generate-icon-types.ts"
+    "icon:gen": "tsx app/scripts/generate-icon-types.ts",
+    "db:dev:generate": "drizzle-kit generate --config=drizzle.dev.config.ts",
+    "db:dev:push": "drizzle-kit push --config=drizzle.dev.config.ts",
+    "db:prod:generate": "drizzle-kit generate --config=drizzle.prod.config.ts",
+    "db:prod:migrate": "drizzle-kit migrate --config=drizzle.prod.config.ts"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
@@ -50,6 +54,7 @@
     "@types/node": "^26.2.0",
     "@vitejs/plugin-vue": "^6.0.8",
     "@vue/test-utils": "^2.4.11",
+    "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
     "eslint": "^10.8.1",
     "happy-dom": "^20.11.2",

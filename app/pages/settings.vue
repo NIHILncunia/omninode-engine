@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSetMeta({
-  title: '홈',
-  url: '/',
+  title: '전역 설정',
+  url: '/settings',
 });
 </script>
 

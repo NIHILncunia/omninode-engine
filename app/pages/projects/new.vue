@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSetMeta({
-  title: '홈',
-  url: '/',
+  title: '새 프로젝트',
+  url: '/projects/new',
 });
 </script>
 
