@@ -1,2 +1,18 @@
-// SQLite 테이블은 데이터 모델 확정 후 이 파일에 선언한다.
-export {};
+export { admins } from './admins.table';
+export { adminRefreshTokens } from './adminRefreshTokens.table';
+export { projectAdmins } from './projectAdmins.table';
+export { projects } from './projects.table';
+export { worlds } from './worlds.table';
+export { categories } from './categories.table';
+export { templates } from './templates.table';
+export { sections } from './sections.table';
+export { templateSections } from './templateSections.table';
+export { documents } from './documents.table';
+export { documentCategories } from './documentCategories.table';
+export { documentSections } from './documentSections.table';
+export { relationshipTypes } from './relationshipTypes.table';
+export { relationshipTypeRoles } from './relationshipTypeRoles.table';
+export { worldRelationshipTypes } from './worldRelationshipTypes.table';
+export { worldRelationshipRoleCategories } from './worldRelationshipRoleCategories.table';
+export { documentRelationships } from './documentRelationships.table';
+export { documentRelationshipTargets } from './documentRelationshipTargets.table';

@@ -12,10 +12,10 @@
 
 | 환경 | 파일 | DBMS | 목적 |
 | --- | --- | --- | --- |
-| 개발 | `server/db/schema/sqlite/index.ts` | SQLite | 로컬 개발과 빠른 검증 |
-| 운영 | `server/db/schema/postgresql/index.ts` | PostgreSQL | 운영 데이터 저장 |
+| 개발 | `server/db/schema/sqlite/<tableName>.table.ts` | SQLite | 로컬 개발과 빠른 검증 |
+| 운영 | `server/db/schema/postgresql/<tableName>.table.ts` | PostgreSQL | 운영 데이터 저장 |
 
-두 스키마는 테이블·컬럼의 camelCase 이름, 관계, 기본값, 논리 제약의 의미를 일치시킨다. 다만 자동 증가 키, 날짜 기본값, 전문 검색, 부분·표현식 인덱스처럼 DBMS가 다른 기능은 각 방언에 맞게 선언한다.
+두 스키마는 테이블별 `<tableName>.table.ts` 파일로 분리하고, 각 디렉터리의 `index.ts`는 named export만 다시 내보낸다. Drizzle TypeScript 테이블 export와 속성 key는 camelCase로, DB 물리 테이블·컬럼명은 snake_case로 선언하며 관계, 기본값, 논리 제약의 의미를 일치시킨다. 인덱스와 CHECK 제약 이름은 기존 snake_case를 유지한다. 다만 자동 증가 키, 날짜 기본값, 전문 검색, 부분·표현식 인덱스처럼 DBMS가 다른 기능은 각 방언에 맞게 선언한다.
 
 ### 2.1 공통 컬럼
 

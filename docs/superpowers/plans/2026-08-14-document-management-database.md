@@ -4,13 +4,13 @@
 
 **Goal:** SQLite 개발 환경과 PostgreSQL 운영 환경에 동일한 18개 테이블의 Omninode 데이터 모델을 Drizzle 스키마와 마이그레이션으로 제공한다.
 
-**Architecture:** 두 방언의 `index.ts`는 동일한 테이블명·camelCase 컬럼·관계·제약을 독립 선언한다. 순환 참조, 부분·표현식 인덱스, 전문 검색처럼 Drizzle 테이블 선언만으로 완결되지 않는 DBMS 차이는 생성 마이그레이션에 명시 SQL을 추가해 해결한다. 행 간 또는 권한 기반 제약은 스키마에 억지로 넣지 않고 이후 서버 서비스 트랜잭션의 책임으로 남긴다.
+**Architecture:** 두 방언의 `index.ts`는 동일한 camelCase TypeScript 테이블 export·속성 key와 snake_case 물리 테이블·컬럼명, 관계·제약을 독립 선언한다. 인덱스와 CHECK 제약 이름은 기존 snake_case를 유지한다. 순환 참조, 부분·표현식 인덱스, 전문 검색처럼 Drizzle 테이블 선언만으로 완결되지 않는 DBMS 차이는 생성 마이그레이션에 명시 SQL을 추가해 해결한다. 행 간 또는 권한 기반 제약은 스키마에 억지로 넣지 않고 이후 서버 서비스 트랜잭션의 책임으로 남긴다.
 
 **Tech Stack:** Nuxt 4, TypeScript, Drizzle ORM 0.45, Drizzle Kit 0.31, SQLite, PostgreSQL, Vitest 4.
 
 ## Global Constraints
 
-- 테이블명과 컬럼명은 명세서대로 복수형 camelCase와 camelCase를 사용한다.
+- DB 물리 테이블명과 컬럼명은 snake_case를 사용하고, Drizzle TypeScript 테이블 export와 속성 key만 camelCase를 사용한다. 인덱스와 CHECK 제약 이름은 기존 snake_case를 유지한다.
 - 모든 테이블은 `id`, `useYn`, `delYn`, `createDate`, `updateDate`, `deleteDate` 공통 컬럼을 가진다.
 - 모든 YN 컬럼은 `Y`와 `N`만 허용하고, 외래키는 `ON DELETE NO ACTION`을 사용한다.
 - 문서 본문의 유일한 영구 정본은 `documents.content`이며, 섹션별 콘텐츠 컬럼은 만들지 않는다.
@@ -23,8 +23,10 @@
 ## 파일 구조
 
 - `test/database-schema.test.ts`: 두 방언의 18개 테이블·핵심 컬럼·문서 본문 단일 정본·핵심 인덱스 선언을 검사한다.
-- `server/db/schema/sqlite/index.ts`: SQLite의 테이블, FK, CHECK, UNIQUE, 일반·부분·표현식 인덱스를 선언한다.
-- `server/db/schema/postgresql/index.ts`: PostgreSQL의 테이블, FK, CHECK, UNIQUE, 일반·부분·표현식 인덱스를 선언한다.
+- `server/db/schema/sqlite/<tableName>.table.ts`: SQLite의 테이블 하나와 해당 FK, CHECK, UNIQUE, 인덱스를 선언한다.
+- `server/db/schema/sqlite/index.ts`: SQLite 테이블 파일의 named export만 다시 내보낸다.
+- `server/db/schema/postgresql/<tableName>.table.ts`: PostgreSQL의 테이블 하나와 해당 FK, CHECK, UNIQUE, 인덱스를 선언한다.
+- `server/db/schema/postgresql/index.ts`: PostgreSQL 테이블 파일의 named export만 다시 내보낸다.
 - `server/db/migrations/sqlite/`: Drizzle Kit가 생성하는 초기 스키마 SQL과 SQLite FTS5 보조 SQL을 둔다.
 - `server/db/migrations/postgresql/`: Drizzle Kit가 생성하는 초기 스키마 SQL과 PostgreSQL GIN 보조 SQL을 둔다.
 
@@ -96,6 +98,7 @@ Expected: PASS 또는 기존 ESLint 도구 체인 문제만 보고한다.
 ### Task 2: SQLite 18개 테이블과 제약 선언
 
 **Files:**
+- Create: `server/db/schema/sqlite/<tableName>.table.ts` 18개
 - Modify: `server/db/schema/sqlite/index.ts`
 - Test: `test/database-schema.test.ts`
 
@@ -155,6 +158,7 @@ Expected: SQLite 스키마의 Drizzle 타입 오류가 없다.
 ### Task 3: PostgreSQL 18개 테이블과 제약 선언
 
 **Files:**
+- Create: `server/db/schema/postgresql/<tableName>.table.ts` 18개
 - Modify: `server/db/schema/postgresql/index.ts`
 - Test: `test/database-schema.test.ts`
 
