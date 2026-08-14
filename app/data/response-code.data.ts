@@ -1,0 +1,36 @@
+export const responseCodeData = {
+  // 2xx Success
+  OK: 'OK', // 200 요청 성공
+  CREATED: 'CREATED', // 201 리소스 생성 성공
+  ACCEPTED: 'ACCEPTED', // 202 처리 접수, 비동기 처리
+  NO_CONTENT: 'NO_CONTENT', // 204 응답 본문 없음
+
+  // 3xx Redirection
+  MOVED_PERMANENTLY: 'MOVED_PERMANENTLY', // 301 영구 이동
+  FOUND: 'FOUND', // 302 임시 이동
+  NOT_MODIFIED: 'NOT_MODIFIED', // 304 수정되지 않음
+  TEMPORARY_REDIRECT: 'TEMPORARY_REDIRECT', // 307 임시 리다이렉트
+  PERMANENT_REDIRECT: 'PERMANENT_REDIRECT', // 308 영구 리다이렉트
+
+  // 4xx Client Error
+  BAD_REQUEST: 'BAD_REQUEST', // 400 잘못된 요청
+  UNAUTHORIZED: 'UNAUTHORIZED', // 401 인증 필요 또는 인증 실패
+  FORBIDDEN: 'FORBIDDEN', // 403 권한 부족
+  NOT_FOUND: 'NOT_FOUND', // 404 리소스 없음
+  METHOD_NOT_ALLOWED: 'METHOD_NOT_ALLOWED', // 405 허용되지 않은 HTTP 메서드
+  NOT_ACCEPTABLE: 'NOT_ACCEPTABLE', // 406 요청 조건에 맞는 응답 불가
+  CONFLICT: 'CONFLICT', // 409 리소스 충돌
+  GONE: 'GONE', // 410 리소스가 영구적으로 삭제됨
+  PRECONDITION_FAILED: 'PRECONDITION_FAILED', // 412 사전 조건 실패
+  PAYLOAD_TOO_LARGE: 'PAYLOAD_TOO_LARGE', // 413 요청 본문이 너무 큼
+  UNSUPPORTED_MEDIA_TYPE: 'UNSUPPORTED_MEDIA_TYPE', // 415 지원하지 않는 미디어 타입
+  UNPROCESSABLE_CONTENT: 'UNPROCESSABLE_CONTENT', // 422 문법은 맞지만 처리할 수 없음
+  TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS', // 429 요청 횟수 제한 초과
+
+  // 5xx Server Error
+  INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR', // 500 서버 내부 오류
+  NOT_IMPLEMENTED: 'NOT_IMPLEMENTED', // 501 기능 미구현
+  BAD_GATEWAY: 'BAD_GATEWAY', // 502 게이트웨이 오류
+  SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE', // 503 서비스 이용 불가
+  GATEWAY_TIMEOUT: 'GATEWAY_TIMEOUT', // 504 게이트웨이 시간 초과
+} as const;

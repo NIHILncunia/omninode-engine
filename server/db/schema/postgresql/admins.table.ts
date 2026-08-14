@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { bigint, char, check, index, pgTable, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
+import { char, check, index, pgTable, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 import { commonColumns } from './common.columns';
 
 export const admins = pgTable('admins', {

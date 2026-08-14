@@ -1,7 +1,5 @@
 import * as postgresqlSchema from '../server/db/schema/postgresql';
-import * as sqliteSchema from '../server/db/schema/sqlite';
-import { getTableConfig as getPostgresqlTableConfig } from 'drizzle-orm/pg-core';
-import { getTableConfig } from 'drizzle-orm/sqlite-core';
+import { getTableConfig } from 'drizzle-orm/pg-core';
 import { describe, expect, it } from 'vitest';
 
 const toSnakeCase = (value: string) => value.replaceAll(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
@@ -38,23 +36,14 @@ const tableNames = {
   adminPermissions: 'admin_permissions',
 } as const;
 
-describe.each([
-  [
-    'SQLite',
-    sqliteSchema,
-  ],
-  [
-    'PostgreSQL',
-    postgresqlSchema,
-  ],
-])('%s 문서 관리 스키마', (_dialect, schema) => {
+describe('PostgreSQL 문서 관리 스키마', () => {
   it('명세의 18개 테이블을 모두 내보낸다', () => {
-    for (const tableName of Object.keys(tableNames)) expect(schema).toHaveProperty(tableName);
+    for (const tableName of Object.keys(tableNames)) expect(postgresqlSchema).toHaveProperty(tableName);
   });
 
   it('모든 테이블이 공통 컬럼을 가진다', () => {
     for (const tableName of Object.keys(tableNames)) {
-      const table = schema[tableName];
+      const table = postgresqlSchema[tableName];
       expect(Object.keys(table)).toEqual(expect.arrayContaining([
         'id',
         'useYn',
@@ -70,36 +59,25 @@ describe.each([
   });
 
   it('문서 본문을 documents.content 하나로 선언한다', () => {
-    expect(schema.documents).toHaveProperty('content');
-    expect(Object.keys(schema.documentSections)).not.toContain('content');
+    expect(postgresqlSchema.documents).toHaveProperty('content');
+    expect(Object.keys(postgresqlSchema.documentSections)).not.toContain('content');
   });
 });
 
-describe.each([
-  [
-    'SQLite',
-    sqliteSchema,
-    getTableConfig,
-  ],
-  [
-    'PostgreSQL',
-    postgresqlSchema,
-    getPostgresqlTableConfig,
-  ],
-])('%s 문서 관리 스키마 물리 명명', (_dialect, schema, getPhysicalTableConfig) => {
+describe('PostgreSQL 문서 관리 스키마 물리 명명', () => {
   it('camelCase export를 snake_case 물리 테이블명으로 선언한다', () => {
     for (const [
       tableKey,
       physicalTableName,
     ] of Object.entries(tableNames)) {
-      expect(getPhysicalTableConfig(schema[tableKey] as never).name).toBe(physicalTableName);
+      expect(getTableConfig(postgresqlSchema[tableKey] as never).name).toBe(physicalTableName);
     }
   });
 
   it('camelCase Drizzle 속성 key를 snake_case 물리 컬럼명으로 선언한다', () => {
     for (const tableKey of Object.keys(tableNames)) {
-      const table = schema[tableKey];
-      const physicalColumnNames = new Set(getPhysicalTableConfig(table as never).columns.map(column => column.name));
+      const table = postgresqlSchema[tableKey];
+      const physicalColumnNames = new Set(getTableConfig(table as never).columns.map(column => column.name));
 
       for (const [
         columnKey,
@@ -115,177 +93,58 @@ describe.each([
   });
 });
 
-describe.each([
-  [
-    'SQLite',
-    sqliteSchema,
-  ],
-  [
-    'PostgreSQL',
-    postgresqlSchema,
-  ],
-])('%s 문서 관리 스키마 기본값 계약', (_dialect, schema) => {
+describe('PostgreSQL 문서 관리 스키마 기본값 계약', () => {
   it('documents.content의 기본값을 빈 문자열로 선언한다', () => {
-    expect(schema.documents.content.default).toBe('');
+    expect(postgresqlSchema.documents.content.default).toBe('');
   });
 
   it('relationshipTypeRoles의 역할 순서와 필수 여부 기본값을 선언한다', () => {
-    expect(schema.relationshipTypeRoles.roleOrder.default).toBe(0);
-    expect(schema.relationshipTypeRoles.requiredYn.default).toBe('Y');
+    expect(postgresqlSchema.relationshipTypeRoles.roleOrder.default).toBe(0);
+    expect(postgresqlSchema.relationshipTypeRoles.requiredYn.default).toBe('Y');
   });
 });
 
-describe('SQLite 문서 관리 스키마의 sections', () => {
+describe('PostgreSQL 문서 관리 스키마의 sections', () => {
   it('sectionType을 TEMPLATE와 DOCUMENT로 제한하는 enum 및 CHECK를 선언한다', () => {
-    expect(sqliteSchema.sections.sectionType.enumValues).toEqual([
+    expect(postgresqlSchema.sections.sectionType.enumValues).toEqual([
       'TEMPLATE',
       'DOCUMENT',
     ]);
-    expect(getTableConfig(sqliteSchema.sections).checks.map(check => check.name)).toContain('ck_sections_section_type');
+    expect(getTableConfig(postgresqlSchema.sections).checks.map(check => check.name)).toContain('ck_sections_section_type');
   });
 });
 
-describe('SQLite 문서 관리 스키마의 admins', () => {
+describe('PostgreSQL 문서 관리 스키마의 admins', () => {
   it('role을 SUPER_ADMIN, ADMIN, SUB_ADMIN으로 제한하고 초기 비밀번호 변경을 요구한다', () => {
-    expect(sqliteSchema.admins.role.enumValues).toEqual([
+    expect(postgresqlSchema.admins.role.enumValues).toEqual([
       'SUPER_ADMIN',
       'ADMIN',
       'SUB_ADMIN',
     ]);
-    expect(sqliteSchema.admins.passwordChangeRequiredYn.default).toBe('Y');
+    expect(postgresqlSchema.admins.passwordChangeRequiredYn.default).toBe('Y');
   });
 
   it('감사 생성자와 로그인·비밀번호 변경 시각을 새 계약으로 선언한다', () => {
-    expect(sqliteSchema.admins).toHaveProperty('createId');
-    expect(sqliteSchema.admins).toHaveProperty('lastSignInDate');
-    expect(sqliteSchema.admins).toHaveProperty('passwordChangeRequiredDate');
-    expect(sqliteSchema.admins).not.toHaveProperty('createdByAdminId');
-    expect(sqliteSchema.admins).not.toHaveProperty('lastLoginDate');
+    expect(postgresqlSchema.admins).toHaveProperty('createId');
+    expect(postgresqlSchema.admins).toHaveProperty('lastSignInDate');
+    expect(postgresqlSchema.admins).toHaveProperty('passwordChangeRequiredDate');
+    expect(postgresqlSchema.admins).not.toHaveProperty('createdByAdminId');
+    expect(postgresqlSchema.admins).not.toHaveProperty('lastLoginDate');
   });
 });
 
-describe.each([
-  [
-    'SQLite',
-    sqliteSchema,
-  ],
-  [
-    'PostgreSQL',
-    postgresqlSchema,
-  ],
-])('%s 관리자 세부 권한 스키마', (_dialect, schema) => {
+describe('PostgreSQL 관리자 세부 권한 스키마', () => {
   it('권한 마스터와 관리자별 YN 권한을 선언한다', () => {
-    expect(schema.permissions).toHaveProperty('code');
-    expect(schema.permissions).toHaveProperty('name');
-    expect(schema.adminPermissions).toHaveProperty('adminId');
-    expect(schema.adminPermissions).toHaveProperty('permissionId');
-    expect(schema.adminPermissions.grantYn.default).toBe('Y');
+    expect(postgresqlSchema.permissions).toHaveProperty('code');
+    expect(postgresqlSchema.permissions).toHaveProperty('name');
+    expect(postgresqlSchema.adminPermissions).toHaveProperty('adminId');
+    expect(postgresqlSchema.adminPermissions).toHaveProperty('permissionId');
+    expect(postgresqlSchema.adminPermissions.grantYn.default).toBe('Y');
   });
-});
-
-describe('SQLite 문서 관리 스키마 제약', () => {
-  const tableConfigs = Object.values(sqliteSchema).map(table => getTableConfig(table));
-  const expectedForeignKeyReferences = [
-    'admin_refresh_tokens.admin_id->admins.id',
-    'admin_permissions.admin_id->admins.id',
-    'admin_permissions.permission_id->permissions.id',
-    'categories.template_id->templates.id',
-    'categories.upper_category_id->categories.id',
-    'categories.world_id->worlds.id',
-    'document_categories.category_id->categories.id',
-    'document_categories.document_id->documents.id',
-    'document_relationships.world_id->worlds.id',
-    'document_relationships.world_relationship_type_id->world_relationship_types.id',
-    'document_relationship_targets.document_id->documents.id',
-    'document_relationship_targets.document_relationship_id->document_relationships.id',
-    'document_relationship_targets.relationship_type_role_id->relationship_type_roles.id',
-    'document_sections.document_id->documents.id',
-    'document_sections.section_id->sections.id',
-    'document_sections.upper_section_id->sections.id',
-    'documents.template_id->templates.id',
-    'documents.world_id->worlds.id',
-    'project_admins.admin_id->admins.id',
-    'project_admins.project_id->projects.id',
-    'projects.admin_id->admins.id',
-    'relationship_type_roles.relationship_type_id->relationship_types.id',
-    'relationship_types.owner_admin_id->admins.id',
-    'template_sections.section_id->sections.id',
-    'template_sections.template_id->templates.id',
-    'template_sections.upper_section_id->sections.id',
-    'templates.world_id->worlds.id',
-    'world_relationship_role_categories.category_id->categories.id',
-    'world_relationship_role_categories.relationship_type_role_id->relationship_type_roles.id',
-    'world_relationship_role_categories.world_relationship_type_id->world_relationship_types.id',
-    'world_relationship_types.relationship_type_id->relationship_types.id',
-    'world_relationship_types.world_id->worlds.id',
-    'worlds.project_id->projects.id',
-  ];
-  const expectedAuditForeignKeyReferences = Object.values(tableNames).flatMap(tableName => [
-    `${tableName}.create_id->admins.id`,
-    `${tableName}.update_id->admins.id`,
-    `${tableName}.delete_id->admins.id`,
-  ]);
-
-  it('93개 외래키의 원본과 대상 열을 정확히 ON DELETE NO ACTION으로 선언한다', () => {
-    const foreignKeys = tableConfigs.flatMap(table => table.foreignKeys.map((foreignKey) => {
-      const reference = foreignKey.reference();
-      const sourceColumns = reference.columns.map(column => column.name).join(',');
-      const targetColumns = reference.foreignColumns.map(column => column.name).join(',');
-      const targetTable = getTableConfig(reference.foreignTable).name;
-
-      return {
-        onDelete: foreignKey.onDelete,
-        reference: `${table.name}.${sourceColumns}->${targetTable}.${targetColumns}`,
-      };
-    }));
-
-    expect(foreignKeys).toHaveLength(93);
-    expect(foreignKeys.every(foreignKey => foreignKey.onDelete === 'no action')).toBe(true);
-    expect(foreignKeys.map(foreignKey => foreignKey.reference).sort()).toEqual(expectedForeignKeyReferences.concat(expectedAuditForeignKeyReferences).sort());
-  });
-
-  it('모든 YN 컬럼의 CHECK가 Y와 N을 허용한다', () => {
-    for (const table of tableConfigs) {
-      const ynColumns = table.columns.filter(column => column.name.endsWith('_yn'));
-
-      for (const column of ynColumns) {
-        const checkName = `ck_${table.name}_${column.name}`;
-        const check = table.checks.find(candidate => candidate.name === checkName);
-
-        expect(check).toBeDefined();
-        expect(getSqlText(check?.value.queryChunks ?? [
-        ])).toContain(column.name);
-        expect(getSqlText(check?.value.queryChunks ?? [
-        ])).toContain('\'Y\'');
-        expect(getSqlText(check?.value.queryChunks ?? [
-        ])).toContain('\'N\'');
-      }
-    }
-  });
-
-  it('관계 유형 이름 부분 UNIQUE 인덱스의 고유성과 WHERE 조건을 선언한다', () => {
-    const relationshipTypeIndexes = getTableConfig(sqliteSchema.relationshipTypes).indexes;
-    const expectedPartialUniqueIndexes = {
-      uq_relationship_types_system_name: 'system_yn=\'Y\'',
-      uq_relationship_types_owner_name: 'system_yn=\'N\'',
-    };
-
-    for (const [
-      name,
-      where,
-    ] of Object.entries(expectedPartialUniqueIndexes)) {
-      const index = relationshipTypeIndexes.find(candidate => candidate.config.name === name);
-
-      expect(index?.config.unique).toBe(true);
-      expect(getSqlText(index?.config.where?.queryChunks ?? [
-      ]).replaceAll(/\s/g, '')).toBe(where);
-    }
-  });
-
 });
 
 describe('PostgreSQL 문서 관리 스키마 제약', () => {
-  const tableConfigs = Object.values(postgresqlSchema).map(table => getPostgresqlTableConfig(table));
+  const tableConfigs = Object.values(postgresqlSchema).map(table => getTableConfig(table));
   const expectedForeignKeyReferences = [
     'admin_refresh_tokens.admin_id->admins.id',
     'admin_permissions.admin_id->admins.id',
@@ -366,7 +225,7 @@ describe('PostgreSQL 문서 관리 스키마 제약', () => {
       const reference = foreignKey.reference();
       const sourceColumns = reference.columns.map(column => column.name).join(',');
       const targetColumns = reference.foreignColumns.map(column => column.name).join(',');
-      const targetTable = getPostgresqlTableConfig(reference.foreignTable).name;
+      const targetTable = getTableConfig(reference.foreignTable).name;
 
       return {
         onDelete: foreignKey.onDelete,
@@ -399,7 +258,7 @@ describe('PostgreSQL 문서 관리 스키마 제약', () => {
   });
 
   it('관계 유형 이름 부분 UNIQUE 인덱스의 고유성과 WHERE 조건을 선언한다', () => {
-    const relationshipTypeIndexes = getPostgresqlTableConfig(postgresqlSchema.relationshipTypes).indexes;
+    const relationshipTypeIndexes = getTableConfig(postgresqlSchema.relationshipTypes).indexes;
     const expectedPartialUniqueIndexes = {
       uq_relationship_types_system_name: 'system_yn=\'Y\'',
       uq_relationship_types_owner_name: 'system_yn=\'N\'',

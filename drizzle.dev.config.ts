@@ -5,16 +5,16 @@ config({
   path: '.env.development',
 });
 
-const databaseUrl = process.env.DB_FILE_NAME;
+const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
-  throw new Error('DB_FILE_NAME is not set.');
+  throw new Error('DATABASE_URL is not set.');
 }
 
 export default defineConfig({
-  dialect: 'sqlite',
-  schema: './server/db/schema/sqlite/index.ts',
-  out: './server/db/migrations/sqlite',
+  dialect: 'postgresql',
+  schema: './server/db/schema/postgresql/index.ts',
+  out: './server/db/migrations/postgresql',
   dbCredentials: {
     url: databaseUrl,
   },

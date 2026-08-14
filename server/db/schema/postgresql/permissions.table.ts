@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { char, check, pgTable, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
+import { check, pgTable, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 import { commonColumns } from './common.columns';
 
 export const permissions = pgTable('permissions', {

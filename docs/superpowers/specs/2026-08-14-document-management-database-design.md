@@ -8,27 +8,27 @@
 
 ## 2. 구현 방식
 
-권장안은 동일한 도메인 모델을 다음 두 Drizzle 스키마에 병렬 선언하는 방식이다.
+권장안은 PostgreSQL 단일 Drizzle 스키마를 개발·운영 데이터베이스에 함께 사용하는 방식이다.
 
 | 환경 | 파일 | DBMS | 목적 |
 | --- | --- | --- | --- |
-| 개발 | `server/db/schema/sqlite/<tableName>.table.ts` | SQLite | 로컬 개발과 빠른 검증 |
-| 운영 | `server/db/schema/postgresql/<tableName>.table.ts` | PostgreSQL | 운영 데이터 저장 |
+| 개발 | `server/db/schema/postgresql/<tableName>.table.ts` | PostgreSQL (`omninode`) | 개발 데이터 저장 |
+| 운영 | `server/db/schema/postgresql/<tableName>.table.ts` | PostgreSQL (`omninode_prod`) | 운영 데이터 저장 |
 
-두 스키마는 테이블별 `<tableName>.table.ts` 파일로 분리하고, 각 디렉터리의 `index.ts`는 named export만 다시 내보낸다. Drizzle TypeScript 테이블 export와 속성 key는 camelCase로, DB 물리 테이블·컬럼명은 snake_case로 선언하며 관계, 기본값, 논리 제약의 의미를 일치시킨다. 인덱스와 CHECK 제약 이름은 기존 snake_case를 유지한다. 다만 자동 증가 키, 날짜 기본값, 전문 검색, 부분·표현식 인덱스처럼 DBMS가 다른 기능은 각 방언에 맞게 선언한다.
+스키마는 테이블별 `<tableName>.table.ts` 파일로 분리하고, `index.ts`는 named export만 다시 내보낸다. Drizzle TypeScript 테이블 export와 속성 key는 camelCase로, DB 물리 테이블·컬럼명은 snake_case로 선언한다.
 
 ### 2.1 공통 컬럼
 
 모든 테이블에 아래 컬럼을 둔다.
 
-| 컬럼 | SQLite | PostgreSQL | 제약 |
-| --- | --- | --- | --- |
-| `id` | 자동 증가 정수 PK | `bigserial` PK | 모든 테이블에 존재 |
-| `useYn` | 1자 텍스트 | `char(1)` | `Y` 또는 `N`, 기본 `Y` |
-| `delYn` | 1자 텍스트 | `char(1)` | `Y` 또는 `N`, 기본 `N` |
-| `createDate` | 현재 시각 | 현재 시각 | NOT NULL |
-| `updateDate` | 현재 시각 | 현재 시각 | NOT NULL |
-| `deleteDate` | 날짜·시각 | 날짜·시각 | NULL 허용 |
+| 컬럼 | PostgreSQL | 제약 |
+| --- | --- | --- |
+| `id` | `bigserial` PK | 모든 테이블에 존재 |
+| `useYn` | `char(1)` | `Y` 또는 `N`, 기본 `Y` |
+| `delYn` | `char(1)` | `Y` 또는 `N`, 기본 `N` |
+| `createDate` | 현재 시각 | NOT NULL |
+| `updateDate` | 현재 시각 | NOT NULL |
+| `deleteDate` | 날짜·시각 | NULL 허용 |
 
 `updateDate`의 자동 갱신은 DB 트리거로 넣지 않는다. 이후 저장 서비스가 명시적으로 갱신하며, Drizzle의 `$onUpdate`는 애플리케이션 경로의 편의를 위한 보조 수단으로만 사용한다.
 
@@ -56,7 +56,7 @@
 | `worlds` | `projectId`, `name`, `description` | `(projectId, name)` UNIQUE, 프로젝트 FK |
 | `categories` | `worldId`, `upperCategoryId`, `templateId`, `name`, `level`, `order` | 월드·상위 카테고리·템플릿 FK, `level` 1~3 CHECK, `(worldId, COALESCE(upperCategoryId, 0), name)` UNIQUE |
 
-`categories.templateId`와 `templates`의 상호 참조는 순환 외래키가 된다. 테이블 선언은 가능하지만 마이그레이션에서는 `categories` 생성 후 `templates`, 이후 `categories.templateId` FK를 추가해야 한다. SQLite에서는 FK 추가가 제한적이므로 재생성 마이그레이션이 필요할 수 있다.
+`categories.templateId`와 `templates`의 상호 참조는 순환 외래키가 된다. 테이블 선언은 가능하지만 마이그레이션에서는 `categories` 생성 후 `templates`, 이후 `categories.templateId` FK를 추가해야 한다.
 
 상위 카테고리의 월드·레벨 일치, 1단계에만 템플릿 허용, 최대 3단계 보장은 서비스에서 검증한다.
 
@@ -71,7 +71,7 @@
 | `documentCategories` | `documentId`, `categoryId`, `level` | `(documentId, level)`, `(documentId, categoryId)` UNIQUE, 문서·카테고리 FK |
 | `documentSections` | `documentId`, `sectionId`, `upperSectionId`, `order`, `templateSectionYn`, `appliedTemplateVersion` | `(documentId, sectionId)` UNIQUE, 문서·섹션 FK |
 
-문서 본문의 영구 정본은 `documents.content` 하나다. 섹션별 콘텐츠 컬럼은 만들지 않는다. PostgreSQL은 제목·본문 GIN 전문 검색 인덱스를 두고, SQLite는 FTS5 가상 테이블을 별도 마이그레이션으로 추가한다. Drizzle의 일반 테이블 선언만으로 양쪽 전문 검색 인덱스를 동일하게 표현할 수 없으므로, 이 부분은 DBMS별 SQL 마이그레이션으로 관리한다.
+문서 본문의 영구 정본은 `documents.content` 하나다. 섹션별 콘텐츠 컬럼은 만들지 않는다. 제목·본문 GIN 전문 검색 인덱스는 PostgreSQL 마이그레이션으로 관리한다.
 
 템플릿·문서와 카테고리·섹션의 월드 일치, 트리의 부모·자식 일치, 문서의 정확히 하나인 1단계 카테고리는 서비스 트랜잭션에서 검증한다.
 
@@ -84,7 +84,7 @@
 | `worldRelationshipTypes` | `worldId`, `relationshipTypeId` | `(worldId, relationshipTypeId)` UNIQUE |
 | `worldRelationshipRoleCategories` | `worldRelationshipTypeId`, `relationshipTypeRoleId`, `categoryId` | 세 컬럼 UNIQUE, 월드 관계·역할·카테고리 FK |
 
-PostgreSQL에는 시스템 관계명과 사용자 관계명의 범위를 그대로 나눈 부분 UNIQUE 인덱스를 사용한다. SQLite에는 동일 의미의 부분 UNIQUE 인덱스를 사용한다. 관계 역할이 해당 관계 유형에 속하는지, 카테고리가 같은 월드인지, 최소 대상 수를 충족하는지는 서비스 검증 대상이다.
+시스템 관계명과 사용자 관계명의 범위를 그대로 나눈 PostgreSQL 부분 UNIQUE 인덱스를 사용한다. 관계 역할이 해당 관계 유형에 속하는지, 카테고리가 같은 월드인지, 최소 대상 수를 충족하는지는 서비스 검증 대상이다.
 
 ### 3.5 실제 문서 관계
 
@@ -110,17 +110,17 @@ PostgreSQL에는 시스템 관계명과 사용자 관계명의 범위를 그대�
 승인 후 다음 순서로 구현한다.
 
 1. 테이블 존재·핵심 컬럼·기본값·인덱스를 검증하는 스키마 구조 테스트를 먼저 작성한다.
-2. SQLite와 PostgreSQL Drizzle 스키마를 같은 모델로 선언한다.
-3. 개발·운영용 마이그레이션을 생성하고, 순환 FK와 DBMS별 전문 검색 SQL을 분리한다.
-4. 각 방언에서 Drizzle 스키마 생성 명령과 구조 테스트를 실행한다.
+2. PostgreSQL Drizzle 스키마를 개발·운영 환경에 공통으로 선언한다.
+3. 공통 PostgreSQL 마이그레이션을 생성하고, 순환 FK와 GIN 전문 검색 SQL을 분리한다.
+4. PostgreSQL 스키마 생성 명령과 구조 테스트를 실행한다.
 5. 타입 검사와 빌드를 실행하고, 기존 무관한 실패가 있으면 분리해 보고한다.
 
 데이터베이스를 실제로 생성하거나 운영 DB에 적용하는 작업은 이 설계에 포함하지 않는다. 승인된 구현 계획에서 생성 대상과 실행 범위를 다시 확인한다.
 
 ## 6. 완료 기준
 
-- 18개 테이블이 양쪽 Drizzle 스키마에 존재한다.
+- 18개 테이블이 PostgreSQL Drizzle 스키마에 존재한다.
 - 모든 공통 컬럼, 명시된 FK·UNIQUE·CHECK·일반 인덱스가 구현된다.
-- DBMS별 표현식·부분·전문 검색 인덱스는 방언별 마이그레이션으로 검증된다.
+- 표현식·부분·전문 검색 인덱스는 PostgreSQL 마이그레이션으로 검증된다.
 - 교차 테이블·권한·소프트 삭제 복구 규칙은 향후 서버 서비스의 검증 책임으로 명확히 분리된다.
 - 스키마 구조 테스트, Drizzle 생성, 타입 검사와 빌드 결과가 기록된다.

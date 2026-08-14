@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { bigint, check, index, integer, pgTable, varchar } from 'drizzle-orm/pg-core';
+import { check, index, integer, pgTable, varchar } from 'drizzle-orm/pg-core';
 import { commonColumns } from './common.columns';
 
 export const sections = pgTable('sections', {

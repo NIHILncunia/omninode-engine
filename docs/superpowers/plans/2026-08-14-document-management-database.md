@@ -2,11 +2,13 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** SQLite 개발 환경과 PostgreSQL 운영 환경에 동일한 18개 테이블의 Omninode 데이터 모델을 Drizzle 스키마와 마이그레이션으로 제공한다.
+**Goal:** 개발·운영 PostgreSQL 데이터베이스에 같은 Omninode 데이터 모델을 제공한다.
 
-**Architecture:** 두 방언의 `index.ts`는 동일한 camelCase TypeScript 테이블 export·속성 key와 snake_case 물리 테이블·컬럼명, 관계·제약을 독립 선언한다. 인덱스와 CHECK 제약 이름은 기존 snake_case를 유지한다. 순환 참조, 부분·표현식 인덱스, 전문 검색처럼 Drizzle 테이블 선언만으로 완결되지 않는 DBMS 차이는 생성 마이그레이션에 명시 SQL을 추가해 해결한다. 행 간 또는 권한 기반 제약은 스키마에 억지로 넣지 않고 이후 서버 서비스 트랜잭션의 책임으로 남긴다.
+**Architecture:** PostgreSQL 스키마는 테이블별 파일로 선언하고 `index.ts`에서 다시 내보낸다. 개발과 운영은 서로 다른 `DATABASE_URL`만 사용하며 같은 스키마를 공유한다. 행 간 또는 권한 기반 제약은 스키마에 억지로 넣지 않고 이후 서버 서비스 트랜잭션의 책임으로 남긴다.
 
-**Tech Stack:** Nuxt 4, TypeScript, Drizzle ORM 0.45, Drizzle Kit 0.31, SQLite, PostgreSQL, Vitest 4.
+**Tech Stack:** Nuxt 4, TypeScript, Drizzle ORM 0.45, Drizzle Kit 0.31, PostgreSQL, Vitest 4.
+
+> **2026-08-15 범위 변경:** 개발과 운영을 PostgreSQL로 통일한다. 아래의 SQLite 파일·마이그레이션·검증 단계는 이력으로만 남기며 실행 대상에서 제외한다.
 
 ## Global Constraints
 
@@ -22,12 +24,9 @@
 
 ## 파일 구조
 
-- `test/database-schema.test.ts`: 두 방언의 18개 테이블·핵심 컬럼·문서 본문 단일 정본·핵심 인덱스 선언을 검사한다.
-- `server/db/schema/sqlite/<tableName>.table.ts`: SQLite의 테이블 하나와 해당 FK, CHECK, UNIQUE, 인덱스를 선언한다.
-- `server/db/schema/sqlite/index.ts`: SQLite 테이블 파일의 named export만 다시 내보낸다.
+- `test/database-schema.test.ts`: PostgreSQL 테이블·핵심 컬럼·문서 본문 단일 정본·핵심 인덱스 선언을 검사한다.
 - `server/db/schema/postgresql/<tableName>.table.ts`: PostgreSQL의 테이블 하나와 해당 FK, CHECK, UNIQUE, 인덱스를 선언한다.
 - `server/db/schema/postgresql/index.ts`: PostgreSQL 테이블 파일의 named export만 다시 내보낸다.
-- `server/db/migrations/sqlite/`: Drizzle Kit가 생성하는 초기 스키마 SQL과 SQLite FTS5 보조 SQL을 둔다.
 - `server/db/migrations/postgresql/`: Drizzle Kit가 생성하는 초기 스키마 SQL과 PostgreSQL GIN 보조 SQL을 둔다.
 
 ### Task 1: 스키마 구조 계약 테스트

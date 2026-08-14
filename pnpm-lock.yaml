@@ -117,9 +117,6 @@ importers:
       '@vue/test-utils':
         specifier: ^2.4.11
         version: 2.4.11(@vue/compiler-dom@3.5.41)(@vue/server-renderer@3.5.41)(vue@3.5.41(typescript@6.0.3))
-      better-sqlite3:
-        specifier: ^13.0.3
-        version: 13.0.3
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -9108,6 +9105,7 @@ snapshots:
   better-sqlite3@13.0.3:
     dependencies:
       node-addon-api: 8.9.2
+    optional: true
 
   binary-extensions@2.3.0: {}
 
@@ -10954,7 +10952,8 @@ snapshots:
   node-addon-api@7.1.1:
     optional: true
 
-  node-addon-api@8.9.2: {}
+  node-addon-api@8.9.2:
+    optional: true
 
   node-fetch-native@1.6.7: {}
 
