@@ -29,11 +29,11 @@ describe('useSetMeta', () => {
 
     expect(head.meta.find((item) => item.property === 'og:image')).toEqual({
       property: 'og:image',
-      content: 'http://localhost:3000/images/nihil-web-logo.png',
+      content: 'http://localhost:3000/images/omninode-web-logo.png',
     });
     expect(head.meta.find((item) => item.property === 'og:image:alt')).toEqual({
       property: 'og:image:alt',
-      content: '로고',
+      content: '옴니노드 로고',
     });
   });
 });

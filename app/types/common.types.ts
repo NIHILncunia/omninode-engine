@@ -77,5 +77,5 @@ export interface SiteConfig {
     route: string;
   };
   links?: SiteLink[];
-  navigation?: NavigationItem[];
+  navigation: NavigationItem[];
 }

@@ -34,6 +34,8 @@ const tableNames = {
   worldRelationshipRoleCategories: 'world_relationship_role_categories',
   documentRelationships: 'document_relationships',
   documentRelationshipTargets: 'document_relationship_targets',
+  permissions: 'permissions',
+  adminPermissions: 'admin_permissions',
 } as const;
 
 describe.each([
@@ -57,6 +59,9 @@ describe.each([
         'id',
         'useYn',
         'delYn',
+        'createId',
+        'updateId',
+        'deleteId',
         'createDate',
         'updateDate',
         'deleteDate',
@@ -149,19 +154,46 @@ describe('SQLite 문서 관리 스키마의 admins', () => {
     ]);
     expect(sqliteSchema.admins.passwordChangeRequiredYn.default).toBe('Y');
   });
+
+  it('감사 생성자와 로그인·비밀번호 변경 시각을 새 계약으로 선언한다', () => {
+    expect(sqliteSchema.admins).toHaveProperty('createId');
+    expect(sqliteSchema.admins).toHaveProperty('lastSignInDate');
+    expect(sqliteSchema.admins).toHaveProperty('passwordChangeRequiredDate');
+    expect(sqliteSchema.admins).not.toHaveProperty('createdByAdminId');
+    expect(sqliteSchema.admins).not.toHaveProperty('lastLoginDate');
+  });
+});
+
+describe.each([
+  [
+    'SQLite',
+    sqliteSchema,
+  ],
+  [
+    'PostgreSQL',
+    postgresqlSchema,
+  ],
+])('%s 관리자 세부 권한 스키마', (_dialect, schema) => {
+  it('권한 마스터와 관리자별 YN 권한을 선언한다', () => {
+    expect(schema.permissions).toHaveProperty('code');
+    expect(schema.permissions).toHaveProperty('name');
+    expect(schema.adminPermissions).toHaveProperty('adminId');
+    expect(schema.adminPermissions).toHaveProperty('permissionId');
+    expect(schema.adminPermissions.grantYn.default).toBe('Y');
+  });
 });
 
 describe('SQLite 문서 관리 스키마 제약', () => {
   const tableConfigs = Object.values(sqliteSchema).map(table => getTableConfig(table));
   const expectedForeignKeyReferences = [
     'admin_refresh_tokens.admin_id->admins.id',
-    'admins.created_by_admin_id->admins.id',
+    'admin_permissions.admin_id->admins.id',
+    'admin_permissions.permission_id->permissions.id',
     'categories.template_id->templates.id',
     'categories.upper_category_id->categories.id',
     'categories.world_id->worlds.id',
     'document_categories.category_id->categories.id',
     'document_categories.document_id->documents.id',
-    'document_relationships.created_by_admin_id->admins.id',
     'document_relationships.world_id->worlds.id',
     'document_relationships.world_relationship_type_id->world_relationship_types.id',
     'document_relationship_targets.document_id->documents.id',
@@ -177,7 +209,6 @@ describe('SQLite 문서 관리 스키마 제약', () => {
     'projects.admin_id->admins.id',
     'relationship_type_roles.relationship_type_id->relationship_types.id',
     'relationship_types.owner_admin_id->admins.id',
-    'sections.created_by_admin_id->admins.id',
     'template_sections.section_id->sections.id',
     'template_sections.template_id->templates.id',
     'template_sections.upper_section_id->sections.id',
@@ -189,8 +220,13 @@ describe('SQLite 문서 관리 스키마 제약', () => {
     'world_relationship_types.world_id->worlds.id',
     'worlds.project_id->projects.id',
   ];
+  const expectedAuditForeignKeyReferences = Object.values(tableNames).flatMap(tableName => [
+    `${tableName}.create_id->admins.id`,
+    `${tableName}.update_id->admins.id`,
+    `${tableName}.delete_id->admins.id`,
+  ]);
 
-  it('34개 외래키의 원본과 대상 열을 정확히 ON DELETE NO ACTION으로 선언한다', () => {
+  it('93개 외래키의 원본과 대상 열을 정확히 ON DELETE NO ACTION으로 선언한다', () => {
     const foreignKeys = tableConfigs.flatMap(table => table.foreignKeys.map((foreignKey) => {
       const reference = foreignKey.reference();
       const sourceColumns = reference.columns.map(column => column.name).join(',');
@@ -203,9 +239,9 @@ describe('SQLite 문서 관리 스키마 제약', () => {
       };
     }));
 
-    expect(foreignKeys).toHaveLength(34);
+    expect(foreignKeys).toHaveLength(93);
     expect(foreignKeys.every(foreignKey => foreignKey.onDelete === 'no action')).toBe(true);
-    expect(foreignKeys.map(foreignKey => foreignKey.reference).sort()).toEqual(expectedForeignKeyReferences.sort());
+    expect(foreignKeys.map(foreignKey => foreignKey.reference).sort()).toEqual(expectedForeignKeyReferences.concat(expectedAuditForeignKeyReferences).sort());
   });
 
   it('모든 YN 컬럼의 CHECK가 Y와 N을 허용한다', () => {
@@ -252,13 +288,13 @@ describe('PostgreSQL 문서 관리 스키마 제약', () => {
   const tableConfigs = Object.values(postgresqlSchema).map(table => getPostgresqlTableConfig(table));
   const expectedForeignKeyReferences = [
     'admin_refresh_tokens.admin_id->admins.id',
-    'admins.created_by_admin_id->admins.id',
+    'admin_permissions.admin_id->admins.id',
+    'admin_permissions.permission_id->permissions.id',
     'categories.template_id->templates.id',
     'categories.upper_category_id->categories.id',
     'categories.world_id->worlds.id',
     'document_categories.category_id->categories.id',
     'document_categories.document_id->documents.id',
-    'document_relationships.created_by_admin_id->admins.id',
     'document_relationships.world_id->worlds.id',
     'document_relationships.world_relationship_type_id->world_relationship_types.id',
     'document_relationship_targets.document_id->documents.id',
@@ -274,7 +310,6 @@ describe('PostgreSQL 문서 관리 스키마 제약', () => {
     'projects.admin_id->admins.id',
     'relationship_type_roles.relationship_type_id->relationship_types.id',
     'relationship_types.owner_admin_id->admins.id',
-    'sections.created_by_admin_id->admins.id',
     'template_sections.section_id->sections.id',
     'template_sections.template_id->templates.id',
     'template_sections.upper_section_id->sections.id',
@@ -286,6 +321,11 @@ describe('PostgreSQL 문서 관리 스키마 제약', () => {
     'world_relationship_types.world_id->worlds.id',
     'worlds.project_id->projects.id',
   ];
+  const expectedAuditForeignKeyReferences = Object.values(tableNames).flatMap(tableName => [
+    `${tableName}.create_id->admins.id`,
+    `${tableName}.update_id->admins.id`,
+    `${tableName}.delete_id->admins.id`,
+  ]);
 
   const expectedVarcharLengths = {
     'adminRefreshTokens.deviceInfo': 500,
@@ -321,7 +361,7 @@ describe('PostgreSQL 문서 관리 스키마 제약', () => {
     }
   });
 
-  it('34개 외래키의 원본과 대상 열을 정확히 ON DELETE NO ACTION으로 선언한다', () => {
+  it('93개 외래키의 원본과 대상 열을 정확히 ON DELETE NO ACTION으로 선언한다', () => {
     const foreignKeys = tableConfigs.flatMap(table => table.foreignKeys.map((foreignKey) => {
       const reference = foreignKey.reference();
       const sourceColumns = reference.columns.map(column => column.name).join(',');
@@ -334,9 +374,9 @@ describe('PostgreSQL 문서 관리 스키마 제약', () => {
       };
     }));
 
-    expect(foreignKeys).toHaveLength(34);
+    expect(foreignKeys).toHaveLength(93);
     expect(foreignKeys.every(foreignKey => foreignKey.onDelete === 'no action')).toBe(true);
-    expect(foreignKeys.map(foreignKey => foreignKey.reference).sort()).toEqual(expectedForeignKeyReferences.sort());
+    expect(foreignKeys.map(foreignKey => foreignKey.reference).sort()).toEqual(expectedForeignKeyReferences.concat(expectedAuditForeignKeyReferences).sort());
   });
 
   it('모든 YN 컬럼의 CHECK가 Y와 N을 허용한다', () => {

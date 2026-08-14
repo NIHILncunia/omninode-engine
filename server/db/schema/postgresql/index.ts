@@ -16,3 +16,5 @@ export { worldRelationshipTypes } from './worldRelationshipTypes.table';
 export { worldRelationshipRoleCategories } from './worldRelationshipRoleCategories.table';
 export { documentRelationships } from './documentRelationships.table';
 export { documentRelationshipTargets } from './documentRelationshipTargets.table';
+export { permissions } from './permissions.table';
+export { adminPermissions } from './adminPermissions.table';

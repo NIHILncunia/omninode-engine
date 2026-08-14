@@ -39,4 +39,22 @@ export const siteConfig: SiteConfig = {
       label: 'NIHILncunia GitHub',
     },
   ],
+  navigation: [
+    {
+      label: '홈',
+      to: '/',
+    },
+    {
+      label: '프로젝트',
+      to: '/projects',
+    },
+    {
+      label: '설정',
+      to: '/settings',
+    },
+    {
+      label: '소개',
+      to: '/about',
+    },
+  ],
 } as const;
