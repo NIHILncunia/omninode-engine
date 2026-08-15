@@ -14,7 +14,7 @@ const cssVariants = cva([
   'w-full',
   'max-w-md',
   'flex-col',
-  'gap-1',
+  'gap-2',
   'rounded-md',
   'border',
   'border-black-300',
