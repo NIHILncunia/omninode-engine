@@ -6,6 +6,10 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
+  runtimeConfig: {
+    databaseUrl: process.env.DATABASE_URL,
+    jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
+  },
   modules: [
     '@nuxt/eslint',
     '@pinia/nuxt',

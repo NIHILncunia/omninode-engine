@@ -27,8 +27,13 @@ export const getAuthRedirect = (
   return null;
 };
 
-export default (to: RouteLocationNormalized) => {
+export default async (to: RouteLocationNormalized) => {
   const auth = useAuthStore();
+
+  if (!publicPaths.has(to.path) && auth.status === 'unknown') {
+    await auth.onRestoreSession();
+  }
+
   const redirect = getAuthRedirect(
     to.path,
     auth.status,

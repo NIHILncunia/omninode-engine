@@ -210,17 +210,24 @@ signin 화면
 - refresh token은 해시 저장하고 폐기 여부와 만료일을 확인한다.
 - 비밀번호 변경 성공 시 `passwordChangeRequiredYn`을 `N`으로 변경한다.
 
+### 구현 기록 (2026-08-15)
+
+- access token은 15분짜리 HttpOnly JWT 쿠키, refresh token은 14일짜리 HttpOnly 무작위 값 쿠키로 구현했다. DB에는 refresh token의 SHA-256 해시만 저장한다.
+- refresh와 비밀번호 변경 성공 시 access·refresh 쿠키를 함께 새로 발급한다.
+- `/signin`과 `/account/password-change`는 사이드바가 없는 `auth` 레이아웃을 사용하며, `/account`는 기본 레이아웃을 유지한다.
+- 역할·프로젝트 범위 권한 계산은 다음 단계인 관리자·권한에서 실제 관리 기능과 함께 구현한다.
+
 ## 6.2 관리자 계정과 권한
 
 ### 화면
 
 ```text
 /admin
-/admin/admins
-/admin/admins/new
-/admin/admins/:adminId
-/admin/admins/:adminId/edit
-/admin/admins/:adminId/permissions
+/admins
+/admins/new
+/admins/:adminId
+/admins/:adminId/edit
+/admins/:adminId/permissions
 /admin/permissions
 /projects/:projectId/admins
 ```

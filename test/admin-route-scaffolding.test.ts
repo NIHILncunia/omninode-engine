@@ -7,11 +7,11 @@ const adminRouteFiles = [
   'app/pages/account.vue',
   'app/pages/account/password-change.vue',
   'app/pages/admin/index.vue',
-  'app/pages/admin/admins/index.vue',
-  'app/pages/admin/admins/new.vue',
-  'app/pages/admin/admins/[adminId]/index.vue',
-  'app/pages/admin/admins/[adminId]/edit.vue',
-  'app/pages/admin/admins/[adminId]/permissions.vue',
+  'app/pages/admins/index.vue',
+  'app/pages/admins/new.vue',
+  'app/pages/admins/[adminId]/index.vue',
+  'app/pages/admins/[adminId]/edit.vue',
+  'app/pages/admins/[adminId]/permissions.vue',
   'app/pages/admin/permissions.vue',
   'app/pages/projects/[projectId]/admins.vue',
 ] as const;
@@ -23,12 +23,25 @@ describe('관리자 라우트 골격', () => {
     }
   });
 
-  it('모든 관리자 페이지가 메타 설정과 비표시 루트를 가진다', () => {
+  it('이전 중첩 관리자 목록 경로를 제공하지 않는다', () => {
+    expect(existsSync(resolve(process.cwd(), 'app/pages/admin/admins/index.vue'))).toBe(false);
+  });
+
+  it('모든 관리자 페이지가 메타 설정과 지정된 렌더링 루트를 가진다', () => {
     for (const routeFile of adminRouteFiles) {
       const content = readFileSync(resolve(process.cwd(), routeFile), 'utf8');
 
       expect(content).toContain('useSetMeta');
-      expect(content).toContain('<span hidden />');
+
+      if (routeFile === 'app/pages/signin.vue') {
+        expect(content).toContain('<AuthSigninForm />');
+      } else if (routeFile === 'app/pages/account.vue') {
+        expect(content).toContain('<AuthAccountProfile />');
+      } else if (routeFile === 'app/pages/account/password-change.vue') {
+        expect(content).toContain('<AuthPasswordChangeForm />');
+      } else {
+        expect(content).toContain('<span hidden />');
+      }
     }
   });
 });

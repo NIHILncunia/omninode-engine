@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSetMeta({
   title: '관리자 상세',
-  url: '/admin/admins/:adminId',
+  url: '/admins/:adminId',
 });
 </script>
 

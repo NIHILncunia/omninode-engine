@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSetMeta({
-  title: '관리자 목록',
-  url: '/admin/admins',
+  title: '관리자 권한 설정',
+  url: '/admins/:adminId/permissions',
 });
 </script>
 

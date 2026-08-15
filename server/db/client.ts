@@ -15,3 +15,5 @@ export const createDatabaseClient = (databaseUrl: string) => {
     schema,
   });
 };
+
+export type DatabaseClient = ReturnType<typeof createDatabaseClient>;

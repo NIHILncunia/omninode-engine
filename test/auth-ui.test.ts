@@ -1,0 +1,60 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { mount } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
+import SigninForm from '../app/components/auth/SigninForm.vue';
+import PasswordChangeForm from '../app/components/auth/PasswordChangeForm.vue';
+
+describe('인증 UI', () => {
+  const fetchApi = vi.fn();
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    fetchApi.mockReset();
+    vi.stubGlobal('$fetch', fetchApi);
+    vi.stubGlobal('navigateTo', vi.fn());
+  });
+
+  it('로그인 실패를 오류 상태로 표시한다', async () => {
+    fetchApi.mockRejectedValue(new Error('unauthorized'));
+    const wrapper = mount(SigninForm, {
+      global: {
+        plugins: [
+          createPinia(),
+        ],
+        stubs: {
+          ErrorState: {
+            props: [
+              'title',
+              'description',
+            ],
+            template: '<p>{{ title }} {{ description }}</p>',
+          },
+        },
+      },
+    });
+
+    await wrapper.get('input[name="email"]').setValue('admin@example.com');
+    await wrapper.get('input[name="password"]').setValue('password123');
+    await wrapper.get('form').trigger('submit');
+    await vi.waitFor(() => expect(wrapper.text()).toContain('로그인하지 못했습니다.'));
+  });
+
+  it('8자 미만 새 비밀번호는 변경 요청을 보내지 않는다', async () => {
+    const wrapper = mount(PasswordChangeForm, {
+      global: {
+        plugins: [
+          createPinia(),
+        ],
+        stubs: {
+          ErrorState: true,
+        },
+      },
+    });
+
+    await wrapper.get('input[name="currentPassword"]').setValue('password123');
+    await wrapper.get('input[name="newPassword"]').setValue('short');
+    await wrapper.get('form').trigger('submit');
+
+    expect(fetchApi).not.toHaveBeenCalled();
+  });
+});

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSetMeta({
-  title: '관리자 생성',
-  url: '/admin/admins/new',
+  title: '관리자 수정',
+  url: '/admins/:adminId/edit',
 });
 </script>
 
