@@ -1,11 +1,13 @@
-interface ListResponseInput<TData> {
-  list: TData[];
-  page: number; // 0부터 시작
-  pageSize: number;
-  totalElements: number;
-}
+import type {
+  BaseResponse,
+  ListData,
+  ListResponseInput,
+  ResponseKey,
+} from '~/types/response.types';
+import { responseCodeData } from '~/data/response-code.data';
+import { responseMessageData } from '~/data/response-message.data';
 
-export class CreateResponse {
+export const CreateResponse = {
   data<TData>(
     data: TData,
     code: ResponseKey = 'OK',
@@ -17,7 +19,7 @@ export class CreateResponse {
       code: responseCodeData[code],
       message: responseMessageData[message],
     };
-  }
+  },
 
   list<TData>(
     listData: ListResponseInput<TData>,
@@ -33,30 +35,14 @@ export class CreateResponse {
 
     const normalizedPage = Math.max(0, Math.floor(page));
     const normalizedPageSize = Math.max(1, Math.floor(pageSize));
-    const normalizedTotalElements = Math.max(
-      0,
-      Math.floor(totalElements),
-    );
-
+    const normalizedTotalElements = Math.max(0, Math.floor(totalElements));
     const numberOfElements = list.length;
-    const totalPages = Math.ceil(
-      normalizedTotalElements / normalizedPageSize,
-    );
-
+    const totalPages = Math.ceil(normalizedTotalElements / normalizedPageSize);
     const empty = numberOfElements === 0;
-
-    const startIndex = empty
-      ? 0
-      : normalizedPage * normalizedPageSize + 1;
-
-    const endIndex = empty
-      ? 0
-      : startIndex + numberOfElements - 1;
-
+    const startIndex = empty ? 0 : normalizedPage * normalizedPageSize + 1;
+    const endIndex = empty ? 0 : startIndex + numberOfElements - 1;
     const isFirst = normalizedPage === 0;
-    const isLast =
-      totalPages === 0 ||
-      normalizedPage >= totalPages - 1;
+    const isLast = totalPages === 0 || normalizedPage >= totalPages - 1;
 
     return {
       error: false,
@@ -78,7 +64,7 @@ export class CreateResponse {
       code: responseCodeData[code],
       message: responseMessageData[message],
     };
-  }
+  },
 
   error(
     code: ResponseKey = 'INTERNAL_SERVER_ERROR',
@@ -90,5 +76,5 @@ export class CreateResponse {
       code: responseCodeData[code],
       message: responseMessageData[message],
     };
-  }
-}
+  },
+};

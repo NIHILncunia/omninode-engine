@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const adminRouteFiles = [
-  'app/pages/login.vue',
+  'app/pages/signin.vue',
   'app/pages/account.vue',
   'app/pages/account/password-change.vue',
   'app/pages/admin/index.vue',

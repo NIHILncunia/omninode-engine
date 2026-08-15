@@ -67,9 +67,11 @@
 - `server/services/`: 권한·검증·트랜잭션이 포함된 도메인 서비스
 - `server/repositories/`: Drizzle 조회·저장 조합
 - `server/utils/`: JWT, 비밀번호, API 오류, 공통 응답 처리
-- `server/db/schema/`: SQLite·PostgreSQL 방언별 스키마
+- `server/db/schema/postgresql/`: 개발·운영이 공유하는 PostgreSQL Drizzle 스키마
 
 라우트 핸들러는 입력을 검증하고 서비스에 위임한다. 서비스는 현재 관리자, 프로젝트 범위, 데이터 상태, 행 간 제약을 검증한 뒤 저장소를 호출한다.
+
+공통 API 응답은 `server/utils/createResponse.ts`의 `CreateResponse`로 생성한다.
 
 ### 4.3 인증
 
@@ -88,7 +90,10 @@
 
 ```ts
 {
-  data: T;
+  error: false,
+  data: T,
+  code: 'OK',
+  message: '요청이 정상적으로 처리되었습니다.',
 }
 ```
 
@@ -96,12 +101,24 @@
 
 ```ts
 {
-  data: T[];
-  meta: {
-    page: number;
-    pageSize: number;
-    total: number;
-  };
+  error: false,
+  data: {
+    list: T[],
+    page: 0,
+    pageSize: 20,
+    totalElements: 0,
+    numberOfElements: 0,
+    startIndex: 0,
+    endIndex: 0,
+    hasPrev: false,
+    hasNext: false,
+    isFirst: true,
+    isLast: true,
+    empty: true,
+    totalPages: 0,
+  },
+  code: 'OK',
+  message: '요청이 정상적으로 처리되었습니다.',
 }
 ```
 
@@ -109,11 +126,10 @@
 
 ```ts
 {
-  error: {
-    code: string;
-    message: string;
-    fields?: Record<string, string>;
-  };
+  error: true,
+  data: null,
+  code: 'INTERNAL_SERVER_ERROR',
+  message: '서버 내부 오류가 발생했습니다.',
 }
 ```
 
@@ -136,8 +152,7 @@
 ### 구현 대상
 
 - DB 연결 생성과 환경별 설정
-- 개발 SQLite 마이그레이션
-- PostgreSQL 마이그레이션 출력 구조
+- PostgreSQL 생성·마이그레이션 검증
 - API 공통 응답·오류 유틸리티
 - 요청 입력 검증 방식
 - 인증 토큰 저장 방식
@@ -151,7 +166,7 @@
 - `/api/health`가 정상 응답한다.
 - 보호 페이지 접근 시 인증 여부에 따라 이동한다.
 - API 오류가 하나의 형식으로 반환된다.
-- SQLite 개발 DB를 재생성할 수 있다.
+- PostgreSQL 스키마 생성·마이그레이션을 검증할 수 있다.
 - 전체 테스트와 타입 검사의 실행 명령이 고정된다.
 
 ## 6.1 인증과 계정
@@ -590,7 +605,7 @@ pnpm exec vue-tsc --noEmit
 pnpm build
 ```
 
-DB 스키마나 마이그레이션 변경이 있는 단계에서는 Drizzle 생성·적용과 SQLite 구조 검사를 추가한다.
+DB 스키마나 마이그레이션 변경이 있는 단계에서는 PostgreSQL Drizzle 생성·적용과 구조 검사를 추가한다.
 
 ## 10. 커밋 단위
 
