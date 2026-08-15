@@ -35,32 +35,23 @@ const onClickSignOut = async (): Promise<void> => {
       <p class="text-sm text-black-600">현재 로그인한 관리자 정보입니다.</p>
     </header>
 
-    <LoadingState v-if="auth.status === 'unknown'" />
+    <ElSkeleton v-if="auth.status === 'unknown'" :rows="3" animated />
 
     <template v-else-if="auth.admin">
-      <dl class="grid gap-3">
-        <div>
-          <dt class="text-sm text-black-600">이름</dt>
-          <dd>{{ auth.admin.name }}</dd>
-        </div>
-        <div>
-          <dt class="text-sm text-black-600">이메일</dt>
-          <dd>{{ auth.admin.email }}</dd>
-        </div>
-        <div>
-          <dt class="text-sm text-black-600">역할</dt>
-          <dd>{{ auth.admin.role }}</dd>
-        </div>
-      </dl>
+      <ElDescriptions :column="1" border>
+        <ElDescriptionsItem label="이름">{{ auth.admin.name }}</ElDescriptionsItem>
+        <ElDescriptionsItem label="이메일">{{ auth.admin.email }}</ElDescriptionsItem>
+        <ElDescriptionsItem label="역할">{{ auth.admin.role }}</ElDescriptionsItem>
+      </ElDescriptions>
 
-      <button
-        class="w-fit rounded-sm border border-black-400 px-4 py-2"
-        :disabled="auth.isLoading"
-        type="button"
+      <ElButton
+        :loading="auth.isLoading"
+        plain
+        type="info"
         @click="onClickSignOut"
       >
         로그아웃
-      </button>
+      </ElButton>
     </template>
   </section>
 </template>

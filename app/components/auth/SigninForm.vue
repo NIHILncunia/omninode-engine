@@ -43,7 +43,7 @@ const onSubmitSignin = async (): Promise<void> => {
 
 <template>
   <section class="flex min-h-dvh items-center px-4 py-8">
-    <form
+    <ElForm
       :class="cn([cssVariants({})])"
       @submit.prevent="onSubmitSignin"
     >
@@ -52,44 +52,43 @@ const onSubmitSignin = async (): Promise<void> => {
         <p class="text-sm text-black-600">옴니노드 관리 환경에 로그인합니다.</p>
       </header>
 
-      <ErrorState
+      <ElAlert
         v-if="auth.errorMessage"
         :description="auth.errorMessage"
         title="로그인하지 못했습니다."
-        class="items-start p-0"
+        type="error"
+        :closable="false"
+        show-icon
       />
 
-      <label class="flex flex-col gap-1">
-        <span>이메일</span>
-        <input
+      <ElFormItem label="이메일">
+        <ElInput
           v-model="email"
           autocomplete="email"
-          class="rounded-sm border border-black-300 px-3 py-2"
           name="email"
           required
           type="email"
-        >
-      </label>
+        />
+      </ElFormItem>
 
-      <label class="flex flex-col gap-1">
-        <span>비밀번호</span>
-        <input
+      <ElFormItem label="비밀번호">
+        <ElInput
           v-model="password"
           autocomplete="current-password"
-          class="rounded-sm border border-black-300 px-3 py-2"
           name="password"
           required
           type="password"
-        >
-      </label>
+          show-password
+        />
+      </ElFormItem>
 
-      <button
-        class="rounded-sm bg-blue-600 px-4 py-2 text-white disabled:opacity-60"
-        :disabled="auth.isLoading"
-        type="submit"
+      <ElButton
+        :loading="auth.isLoading"
+        native-type="submit"
+        type="primary"
       >
         {{ auth.isLoading ? '로그인 중입니다.' : '로그인' }}
-      </button>
-    </form>
+      </ElButton>
+    </ElForm>
   </section>
 </template>

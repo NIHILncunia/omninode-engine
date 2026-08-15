@@ -10,5 +10,5 @@ useSetMeta({
 </script>
 
 <template>
-  <AuthSigninForm />
+  <SigninForm />
 </template>

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
+import ElementPlus from 'element-plus';
 import SigninForm from '../app/components/auth/SigninForm.vue';
 import PasswordChangeForm from '../app/components/auth/PasswordChangeForm.vue';
 
@@ -20,19 +21,12 @@ describe('인증 UI', () => {
       global: {
         plugins: [
           createPinia(),
+          ElementPlus,
         ],
-        stubs: {
-          ErrorState: {
-            props: [
-              'title',
-              'description',
-            ],
-            template: '<p>{{ title }} {{ description }}</p>',
-          },
-        },
       },
     });
 
+    expect(wrapper.findComponent({ name: 'ElForm', }).exists()).toBe(true);
     await wrapper.get('input[name="email"]').setValue('admin@example.com');
     await wrapper.get('input[name="password"]').setValue('password123');
     await wrapper.get('form').trigger('submit');
@@ -44,13 +38,12 @@ describe('인증 UI', () => {
       global: {
         plugins: [
           createPinia(),
+          ElementPlus,
         ],
-        stubs: {
-          ErrorState: true,
-        },
       },
     });
 
+    expect(wrapper.findComponent({ name: 'ElForm', }).exists()).toBe(true);
     await wrapper.get('input[name="currentPassword"]').setValue('password123');
     await wrapper.get('input[name="newPassword"]').setValue('short');
     await wrapper.get('form').trigger('submit');

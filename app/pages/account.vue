@@ -6,5 +6,5 @@ useSetMeta({
 </script>
 
 <template>
-  <AuthAccountProfile />
+  <AccountProfile />
 </template>

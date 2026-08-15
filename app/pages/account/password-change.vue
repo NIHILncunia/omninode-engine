@@ -10,5 +10,5 @@ useSetMeta({
 </script>
 
 <template>
-  <AuthPasswordChangeForm />
+  <PasswordChangeForm />
 </template>

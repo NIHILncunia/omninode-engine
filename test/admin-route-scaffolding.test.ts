@@ -34,11 +34,11 @@ describe('관리자 라우트 골격', () => {
       expect(content).toContain('useSetMeta');
 
       if (routeFile === 'app/pages/signin.vue') {
-        expect(content).toContain('<AuthSigninForm />');
+        expect(content).toContain('<SigninForm />');
       } else if (routeFile === 'app/pages/account.vue') {
-        expect(content).toContain('<AuthAccountProfile />');
+        expect(content).toContain('<AccountProfile />');
       } else if (routeFile === 'app/pages/account/password-change.vue') {
-        expect(content).toContain('<AuthPasswordChangeForm />');
+        expect(content).toContain('<PasswordChangeForm />');
       } else {
         expect(content).toContain('<span hidden />');
       }
