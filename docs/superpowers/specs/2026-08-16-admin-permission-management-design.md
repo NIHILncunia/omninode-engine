@@ -89,6 +89,37 @@ project_sub_admin.expel
 | `ADMIN` | 18개 권한, 자신이 생성한 프로젝트 범위. 전역 관리자·권한 마스터 관리는 제외 |
 | `SUB_ADMIN` | `document.*`, `category.*`, `template.*`만 배정된 프로젝트 범위에서 허용 |
 
+권한 코드별 기본값은 다음 행렬로 고정한다. `Y`는 역할 기본 권한 허용, `N`은 기본 권한 거부를 의미한다.
+
+| 권한 그룹 | 권한 코드 | SUPER_ADMIN | ADMIN | SUB_ADMIN |
+| --- | --- | :---: | :---: | :---: |
+| 프로젝트 관리 | `project.create` | Y | Y | N |
+| 프로젝트 관리 | `project.update` | Y | Y | N |
+| 프로젝트 관리 | `project.delete` | Y | Y | N |
+| 월드 관리 | `world.create` | Y | Y | N |
+| 월드 관리 | `world.update` | Y | Y | N |
+| 월드 관리 | `world.delete` | Y | Y | N |
+| 설정 문서 관리 | `document.create` | Y | Y | Y |
+| 설정 문서 관리 | `document.update` | Y | Y | Y |
+| 설정 문서 관리 | `document.delete` | Y | Y | Y |
+| 카테고리 관리 | `category.create` | Y | Y | Y |
+| 카테고리 관리 | `category.update` | Y | Y | Y |
+| 카테고리 관리 | `category.delete` | Y | Y | Y |
+| 템플릿 관리 | `template.create` | Y | Y | Y |
+| 템플릿 관리 | `template.update` | Y | Y | Y |
+| 템플릿 관리 | `template.delete` | Y | Y | Y |
+| 프로젝트 관리자 관리 | `project_sub_admin.invite` | Y | Y | N |
+| 프로젝트 관리자 관리 | `project_sub_admin.update` | Y | Y | N |
+| 프로젝트 관리자 관리 | `project_sub_admin.expel` | Y | Y | N |
+
+권한의 `Y` 여부와 별개로 프로젝트 범위를 함께 적용한다.
+
+- `SUPER_ADMIN`: 모든 프로젝트와 전역 관리자·권한 마스터 범위
+- `ADMIN`: 자신이 생성한 프로젝트와 그 프로젝트에 배정된 `SUB_ADMIN` 범위
+- `SUB_ADMIN`: `projectAdmins`에 활성 배정된 프로젝트의 문서·카테고리·템플릿 범위
+
+따라서 `ADMIN`의 `project.create`는 새 프로젝트 생성에 사용할 수 있지만, `project.update`와 `project.delete`는 자신이 생성한 프로젝트에만 적용한다. `SUB_ADMIN`의 문서·카테고리·템플릿 권한도 배정 프로젝트 밖에서는 허용하지 않는다.
+
 `ADMIN`의 `project_sub_admin.*`은 자신이 생성한 프로젝트의 서브 어드민 관리에 사용한다. `SUB_ADMIN`은 관리자·권한 설정·프로젝트·월드·관계 관리에 접근하지 않는다.
 
 ### 최종 권한 판정
