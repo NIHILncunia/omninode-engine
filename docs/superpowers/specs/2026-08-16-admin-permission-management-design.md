@@ -45,6 +45,40 @@ project_sub_admin.update
 project_sub_admin.expel
 ```
 
+관리자 화면에서는 권한을 다음 6개 그룹으로 표시한다.
+
+| 그룹 코드 | 표시 그룹 | 포함 권한 |
+| --- | --- | --- |
+| `project` | 프로젝트 관리 | `project.create`, `project.update`, `project.delete` |
+| `world` | 월드 관리 | `world.create`, `world.update`, `world.delete` |
+| `document` | 설정 문서 관리 | `document.create`, `document.update`, `document.delete` |
+| `category` | 카테고리 관리 | `category.create`, `category.update`, `category.delete` |
+| `template` | 템플릿 관리 | `template.create`, `template.update`, `template.delete` |
+| `project_sub_admin` | 프로젝트 관리자 관리 | `project_sub_admin.invite`, `project_sub_admin.update`, `project_sub_admin.expel` |
+
+각 권한의 표시명은 다음과 같이 고정한다.
+
+| 권한 코드 | 표시명 |
+| --- | --- |
+| `project.create` | 프로젝트 생성 |
+| `project.update` | 프로젝트 수정 |
+| `project.delete` | 프로젝트 삭제 |
+| `world.create` | 월드 생성 |
+| `world.update` | 월드 수정 |
+| `world.delete` | 월드 삭제 |
+| `document.create` | 설정 문서 생성 |
+| `document.update` | 설정 문서 수정 |
+| `document.delete` | 설정 문서 삭제 |
+| `category.create` | 카테고리 생성 |
+| `category.update` | 카테고리 수정 |
+| `category.delete` | 카테고리 삭제 |
+| `template.create` | 템플릿 생성 |
+| `template.update` | 템플릿 수정 |
+| `template.delete` | 템플릿 삭제 |
+| `project_sub_admin.invite` | 프로젝트 서브 어드민 초대 |
+| `project_sub_admin.update` | 프로젝트 서브 어드민 수정 |
+| `project_sub_admin.expel` | 프로젝트 서브 어드민 배정 해제 |
+
 권한 코드는 서버의 상수 타입으로도 관리하지만, 표시명은 `permissions` 테이블에서 조회한다. API는 코드 문자열을 입력받고, 존재하지 않거나 비활성화된 권한 코드는 `BAD_REQUEST`로 거부한다.
 
 ### 역할 기본 권한
