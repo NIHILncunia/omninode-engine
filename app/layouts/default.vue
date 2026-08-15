@@ -20,7 +20,9 @@ const copyrightYears = currentYear === siteConfig.site.startedYear
       </h1>
     </ElHeader>
     <ElContainer>
-      <ElAside>aside</ElAside>
+      <ElAside class="border-r border-r-black-300">
+        <AppSidebar />
+      </ElAside>
       <ElMain class="overflow-y-auto">
         <slot />
       </ElMain>

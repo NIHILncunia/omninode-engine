@@ -2,9 +2,17 @@ import AppSidebar from '../app/components/common/AppSidebar.vue';
 import { ElMenu, ElMenuItem } from 'element-plus';
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { siteConfig } from '../app/config/site.config';
 
 describe('AppSidebar', () => {
+  it('기본 레이아웃이 sidebar를 렌더링한다', () => {
+    const layout = readFileSync(resolve(process.cwd(), 'app/layouts/default.vue'), 'utf8');
+
+    expect(layout).toContain('<AppSidebar />');
+  });
+
   it('defines navigation items in the site configuration', () => {
     expect(siteConfig.navigation.length).toBeGreaterThan(0);
 
