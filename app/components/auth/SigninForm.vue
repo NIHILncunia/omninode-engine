@@ -14,7 +14,7 @@ const cssVariants = cva([
   'w-full',
   'max-w-md',
   'flex-col',
-  'gap-5',
+  'gap-1',
   'rounded-md',
   'border',
   'border-black-300',
@@ -62,7 +62,7 @@ const onSubmitSignin = async (): Promise<void> => {
         show-icon
       />
 
-      <ElFormItem class="flex flex-col items-stretch" label="이메일">
+      <ElFormItem class="mb-0! flex flex-col items-stretch" label="이메일">
         <ElInput
           v-model="email"
           autocomplete="email"
@@ -72,7 +72,7 @@ const onSubmitSignin = async (): Promise<void> => {
         />
       </ElFormItem>
 
-      <ElFormItem class="flex flex-col items-stretch" label="비밀번호">
+      <ElFormItem class="mb-0! flex flex-col items-stretch" label="비밀번호">
         <ElInput
           v-model="password"
           autocomplete="current-password"

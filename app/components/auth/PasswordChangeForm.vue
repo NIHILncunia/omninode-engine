@@ -14,7 +14,7 @@ const cssVariants = cva([
   'w-full',
   'max-w-md',
   'flex-col',
-  'gap-5',
+  'gap-1',
   'rounded-md',
   'border',
   'border-black-300',
@@ -62,7 +62,7 @@ const onSubmitPasswordChange = async (): Promise<void> => {
         show-icon
       />
 
-      <ElFormItem class="flex flex-col items-stretch" label="현재 비밀번호">
+      <ElFormItem class="mb-0! flex flex-col items-stretch" label="현재 비밀번호">
         <ElInput
           v-model="currentPassword"
           autocomplete="current-password"
@@ -73,7 +73,7 @@ const onSubmitPasswordChange = async (): Promise<void> => {
         />
       </ElFormItem>
 
-      <ElFormItem class="flex flex-col items-stretch" label="새 비밀번호">
+      <ElFormItem class="mb-0! flex flex-col items-stretch" label="새 비밀번호">
         <ElInput
           v-model="newPassword"
           autocomplete="new-password"
