@@ -45,6 +45,7 @@ const onSubmitSignin = async (): Promise<void> => {
   <section class="flex min-h-dvh items-center px-4 py-8">
     <ElForm
       :class="cn([cssVariants({})])"
+      label-position="top"
       @submit.prevent="onSubmitSignin"
     >
       <header class="flex flex-col gap-1">
@@ -61,7 +62,7 @@ const onSubmitSignin = async (): Promise<void> => {
         show-icon
       />
 
-      <ElFormItem label="이메일">
+      <ElFormItem class="flex flex-col items-stretch" label="이메일">
         <ElInput
           v-model="email"
           autocomplete="email"
@@ -71,7 +72,7 @@ const onSubmitSignin = async (): Promise<void> => {
         />
       </ElFormItem>
 
-      <ElFormItem label="비밀번호">
+      <ElFormItem class="flex flex-col items-stretch" label="비밀번호">
         <ElInput
           v-model="password"
           autocomplete="current-password"

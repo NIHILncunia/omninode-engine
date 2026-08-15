@@ -27,6 +27,7 @@ describe('인증 UI', () => {
     });
 
     expect(wrapper.findComponent({ name: 'ElForm', }).exists()).toBe(true);
+    expect(wrapper.findComponent({ name: 'ElForm', }).props('labelPosition')).toBe('top');
     await wrapper.get('input[name="email"]').setValue('admin@example.com');
     await wrapper.get('input[name="password"]').setValue('password123');
     await wrapper.get('form').trigger('submit');
@@ -44,6 +45,7 @@ describe('인증 UI', () => {
     });
 
     expect(wrapper.findComponent({ name: 'ElForm', }).exists()).toBe(true);
+    expect(wrapper.findComponent({ name: 'ElForm', }).props('labelPosition')).toBe('top');
     await wrapper.get('input[name="currentPassword"]').setValue('password123');
     await wrapper.get('input[name="newPassword"]').setValue('short');
     await wrapper.get('form').trigger('submit');

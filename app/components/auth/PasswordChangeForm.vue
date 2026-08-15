@@ -45,6 +45,7 @@ const onSubmitPasswordChange = async (): Promise<void> => {
   <section class="flex min-h-dvh items-center px-4 py-8">
     <ElForm
       :class="cn([cssVariants({})])"
+      label-position="top"
       @submit.prevent="onSubmitPasswordChange"
     >
       <header class="flex flex-col gap-1">
@@ -61,7 +62,7 @@ const onSubmitPasswordChange = async (): Promise<void> => {
         show-icon
       />
 
-      <ElFormItem label="현재 비밀번호">
+      <ElFormItem class="flex flex-col items-stretch" label="현재 비밀번호">
         <ElInput
           v-model="currentPassword"
           autocomplete="current-password"
@@ -72,7 +73,7 @@ const onSubmitPasswordChange = async (): Promise<void> => {
         />
       </ElFormItem>
 
-      <ElFormItem label="새 비밀번호">
+      <ElFormItem class="flex flex-col items-stretch" label="새 비밀번호">
         <ElInput
           v-model="newPassword"
           autocomplete="new-password"
