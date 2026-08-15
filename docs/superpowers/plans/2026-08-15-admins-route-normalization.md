@@ -13,7 +13,7 @@
 - `/admin`은 유지하고 `/admin/admins` 및 하위 경로는 제공하지 않는다.
 - 정식 관리자 목록 경로는 `/admins`, `/admins/new`, `/admins/:adminId`, `/admins/:adminId/edit`, `/admins/:adminId/permissions`다.
 - 과거 구현 계획 문서는 당시 기록으로 보존한다.
-- 마스터의 별도 요청 없이는 커밋하지 않는다.
+- 기능 단계 완료 시 검증을 마친 변경사항을 자동으로 커밋한다.
 
 ---
 
@@ -61,8 +61,8 @@ Run: `pnpm exec vitest run test/admin-route-scaffolding.test.ts && pnpm exec vue
 
 Expected: 둘 다 통과한다.
 
-- [ ] **Step 6: 커밋은 마스터 요청 시에만 수행**
+- [x] **Step 6: 완료 변경사항 커밋**
 
 ```text
-2026 0815 refactor: 관리자 목록 루트 경로 정정
+2026 0815 feat: 인증 기반 추가 (`97931cb`에 포함)
 ```

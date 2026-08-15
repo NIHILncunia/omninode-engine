@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 const routeFiles = [
   'app/pages/index.vue',
+  'app/pages/docs/index.vue',
   'app/pages/settings.vue',
   'app/pages/about.vue',
   'app/pages/projects/index.vue',
@@ -65,11 +66,16 @@ describe('옴니노드 1차 라우트 골격', () => {
       expect(existsSync(resolve(process.cwd(), routeFile))).toBe(true);
     }
   });
-  it('대상 페이지가 메타 설정과 비표시 루트만 포함한다', () => {
+  it('대상 페이지가 메타 설정과 지정된 루트를 포함한다', () => {
     for (const routeFile of routeFiles) {
       const content = readFileSync(resolve(process.cwd(), routeFile), 'utf8');
       expect(content).toContain('useSetMeta');
-      expect(content).toContain('<span hidden />');
+
+      if (routeFile === 'app/pages/index.vue') {
+        expect(content).toContain('<NavigateTo to="/docs" replace />');
+      } else {
+        expect(content).toContain('<span hidden />');
+      }
     }
   });
   it('리비전과 토론 라우트 파일을 생성하지 않는다', () => {

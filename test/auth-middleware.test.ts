@@ -8,6 +8,7 @@ import { getAuthRedirect } from '../app/middleware/auth.global';
 describe('인증 보호 경로', () => {
   it('공개 경로는 인증되지 않아도 통과시킨다', () => {
     expect(getAuthRedirect('/signin', 'unauthenticated', false)).toBeNull();
+    expect(getAuthRedirect('/docs', 'unauthenticated', false)).toBeNull();
   });
 
   it('인증되지 않은 보호 경로 접근을 로그인으로 보낸다', () => {

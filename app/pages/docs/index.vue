@@ -1,10 +1,10 @@
 <script setup lang="ts">
 useSetMeta({
-  title: '홈',
-  url: '/',
+  title: '공개 설정 문서',
+  url: '/docs',
 });
 </script>
 
 <template>
-  <NavigateTo to="/docs" replace />
+  <span hidden />
 </template>
