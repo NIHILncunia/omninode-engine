@@ -6,13 +6,11 @@ const adminRouteFiles = [
   'app/pages/signin.vue',
   'app/pages/account.vue',
   'app/pages/account/password-change.vue',
+  'app/pages/admin-permission-request.vue',
   'app/pages/admin/index.vue',
   'app/pages/admins/index.vue',
-  'app/pages/admins/new.vue',
   'app/pages/admins/[adminId]/index.vue',
   'app/pages/admins/[adminId]/edit.vue',
-  'app/pages/admins/[adminId]/permissions.vue',
-  'app/pages/admin/permissions.vue',
   'app/pages/projects/[projectId]/admins.vue',
 ] as const;
 
@@ -39,6 +37,16 @@ describe('관리자 라우트 골격', () => {
         expect(content).toContain('<AccountProfile />');
       } else if (routeFile === 'app/pages/account/password-change.vue') {
         expect(content).toContain('<PasswordChangeForm />');
+      } else if (routeFile === 'app/pages/admin-permission-request.vue') {
+        expect(content).toContain('<AdminPermissionRequestForm />');
+      } else if (routeFile === 'app/pages/admins/index.vue') {
+        expect(content).toContain('<AdminList />');
+      } else if (routeFile === 'app/pages/admins/[adminId]/index.vue') {
+        expect(content).toContain('<AdminDetail :admin-id="adminId" />');
+      } else if (routeFile === 'app/pages/admins/[adminId]/edit.vue') {
+        expect(content).toContain('<AdminEditForm :admin-id="adminId" />');
+      } else if (routeFile === 'app/pages/projects/[projectId]/admins.vue') {
+        expect(content).toContain('<ProjectAdminManagement');
       } else {
         expect(content).toContain('<span hidden />');
       }

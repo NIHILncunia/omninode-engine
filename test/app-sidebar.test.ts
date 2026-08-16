@@ -1,6 +1,7 @@
 import AppSidebar from '../app/components/common/AppSidebar.vue';
 import { ElMenu, ElMenuItem } from 'element-plus';
 import { mount } from '@vue/test-utils';
+import { createPinia } from 'pinia';
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -28,7 +29,11 @@ describe('AppSidebar', () => {
           ElMenu,
           ElMenuItem,
         },
+        plugins: [
+          createPinia(),
+        ],
         stubs: {
+          Icon: true,
           NuxtLink: {
             props: {
               to: {

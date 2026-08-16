@@ -11,9 +11,20 @@ const queryClient = useQueryClient();
 const selectedRequest = ref<AdminPermissionRequestSummary | null>(null);
 const dialogVisible = ref(false);
 const rejectionReason = ref('');
-const cssVariants = cva(['flex', 'flex-col', 'gap-3'], { variants: {}, compoundVariants: [], defaultVariants: {}, });
+const cssVariants = cva([
+  'flex',
+  'flex-col',
+  'gap-3',
+], {
+  variants: {},
+  compoundVariants: [
+  ],
+  defaultVariants: {},
+});
 const listQuery = useQuery({
-  queryKey: ['admin-permission-requests'],
+  queryKey: [
+    'admin-permission-requests',
+  ],
   queryFn: () => $fetch<{ data: AdminPermissionRequestSummary[] }>('/api/admin-permission-requests', { credentials: 'include', }),
 });
 watch(listQuery.data, response => {
@@ -28,7 +39,11 @@ const reviewMutation = useMutation({
       ...(input.action === 'reject' ? { body: { reason: input.reason, }, } : {}),
     });
   },
-  onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ['admin-permission-requests'], }); },
+  onSuccess: async () => { await queryClient.invalidateQueries({
+    queryKey: [
+      'admin-permission-requests',
+    ],
+  }); },
 });
 const canResend = computed(() => selectedRequest.value?.credentialDeliveryStatus === 'FAILED');
 
@@ -39,7 +54,11 @@ const onOpenReviewDialog = (request: AdminPermissionRequestSummary): void => {
 };
 const onReview = async (action: 'approve' | 'reject' | 'resend'): Promise<void> => {
   if (!selectedRequest.value) return;
-  await reviewMutation.mutateAsync({ requestId: selectedRequest.value.id, action, reason: rejectionReason.value, });
+  await reviewMutation.mutateAsync({
+    requestId: selectedRequest.value.id,
+    action,
+    reason: rejectionReason.value,
+  });
   dialogVisible.value = false;
 };
 </script>

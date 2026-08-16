@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { cva } from 'class-variance-authority';
+import { computed } from 'vue';
 import { siteConfig } from '~/config/site.config';
 import { useAuthStore } from '~/stores/auth.store';
 import type { NavigationItem } from '~/types/common.types';
@@ -10,7 +11,13 @@ const props = defineProps<{
 }>();
 const auth = useAuthStore();
 const navigationItems = computed(() => auth.admin?.role === 'SUPER_ADMIN'
-  ? [...siteConfig.navigation, { label: '관리자', to: '/admins', }]
+  ? [
+    ...siteConfig.navigation,
+    {
+      label: '관리자',
+      to: '/admins',
+    },
+  ]
   : siteConfig.navigation);
 
 const emit = defineEmits<{

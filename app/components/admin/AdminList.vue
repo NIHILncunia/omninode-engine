@@ -6,7 +6,8 @@ import { adminRoleLabels } from '~/types/auth.types';
 import { cn } from '~/utils/cn';
 
 const props = defineProps<{ class?: string }>();
-const admins = ref<AdministratorSummary[]>([]);
+const admins = ref<AdministratorSummary[]>([
+]);
 const search = ref('');
 const page = ref(0);
 const pageSize = 20;
@@ -14,17 +15,31 @@ const total = ref(0);
 const pending = ref(false);
 const errorMessage = ref<string | null>(null);
 
-const cssVariants = cva(['flex', 'flex-col', 'gap-4'], { variants: {}, compoundVariants: [], defaultVariants: {}, });
+const cssVariants = cva([
+  'flex',
+  'flex-col',
+  'gap-4',
+], {
+  variants: {},
+  compoundVariants: [
+  ],
+  defaultVariants: {},
+});
 
 const onLoadAdmin = async (): Promise<void> => {
   pending.value = true;
   errorMessage.value = null;
   try {
     const response = await $fetch<AdministratorListResponse>('/api/admins', {
-      query: { page: page.value, pageSize, search: search.value || undefined, },
+      query: {
+        page: page.value,
+        pageSize,
+        search: search.value || undefined,
+      },
       credentials: 'include',
     });
-    admins.value = response.data?.list ?? [];
+    admins.value = response.data?.list ?? [
+    ];
     total.value = response.data?.totalElements ?? 0;
   } catch {
     errorMessage.value = '관리자 목록을 불러오지 못했습니다.';

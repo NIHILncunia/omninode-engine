@@ -42,7 +42,7 @@ export function normalizeRequestInput<
   method: QueryMethod,
   input: QueryRequestInput<TBody, TParams> = {},
 ): NormalizedRequest<TBody, TParams> {
-  const { params, body, headers, options } = input;
+  const { params, body, headers, options, } = input;
 
   return {
     method,

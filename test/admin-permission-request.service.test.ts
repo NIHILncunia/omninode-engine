@@ -24,10 +24,14 @@ function createDependencies() {
     dependencies: {
       requests: {
         async list() {
-          return [...requests.values()];
+          return [
+            ...requests.values(),
+          ];
         },
         async findPendingByEmail(email: string) {
-          return [...requests.values()].find(request => request.email === email && request.status === 'PENDING');
+          return [
+            ...requests.values(),
+          ].find(request => request.email === email && request.status === 'PENDING');
         },
         async insert(input: { email: string; name: string; now: Date }) {
           const request = {
@@ -82,13 +86,20 @@ function createDependencies() {
           return admin ? { ...admin, } : undefined;
         },
         async insert(input: { email: string }) {
-          const admin = { id: admins.size + 1, email: input.email, delYn: 'N' as const, };
+          const admin = {
+            id: admins.size + 1,
+            email: input.email,
+            delYn: 'N' as const,
+          };
           admins.set(input.email, admin);
           return admin;
         },
         async resetTemporaryPassword() {},
       },
-      findActiveAdmin: async (adminId: number) => adminId === 99 ? { id: 99, role: 'SUPER_ADMIN' as const, } : undefined,
+      findActiveAdmin: async (adminId: number) => adminId === 99 ? {
+        id: 99,
+        role: 'SUPER_ADMIN' as const,
+      } : undefined,
       hashPassword: async (password: string) => `hash:${password}`,
       createTemporaryPassword: () => 'temporary-password',
       mailer: {
@@ -105,20 +116,32 @@ describe('admin permission request service', () => {
     const fixture = createDependencies();
     const service = createAdminPermissionRequestService(fixture.dependencies);
 
-    await expect(service.submit({ email: ' A@Example.com ', name: ' 가람 ' })).resolves.toMatchObject({
+    await expect(service.submit({
+      email: ' A@Example.com ',
+      name: ' 가람 ',
+    })).resolves.toMatchObject({
       email: 'a@example.com',
       name: '가람',
       status: 'PENDING',
     });
-    await expect(service.submit({ email: 'a@example.com', name: '가람' })).rejects.toMatchObject({ code: 'CONFLICT', });
+    await expect(service.submit({
+      email: 'a@example.com',
+      name: '가람',
+    })).rejects.toMatchObject({ code: 'CONFLICT', });
   });
 
   it('approves only a pending request and never returns its initial password', async () => {
     const fixture = createDependencies();
     const service = createAdminPermissionRequestService(fixture.dependencies);
-    const request = await service.submit({ email: 'a@example.com', name: '가람', });
+    const request = await service.submit({
+      email: 'a@example.com',
+      name: '가람',
+    });
 
-    await expect(service.approve({ actorAdminId: 99, requestId: request.id, })).resolves.toEqual({
+    await expect(service.approve({
+      actorAdminId: 99,
+      requestId: request.id,
+    })).resolves.toEqual({
       id: request.id,
       email: 'a@example.com',
       name: '가람',
@@ -132,9 +155,15 @@ describe('admin permission request service', () => {
     const fixture = createDependencies();
     fixture.dependencies.mailer.isConfigured = () => false;
     const service = createAdminPermissionRequestService(fixture.dependencies);
-    const request = await service.submit({ email: 'a@example.com', name: '가람', });
+    const request = await service.submit({
+      email: 'a@example.com',
+      name: '가람',
+    });
 
-    await expect(service.approve({ actorAdminId: 99, requestId: request.id, })).rejects.toMatchObject({ code: 'INTERNAL_SERVER_ERROR', });
+    await expect(service.approve({
+      actorAdminId: 99,
+      requestId: request.id,
+    })).rejects.toMatchObject({ code: 'INTERNAL_SERVER_ERROR', });
     expect(fixture.admins.size).toBe(0);
   });
 });

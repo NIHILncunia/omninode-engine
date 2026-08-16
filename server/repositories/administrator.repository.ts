@@ -5,8 +5,6 @@ import type {
   AdminDetail,
   AdministratorRepository,
   AdminSummary,
-  CreateAdminRecord,
-  UpdateAdminRecord,
 } from '../types/administrator.types';
 
 function toSummary(row: typeof admins.$inferSelect): AdminSummary {
@@ -34,7 +32,9 @@ function toDetail(row: typeof admins.$inferSelect): AdminDetail {
 
 export function createAdministratorRepository(database: DatabaseClient): AdministratorRepository {
   const findById = async (adminId: number): Promise<AdminDetail | undefined> => {
-    const [row] = await database.select().from(admins).where(eq(admins.id, adminId)).limit(1);
+    const [
+      row,
+    ] = await database.select().from(admins).where(eq(admins.id, adminId)).limit(1);
     return row ? toDetail(row) : undefined;
   };
 
@@ -54,7 +54,9 @@ export function createAdministratorRepository(database: DatabaseClient): Adminis
         .orderBy(admins.id)
         .limit(input.pageSize)
         .offset(input.page * input.pageSize);
-      const [total] = await database
+      const [
+        total,
+      ] = await database
         .select({ value: count(), })
         .from(admins)
         .where(whereCondition);
@@ -68,12 +70,16 @@ export function createAdministratorRepository(database: DatabaseClient): Adminis
     findById,
 
     async findByEmail(email) {
-      const [row] = await database.select().from(admins).where(eq(admins.email, email)).limit(1);
+      const [
+        row,
+      ] = await database.select().from(admins).where(eq(admins.email, email)).limit(1);
       return row ? toDetail(row) : undefined;
     },
 
     async insert(input) {
-      const [row] = await database.insert(admins).values({
+      const [
+        row,
+      ] = await database.insert(admins).values({
         email: input.email,
         name: input.name,
         role: input.role,
@@ -94,7 +100,9 @@ export function createAdministratorRepository(database: DatabaseClient): Adminis
     },
 
     async update(adminId, input) {
-      const [row] = await database.update(admins).set({
+      const [
+        row,
+      ] = await database.update(admins).set({
         ...(input.name !== undefined ? { name: input.name, } : {}),
         ...(input.role !== undefined ? { role: input.role, } : {}),
         ...(input.useYn !== undefined ? { useYn: input.useYn, } : {}),
@@ -110,7 +118,9 @@ export function createAdministratorRepository(database: DatabaseClient): Adminis
     },
 
     async restoreByEmail(email, input) {
-      const [row] = await database.update(admins).set({
+      const [
+        row,
+      ] = await database.update(admins).set({
         name: input.name,
         role: input.role,
         passwordHash: input.passwordHash,
@@ -149,7 +159,9 @@ export function createAdministratorRepository(database: DatabaseClient): Adminis
         conditions.push(ne(admins.id, excludeAdminId));
       }
 
-      const [result] = await database.select({ value: count(), }).from(admins).where(and(...conditions));
+      const [
+        result,
+      ] = await database.select({ value: count(), }).from(admins).where(and(...conditions));
       return result?.value ?? 0;
     },
 

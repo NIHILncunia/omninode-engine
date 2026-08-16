@@ -19,7 +19,10 @@ export default defineEventHandler(async event => {
     if (!/^\S+@\S+\.\S+$/.test(email) || email.length > 320 || name.length > 100) {
       throw new ApiError(400, 'BAD_REQUEST');
     }
-    const request = await getAdministratorServices().permissionRequests.submit({ email, name, });
+    const request = await getAdministratorServices().permissionRequests.submit({
+      email,
+      name,
+    });
     setResponseStatus(event, 201);
     return CreateResponse.data(request, 'CREATED', 'CREATED');
   } catch (error) {

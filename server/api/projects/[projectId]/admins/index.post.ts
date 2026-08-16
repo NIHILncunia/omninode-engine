@@ -1,7 +1,6 @@
 import { getAdministratorServices } from '../../../../services/administrator.server';
 import { getRequestAdmin, readPositiveInteger } from '../../../../utils/administrator-request';
 import { readValidatedAuthBody, toAuthErrorResponse } from '../../../../utils/auth-request';
-import { ApiError } from '../../../../utils/api-error';
 import { CreateResponse } from '../../../../utils/createResponse';
 import { permissionCodes, type PermissionCode, type PermissionGrant } from '../../../../types/permission.types';
 

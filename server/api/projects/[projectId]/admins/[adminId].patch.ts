@@ -18,7 +18,12 @@ export default defineEventHandler(async event => {
     const projectId = readPositiveInteger(getRouterParam(event, 'projectId'));
     const adminId = readPositiveInteger(getRouterParam(event, 'adminId'));
     const body = await readValidatedAuthBody(event, isUpdateProjectAdminBody);
-    await getAdministratorServices().projectAdmins.assign({ actorAdminId: actor.id, projectId, adminId, grants: body.permissions, });
+    await getAdministratorServices().projectAdmins.assign({
+      actorAdminId: actor.id,
+      projectId,
+      adminId,
+      grants: body.permissions,
+    });
     return CreateResponse.data(null);
   } catch (error) {
     return toAuthErrorResponse(event, error);

@@ -6,11 +6,27 @@ import { useAdminPermissionRequestStore, type AdminPermissionRequestSummary } fr
 import { cn } from '~/utils/cn';
 
 const props = defineProps<{ class?: string }>();
-const form = reactive({ email: '', name: '', });
+const form = reactive({
+  email: '',
+  name: '',
+});
 const pending = ref(false);
 const completed = ref(false);
 const errorMessage = ref<string | null>(null);
-const cssVariants = cva(['mx-auto', 'flex', 'w-full', 'max-w-md', 'flex-col', 'gap-4', 'p-6'], { variants: {}, compoundVariants: [], defaultVariants: {}, });
+const cssVariants = cva([
+  'mx-auto',
+  'flex',
+  'w-full',
+  'max-w-md',
+  'flex-col',
+  'gap-4',
+  'p-6',
+], {
+  variants: {},
+  compoundVariants: [
+  ],
+  defaultVariants: {},
+});
 const requestStore = useAdminPermissionRequestStore();
 const submitMutation = useMutation({
   mutationFn: (input: { email: string; name: string }) => $fetch<{ data: AdminPermissionRequestSummary }>('/api/admin-permission-requests', {
@@ -24,7 +40,10 @@ const onSubmitRequest = async (): Promise<void> => {
   pending.value = true;
   errorMessage.value = null;
   try {
-    await submitMutation.mutateAsync({ email: form.email, name: form.name, });
+    await submitMutation.mutateAsync({
+      email: form.email,
+      name: form.name,
+    });
     completed.value = true;
   } catch {
     errorMessage.value = '권한 요청을 전송하지 못했습니다. 입력값을 확인한 뒤 다시 시도해 주세요.';

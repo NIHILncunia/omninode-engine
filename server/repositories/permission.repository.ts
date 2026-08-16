@@ -38,7 +38,12 @@ export function createPermissionRepository(database: DatabaseClient): Permission
     },
 
     async findActiveAdmin(adminId) {
-      const [row] = await database.select({ id: admins.id, role: admins.role, }).from(admins).where(and(
+      const [
+        row,
+      ] = await database.select({
+        id: admins.id,
+        role: admins.role,
+      }).from(admins).where(and(
         eq(admins.id, adminId),
         eq(admins.useYn, 'Y'),
         eq(admins.delYn, 'N'),
@@ -47,7 +52,9 @@ export function createPermissionRepository(database: DatabaseClient): Permission
     },
 
     async findActiveProjectPermission(projectId, adminId, code) {
-      const [row] = await database.select({ grantYn: adminPermissions.grantYn, })
+      const [
+        row,
+      ] = await database.select({ grantYn: adminPermissions.grantYn, })
         .from(adminPermissions)
         .innerJoin(permissions, eq(adminPermissions.permissionId, permissions.id))
         .where(and(
@@ -69,11 +76,16 @@ export function createPermissionRepository(database: DatabaseClient): Permission
         name: permissions.name,
       }).from(permissions).where(and(eq(permissions.useYn, 'Y'), eq(permissions.delYn, 'N'))).orderBy(permissions.id);
 
-      return rows.map(row => ({ ...row, code: row.code as PermissionCode, }));
+      return rows.map(row => ({
+        ...row,
+        code: row.code as PermissionCode,
+      }));
     },
 
     async findPermissionMaster(code) {
-      const [row] = await database.select({
+      const [
+        row,
+      ] = await database.select({
         id: permissions.id,
         code: permissions.code,
         name: permissions.name,
@@ -82,7 +94,10 @@ export function createPermissionRepository(database: DatabaseClient): Permission
         eq(permissions.useYn, 'Y'),
         eq(permissions.delYn, 'N'),
       )).limit(1);
-      return row ? { ...row, code: row.code as PermissionCode, } : undefined;
+      return row ? {
+        ...row,
+        code: row.code as PermissionCode,
+      } : undefined;
     },
 
     async listProjectAdmins(projectId) {
@@ -102,7 +117,9 @@ export function createPermissionRepository(database: DatabaseClient): Permission
     },
 
     async findProjectAssignment(projectId, adminId) {
-      const [row] = await database.select({ delYn: projectAdmins.delYn, }).from(projectAdmins).where(and(
+      const [
+        row,
+      ] = await database.select({ delYn: projectAdmins.delYn, }).from(projectAdmins).where(and(
         eq(projectAdmins.projectId, projectId),
         eq(projectAdmins.adminId, adminId),
       )).limit(1);
@@ -120,7 +137,10 @@ export function createPermissionRepository(database: DatabaseClient): Permission
         createDate: now,
         updateDate: now,
       }).onConflictDoUpdate({
-        target: [projectAdmins.projectId, projectAdmins.adminId],
+        target: [
+          projectAdmins.projectId,
+          projectAdmins.adminId,
+        ],
         set: {
           useYn: 'Y',
           delYn: 'N',
@@ -171,8 +191,18 @@ export function createPermissionRepository(database: DatabaseClient): Permission
           createDate: input.now,
           updateDate: input.now,
         }).onConflictDoUpdate({
-          target: [projectAdmins.projectId, projectAdmins.adminId],
-          set: { useYn: 'Y', delYn: 'N', deleteId: null, deleteDate: null, updateId: input.actorAdminId, updateDate: input.now, },
+          target: [
+            projectAdmins.projectId,
+            projectAdmins.adminId,
+          ],
+          set: {
+            useYn: 'Y',
+            delYn: 'N',
+            deleteId: null,
+            deleteDate: null,
+            updateId: input.actorAdminId,
+            updateDate: input.now,
+          },
         });
         const masters = await transaction.select().from(permissions).where(and(eq(permissions.useYn, 'Y'), eq(permissions.delYn, 'N')));
         if (masters.length !== 18) throw new Error('권한 마스터가 완전하지 않습니다.');
@@ -191,8 +221,20 @@ export function createPermissionRepository(database: DatabaseClient): Permission
             createDate: input.now,
             updateDate: input.now,
           }).onConflictDoUpdate({
-            target: [adminPermissions.projectId, adminPermissions.adminId, adminPermissions.permissionId],
-            set: { grantYn, useYn: 'Y', delYn: 'N', deleteId: null, deleteDate: null, updateId: input.actorAdminId, updateDate: input.now, },
+            target: [
+              adminPermissions.projectId,
+              adminPermissions.adminId,
+              adminPermissions.permissionId,
+            ],
+            set: {
+              grantYn,
+              useYn: 'Y',
+              delYn: 'N',
+              deleteId: null,
+              deleteDate: null,
+              updateId: input.actorAdminId,
+              updateDate: input.now,
+            },
           });
         }
       });

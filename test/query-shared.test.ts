@@ -22,9 +22,9 @@ describe('normalizeRequestInput', () => {
         page: 2,
         keyword: 'nuxt',
       },
-      body: { title: 'entry' },
-      headers: { Authorization: 'Bearer token' },
-      options: { credentials: 'include' },
+      body: { title: 'entry', },
+      headers: { Authorization: 'Bearer token', },
+      options: { credentials: 'include', },
     });
 
     expect(normalized.method).toBe('POST');
@@ -32,18 +32,18 @@ describe('normalizeRequestInput', () => {
       page: 2,
       keyword: 'nuxt',
     });
-    expect(normalized.body).toEqual({ title: 'entry' });
-    expect(normalized.headers).toEqual({ Authorization: 'Bearer token' });
-    expect(normalized.fetchOptions).toMatchObject({ credentials: 'include' });
+    expect(normalized.body).toEqual({ title: 'entry', });
+    expect(normalized.headers).toEqual({ Authorization: 'Bearer token', });
+    expect(normalized.fetchOptions).toMatchObject({ credentials: 'include', });
   });
 
   it('omits body when it is not provided', () => {
     const normalized = normalizeRequestInput('GET', {
-      params: { page: 1 },
+      params: { page: 1, },
     });
 
     expect(normalized.method).toBe('GET');
-    expect(normalized.query).toEqual({ page: 1 });
+    expect(normalized.query).toEqual({ page: 1, });
     expect(normalized.body).toBeUndefined();
   });
 });
@@ -51,15 +51,15 @@ describe('normalizeRequestInput', () => {
 describe('buildFetchRequestOptions', () => {
   it('returns query, body, and fetch overrides in a single object', () => {
     const normalized = normalizeRequestInput('PATCH', {
-      params: { id: 7 },
-      body: { active: true },
-      options: { credentials: 'same-origin' },
+      params: { id: 7, },
+      body: { active: true, },
+      options: { credentials: 'same-origin', },
     });
 
     expect(buildFetchRequestOptions(normalized)).toMatchObject({
       method: 'PATCH',
-      query: { id: 7 },
-      body: { active: true },
+      query: { id: 7, },
+      body: { active: true, },
       credentials: 'same-origin',
     });
   });
@@ -120,12 +120,12 @@ describe('createQueryResult', () => {
   it('keeps pending true until concurrent executions have all settled', async () => {
     const first = createDeferred<number>();
     const second = createDeferred<number>();
-    const query = createQueryResult(async ({ id }: { id: number }) => {
+    const query = createQueryResult(async ({ id, }: { id: number }) => {
       return id === 1 ? await first.promise : await second.promise;
     });
 
-    const firstExecution = query.execute({ id: 1 });
-    const secondExecution = query.execute({ id: 2 });
+    const firstExecution = query.execute({ id: 1, });
+    const secondExecution = query.execute({ id: 2, });
 
     expect(query.pending.value).toBe(true);
     first.resolve(1);
@@ -165,7 +165,7 @@ describe('createQueryResult', () => {
   it('keeps the last settled successful result after an earlier request fails', async () => {
     const first = createDeferred<undefined>();
     const second = createDeferred<number>();
-    const query = createQueryResult(async ({ id }: { id: number }) => {
+    const query = createQueryResult(async ({ id, }: { id: number }) => {
       if (id === 1) {
         await first.promise;
         throw new Error('First request failed');
@@ -174,8 +174,8 @@ describe('createQueryResult', () => {
       return await second.promise;
     });
 
-    const firstExecution = query.execute({ id: 1 });
-    const secondExecution = query.execute({ id: 2 });
+    const firstExecution = query.execute({ id: 1, });
+    const secondExecution = query.execute({ id: 2, });
 
     first.resolve(undefined);
     await expect(firstExecution).rejects.toMatchObject({
@@ -192,7 +192,7 @@ describe('createQueryResult', () => {
 
   it('normalizes failed executions before storing the error', async () => {
     const cause = {
-      data: { code: 'INVALID_INPUT' },
+      data: { code: 'INVALID_INPUT', },
       message: 'Invalid input',
       statusCode: 400,
     };
@@ -203,7 +203,7 @@ describe('createQueryResult', () => {
     await expect(query.execute()).rejects.toEqual(normalizeApiError(cause));
     expect(query.error.value).toEqual({
       cause,
-      data: { code: 'INVALID_INPUT' },
+      data: { code: 'INVALID_INPUT', },
       message: 'Invalid input',
       statusCode: 400,
     });

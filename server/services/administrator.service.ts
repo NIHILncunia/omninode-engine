@@ -29,7 +29,6 @@ export interface UpdateAdministratorInput {
   useYn?: 'Y' | 'N';
 }
 
-
 function toPublicAdmin(admin: AdminDetail): AdminSummary {
   const {
     passwordHash: _passwordHash,

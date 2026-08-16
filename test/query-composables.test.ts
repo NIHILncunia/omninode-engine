@@ -138,7 +138,7 @@ describe('query composables', () => {
   });
 
   it('sends params and body through POST execute', async () => {
-    mockFetch.mockResolvedValue({ id: 'item-1' });
+    mockFetch.mockResolvedValue({ id: 'item-1', });
     const query = usePost({
       url: '/api/items',
     });

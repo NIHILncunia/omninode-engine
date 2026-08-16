@@ -9,7 +9,17 @@ const props = defineProps<{ adminId: number; class?: string }>();
 const admin = ref<AdministratorSummary | null>(null);
 const pending = ref(false);
 const errorMessage = ref<string | null>(null);
-const cssVariants = cva(['flex', 'max-w-3xl', 'flex-col', 'gap-4'], { variants: {}, compoundVariants: [], defaultVariants: {}, });
+const cssVariants = cva([
+  'flex',
+  'max-w-3xl',
+  'flex-col',
+  'gap-4',
+], {
+  variants: {},
+  compoundVariants: [
+  ],
+  defaultVariants: {},
+});
 
 const onLoadAdmin = async (): Promise<void> => {
   pending.value = true;
@@ -27,7 +37,10 @@ const onDeleteAdmin = async (): Promise<void> => {
   if (!confirm('이 관리자 계정을 삭제하시겠습니까?')) return;
   pending.value = true;
   try {
-    await $fetch(`/api/admins/${props.adminId}`, { method: 'DELETE', credentials: 'include', });
+    await $fetch(`/api/admins/${props.adminId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
     await navigateTo('/admins');
   } catch {
     errorMessage.value = '관리자 계정을 삭제하지 못했습니다.';

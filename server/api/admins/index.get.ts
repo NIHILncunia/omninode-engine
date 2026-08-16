@@ -17,7 +17,11 @@ export default defineEventHandler(async event => {
       search: search || undefined,
     });
 
-    return CreateResponse.list({ ...result, page, pageSize, });
+    return CreateResponse.list({
+      ...result,
+      page,
+      pageSize,
+    });
   } catch (error) {
     return toAuthErrorResponse(event, error);
   }

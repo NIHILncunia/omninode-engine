@@ -97,7 +97,10 @@ export function createAdminPermissionRequestService(dependencies: AdminPermissio
     async submit(input: { email: string; name: string }): Promise<AdminPermissionRequestSummary> {
       const email = normalizeEmail(input.email);
       const name = input.name.trim();
-      const [pending, existing] = await Promise.all([
+      const [
+        pending,
+        existing,
+      ] = await Promise.all([
         dependencies.requests.findPendingByEmail(email),
         dependencies.administrators.findByEmail(email),
       ]);
@@ -106,7 +109,11 @@ export function createAdminPermissionRequestService(dependencies: AdminPermissio
         throw new ApiError(409, 'CONFLICT');
       }
 
-      return toSummary(await dependencies.requests.insert({ email, name, now: dependencies.now(), }));
+      return toSummary(await dependencies.requests.insert({
+        email,
+        name,
+        now: dependencies.now(),
+      }));
     },
 
     async approve(input: { actorAdminId: number; requestId: number }): Promise<AdminPermissionRequestSummary> {

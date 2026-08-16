@@ -10,7 +10,8 @@ export interface AdminPermissionRequestSummary {
 }
 
 export const useAdminPermissionRequestStore = defineStore('admin-permission-request', () => {
-  const requests = ref<AdminPermissionRequestSummary[]>([]);
+  const requests = ref<AdminPermissionRequestSummary[]>([
+  ]);
   const submittedRequest = ref<AdminPermissionRequestSummary | null>(null);
 
   const onSetRequests = (value: AdminPermissionRequestSummary[]): void => {
@@ -20,5 +21,10 @@ export const useAdminPermissionRequestStore = defineStore('admin-permission-requ
     submittedRequest.value = value;
   };
 
-  return { requests, submittedRequest, onSetRequests, onSetSubmittedRequest, };
+  return {
+    requests,
+    submittedRequest,
+    onSetRequests,
+    onSetSubmittedRequest,
+  };
 });

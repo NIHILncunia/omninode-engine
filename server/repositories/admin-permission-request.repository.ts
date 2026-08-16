@@ -30,7 +30,9 @@ function toRecord(row: typeof adminPermissionRequests.$inferSelect): AdminPermis
 
 export function createAdminPermissionRequestRepository(database: DatabaseClient): AdminPermissionRequestRepository {
   const findById = async (requestId: number): Promise<AdminPermissionRequestRecord | undefined> => {
-    const [row] = await database.select().from(adminPermissionRequests).where(and(
+    const [
+      row,
+    ] = await database.select().from(adminPermissionRequests).where(and(
       eq(adminPermissionRequests.id, requestId),
       eq(adminPermissionRequests.delYn, 'N'),
     )).limit(1);
@@ -39,7 +41,9 @@ export function createAdminPermissionRequestRepository(database: DatabaseClient)
 
   return {
     async findPendingByEmail(email) {
-      const [row] = await database.select().from(adminPermissionRequests).where(and(
+      const [
+        row,
+      ] = await database.select().from(adminPermissionRequests).where(and(
         eq(adminPermissionRequests.email, email),
         eq(adminPermissionRequests.status, 'PENDING'),
         eq(adminPermissionRequests.delYn, 'N'),
@@ -50,7 +54,9 @@ export function createAdminPermissionRequestRepository(database: DatabaseClient)
     findById,
 
     async insert(input) {
-      const [row] = await database.insert(adminPermissionRequests).values({
+      const [
+        row,
+      ] = await database.insert(adminPermissionRequests).values({
         email: input.email,
         name: input.name,
         status: 'PENDING',
@@ -62,7 +68,9 @@ export function createAdminPermissionRequestRepository(database: DatabaseClient)
     },
 
     async markApproved(requestId, actorAdminId, now) {
-      const [row] = await database.update(adminPermissionRequests).set({
+      const [
+        row,
+      ] = await database.update(adminPermissionRequests).set({
         status: 'APPROVED',
         reviewedByAdminId: actorAdminId,
         reviewedDate: now,
@@ -77,7 +85,9 @@ export function createAdminPermissionRequestRepository(database: DatabaseClient)
     },
 
     async markRejected(requestId, actorAdminId, reason, now) {
-      const [row] = await database.update(adminPermissionRequests).set({
+      const [
+        row,
+      ] = await database.update(adminPermissionRequests).set({
         status: 'REJECTED',
         reviewedByAdminId: actorAdminId,
         reviewedDate: now,

@@ -6,11 +6,25 @@ import type { AdminRole } from '~/types/auth.types';
 import { cn } from '~/utils/cn';
 
 const props = defineProps<{ adminId: number; class?: string }>();
-const form = reactive({ name: '', role: 'ADMIN' as AdminRole, useYn: 'Y' as 'Y' | 'N', });
+const form = reactive({
+  name: '',
+  role: 'ADMIN' as AdminRole,
+  useYn: 'Y' as 'Y' | 'N',
+});
 const loading = ref(true);
 const submitting = ref(false);
 const errorMessage = ref<string | null>(null);
-const cssVariants = cva(['flex', 'max-w-2xl', 'flex-col', 'gap-4'], { variants: {}, compoundVariants: [], defaultVariants: {}, });
+const cssVariants = cva([
+  'flex',
+  'max-w-2xl',
+  'flex-col',
+  'gap-4',
+], {
+  variants: {},
+  compoundVariants: [
+  ],
+  defaultVariants: {},
+});
 
 const onLoadAdmin = async (): Promise<void> => {
   try {
@@ -30,7 +44,11 @@ const onSubmitAdmin = async (): Promise<void> => {
   submitting.value = true;
   errorMessage.value = null;
   try {
-    await $fetch(`/api/admins/${props.adminId}`, { method: 'PATCH', body: form, credentials: 'include', });
+    await $fetch(`/api/admins/${props.adminId}`, {
+      method: 'PATCH',
+      body: form,
+      credentials: 'include',
+    });
     await navigateTo(`/admins/${props.adminId}`);
   } catch {
     errorMessage.value = '관리자 정보를 수정하지 못했습니다.';
