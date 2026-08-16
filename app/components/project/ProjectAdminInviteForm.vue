@@ -136,7 +136,12 @@ const onTogglePermission = (code: string, value: boolean): void => {
 </script>
 
 <template>
-  <section :class="cn([cssVariants({}), props.class])">
+  <section
+    :class="cn([
+      cssVariants({}),
+      props.class,
+    ])"
+  >
     <ElButton type="primary" @click="onOpenAssignDialog">관리자 배정</ElButton>
     <ElDialog v-model="dialogVisible" title="프로젝트 관리자 배정" width="min(48rem, 90vw)">
       <div class="flex flex-col gap-3">

@@ -55,7 +55,12 @@ const onSubmitRequest = async (): Promise<void> => {
 </script>
 
 <template>
-  <section :class="cn([cssVariants({}), props.class])">
+  <section
+    :class="cn([
+      cssVariants({}),
+      props.class,
+    ])"
+  >
     <header class="flex flex-col gap-1">
       <h1 class="text-h3 font-700">관리자 권한 요청</h1>
       <p class="text-sm text-black-600">승인 후 초기 비밀번호를 이메일로 보내드립니다.</p>

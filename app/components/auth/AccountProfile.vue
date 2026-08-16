@@ -4,6 +4,10 @@ import { storeToRefs } from 'pinia';
 import { useAuthStore } from '~/stores/auth.store';
 import { cn } from '~/utils/cn';
 
+const props = defineProps<{
+  class?: string;
+}>();
+
 const auth = useAuthStore();
 const {
   admin,
@@ -36,7 +40,12 @@ const onClickSignOut = async (): Promise<void> => {
 </script>
 
 <template>
-  <section :class="cn([cssVariants({})])">
+  <section
+    :class="cn([
+      cssVariants({}),
+      props.class,
+    ])"
+  >
     <header class="flex flex-col gap-1">
       <h1 class="text-h3 font-700">내 계정</h1>
       <p class="text-sm text-black-600">현재 로그인한 관리자 정보입니다.</p>

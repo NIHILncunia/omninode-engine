@@ -68,7 +68,15 @@ const updateMutation = useMutation({
 <template>
   <LoadingState v-if="detailQuery.isPending.value" />
   <ErrorState v-else-if="detailQuery.isError.value" description="관리자 정보를 불러오지 못했습니다." />
-  <ElForm v-else :class="cn([cssVariants({}), props.class])" label-position="top" @submit.prevent="onSubmitAdmin">
+  <ElForm
+    v-else
+    :class="cn([
+      cssVariants({}),
+      props.class,
+    ])"
+    label-position="top"
+    @submit.prevent="onSubmitAdmin"
+  >
     <header>
       <h1 class="text-h3 font-700">관리자 수정</h1>
     </header>

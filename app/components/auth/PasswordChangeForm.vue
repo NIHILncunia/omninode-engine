@@ -5,6 +5,10 @@ import { ref } from 'vue';
 import { useAuthStore } from '~/stores/auth.store';
 import { cn } from '~/utils/cn';
 
+const props = defineProps<{
+  class?: string;
+}>();
+
 const auth = useAuthStore();
 const {
   errorMessage,
@@ -50,7 +54,10 @@ const onSubmitPasswordChange = async (): Promise<void> => {
 <template>
   <section class="flex min-h-dvh items-center px-4 py-8">
     <ElForm
-      :class="cn([cssVariants({})])"
+      :class="cn([
+        cssVariants({}),
+        props.class,
+      ])"
       label-position="top"
       @submit.prevent="onSubmitPasswordChange"
     >

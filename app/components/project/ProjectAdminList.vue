@@ -55,7 +55,12 @@ const onExpelProjectAdmin = async (admin: ProjectAdministrator): Promise<void> =
 </script>
 
 <template>
-  <section :class="cn([cssVariants({}), props.class])">
+  <section
+    :class="cn([
+      cssVariants({}),
+      props.class,
+    ])"
+  >
     <LoadingState v-if="assignedQuery.isPending.value" />
     <ErrorState v-else-if="assignedQuery.isError.value" description="프로젝트 관리자 목록을 불러오지 못했습니다." />
     <EmptyState v-else-if="admins.length === 0" description="배정된 관리자가 없습니다." />

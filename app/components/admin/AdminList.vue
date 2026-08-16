@@ -66,7 +66,12 @@ const onChangeAdminPage = (value: number): void => {
 </script>
 
 <template>
-  <section :class="cn([cssVariants({}), props.class])">
+  <section
+    :class="cn([
+      cssVariants({}),
+      props.class,
+    ])"
+  >
     <header class="flex flex-wrap items-center justify-between gap-3">
       <div>
         <h1 class="text-h3 font-700">관리자</h1>

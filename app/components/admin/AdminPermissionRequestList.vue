@@ -67,7 +67,12 @@ const onReview = async (action: 'approve' | 'reject' | 'resend'): Promise<void> 
 </script>
 
 <template>
-  <section :class="cn([cssVariants({}), props.class])">
+  <section
+    :class="cn([
+      cssVariants({}),
+      props.class,
+    ])"
+  >
     <header>
       <h2 class="text-xl font-700">관리자 권한 요청</h2>
       <p class="text-sm text-black-600">요청을 검토한 뒤 승인하면 초기 비밀번호가 이메일로 전송됩니다.</p>

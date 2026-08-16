@@ -59,7 +59,12 @@ const deleteMutation = useMutation({
 </script>
 
 <template>
-  <section :class="cn([cssVariants({}), props.class])">
+  <section
+    :class="cn([
+      cssVariants({}),
+      props.class,
+    ])"
+  >
     <LoadingState v-if="detailQuery.isPending.value && !admin" />
     <ErrorState v-else-if="detailQuery.isError.value && !admin" description="관리자 정보를 불러오지 못했습니다." />
     <template v-else-if="admin">

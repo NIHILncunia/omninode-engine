@@ -114,10 +114,10 @@ const cssVariants = cva([
   <svg
     v-if="renderData"
     v-bind="svgAttrs"
-    :class="cn(
-      cssVariants(),
+    :class="cn([
+      cssVariants({}),
       props.class,
-    )"
+    ])"
     aria-hidden="true"
     focusable="false"
     v-html="renderData.body"
