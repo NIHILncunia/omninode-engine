@@ -34,10 +34,11 @@ const tableNames = {
   documentRelationshipTargets: 'document_relationship_targets',
   permissions: 'permissions',
   adminPermissions: 'admin_permissions',
+  adminPermissionRequests: 'admin_permission_requests',
 } as const;
 
 describe('PostgreSQL 문서 관리 스키마', () => {
-  it('명세의 18개 테이블을 모두 내보낸다', () => {
+  it('명세의 관리자 요청을 포함한 테이블을 모두 내보낸다', () => {
     for (const tableName of Object.keys(tableNames)) expect(postgresqlSchema).toHaveProperty(tableName);
   });
 
@@ -115,11 +116,10 @@ describe('PostgreSQL 문서 관리 스키마의 sections', () => {
 });
 
 describe('PostgreSQL 문서 관리 스키마의 admins', () => {
-  it('role을 SUPER_ADMIN, ADMIN, SUB_ADMIN으로 제한하고 초기 비밀번호 변경을 요구한다', () => {
+  it('role을 SUPER_ADMIN, ADMIN으로 제한하고 초기 비밀번호 변경을 요구한다', () => {
     expect(postgresqlSchema.admins.role.enumValues).toEqual([
       'SUPER_ADMIN',
       'ADMIN',
-      'SUB_ADMIN',
     ]);
     expect(postgresqlSchema.admins.passwordChangeRequiredYn.default).toBe('Y');
   });
@@ -134,12 +134,24 @@ describe('PostgreSQL 문서 관리 스키마의 admins', () => {
 });
 
 describe('PostgreSQL 관리자 세부 권한 스키마', () => {
-  it('권한 마스터와 관리자별 YN 권한을 선언한다', () => {
+  it('권한 마스터와 프로젝트별 관리자 YN 권한을 선언한다', () => {
     expect(postgresqlSchema.permissions).toHaveProperty('code');
     expect(postgresqlSchema.permissions).toHaveProperty('name');
     expect(postgresqlSchema.adminPermissions).toHaveProperty('adminId');
+    expect(postgresqlSchema.adminPermissions).toHaveProperty('projectId');
     expect(postgresqlSchema.adminPermissions).toHaveProperty('permissionId');
     expect(postgresqlSchema.adminPermissions.grantYn.default).toBe('Y');
+  });
+
+  it('승인형 어드민 요청의 상태·검토·전달 기록을 선언한다', () => {
+    expect(postgresqlSchema.adminPermissionRequests.status.enumValues).toEqual([
+      'PENDING',
+      'APPROVED',
+      'REJECTED',
+    ]);
+    expect(postgresqlSchema.adminPermissionRequests).toHaveProperty('reviewedByAdminId');
+    expect(postgresqlSchema.adminPermissionRequests).toHaveProperty('credentialDeliveredDate');
+    expect(postgresqlSchema.adminPermissionRequests).toHaveProperty('credentialDeliveryFailedDate');
   });
 });
 
@@ -149,6 +161,8 @@ describe('PostgreSQL 문서 관리 스키마 제약', () => {
     'admin_refresh_tokens.admin_id->admins.id',
     'admin_permissions.admin_id->admins.id',
     'admin_permissions.permission_id->permissions.id',
+    'admin_permissions.project_id->projects.id',
+    'admin_permission_requests.reviewed_by_admin_id->admins.id',
     'categories.template_id->templates.id',
     'categories.upper_category_id->categories.id',
     'categories.world_id->worlds.id',
@@ -220,7 +234,7 @@ describe('PostgreSQL 문서 관리 스키마 제약', () => {
     }
   });
 
-  it('93개 외래키의 원본과 대상 열을 정확히 ON DELETE NO ACTION으로 선언한다', () => {
+  it('98개 외래키의 원본과 대상 열을 정확히 ON DELETE NO ACTION으로 선언한다', () => {
     const foreignKeys = tableConfigs.flatMap(table => table.foreignKeys.map((foreignKey) => {
       const reference = foreignKey.reference();
       const sourceColumns = reference.columns.map(column => column.name).join(',');
@@ -233,7 +247,7 @@ describe('PostgreSQL 문서 관리 스키마 제약', () => {
       };
     }));
 
-    expect(foreignKeys).toHaveLength(93);
+    expect(foreignKeys).toHaveLength(98);
     expect(foreignKeys.every(foreignKey => foreignKey.onDelete === 'no action')).toBe(true);
     expect(foreignKeys.map(foreignKey => foreignKey.reference).sort()).toEqual(expectedForeignKeyReferences.concat(expectedAuditForeignKeyReferences).sort());
   });

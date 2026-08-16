@@ -12,7 +12,6 @@ export const admins = pgTable('admins', {
     enum: [
       'SUPER_ADMIN',
       'ADMIN',
-      'SUB_ADMIN',
     ],
   }).notNull(),
   passwordChangeRequiredYn: char('password_change_required_yn', {
@@ -30,6 +29,6 @@ export const admins = pgTable('admins', {
   index('idx_admins_status').on(table.useYn, table.delYn),
   check('ck_admins_use_yn', sql`${table.useYn} in ('Y', 'N')`),
   check('ck_admins_del_yn', sql`${table.delYn} in ('Y', 'N')`),
-  check('ck_admins_role', sql`${table.role} in ('SUPER_ADMIN', 'ADMIN', 'SUB_ADMIN')`),
+  check('ck_admins_role', sql`${table.role} in ('SUPER_ADMIN', 'ADMIN')`),
   check('ck_admins_password_change_required_yn', sql`${table.passwordChangeRequiredYn} in ('Y', 'N')`),
 ]);

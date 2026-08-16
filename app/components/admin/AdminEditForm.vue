@@ -48,7 +48,7 @@ onMounted(onLoadAdmin);
     <header><h1 class="text-h3 font-700">관리자 수정</h1></header>
     <ElAlert v-if="errorMessage" :description="errorMessage" title="수정 실패" type="error" :closable="false" />
     <ElFormItem label="이름"><ElInput v-model="form.name" maxlength="100" required /></ElFormItem>
-    <ElFormItem label="역할"><ElSelect v-model="form.role"><ElOption label="슈퍼 어드민" value="SUPER_ADMIN" /><ElOption label="어드민" value="ADMIN" /><ElOption label="서브 어드민" value="SUB_ADMIN" /></ElSelect></ElFormItem>
+    <ElFormItem label="역할"><ElSelect v-model="form.role"><ElOption label="슈퍼 어드민" value="SUPER_ADMIN" /><ElOption label="어드민" value="ADMIN" /></ElSelect></ElFormItem>
     <ElFormItem label="활성 상태"><ElSwitch v-model="form.useYn" active-value="Y" inactive-value="N" active-text="활성" inactive-text="비활성" /></ElFormItem>
     <div class="flex gap-2"><ElButton @click="navigateTo(`/admins/${props.adminId}`)">취소</ElButton><ElButton :loading="submitting" native-type="submit" type="primary">저장</ElButton></div>
   </ElForm>

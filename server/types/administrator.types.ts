@@ -77,22 +77,21 @@ export interface ProjectAdminSummary {
 export interface PermissionRepository {
   synchronizePermissionMasters(definitions: readonly { code: PermissionCode; name: string }[], actorAdminId: number, now: Date): Promise<void>;
   findActiveAdmin(adminId: number): Promise<{ id: number; role: AdminRole } | undefined>;
-  findActiveOverride(adminId: number, code: PermissionCode): Promise<PermissionGrant | undefined>;
+  findActiveProjectPermission(projectId: number, adminId: number, code: PermissionCode): Promise<PermissionGrant | undefined>;
   isProjectOwner(projectId: number, adminId: number): Promise<boolean>;
   isAssignedProjectAdmin(projectId: number, adminId: number): Promise<boolean>;
   listPermissionMasters(): Promise<PermissionMasterRecord[]>;
   findPermissionMaster(code: PermissionCode): Promise<PermissionMasterRecord | undefined>;
-  listAdminOverrides(adminId: number): Promise<AdminPermissionRecord[]>;
-  upsertAdminOverride(input: {
-    adminId: number;
-    permissionId: number;
-    grantYn: PermissionGrant;
-    actorAdminId: number;
-    now: Date;
-  }): Promise<void>;
   listProjectAdmins(projectId: number): Promise<ProjectAdminSummary[]>;
   findProjectAssignment(projectId: number, adminId: number): Promise<{ delYn: 'Y' | 'N' } | undefined>;
   upsertProjectAssignment(projectId: number, adminId: number, actorAdminId: number, now: Date): Promise<void>;
   updateProjectAssignment(projectId: number, adminId: number, useYn: 'Y' | 'N', actorAdminId: number, now: Date): Promise<void>;
   softDeleteProjectAssignment(projectId: number, adminId: number, actorAdminId: number, now: Date): Promise<void>;
+  assignProjectAdmin(input: {
+    projectId: number;
+    adminId: number;
+    grants: Record<PermissionCode, PermissionGrant>;
+    actorAdminId: number;
+    now: Date;
+  }): Promise<void>;
 }

@@ -1,39 +1,33 @@
 import { getAdministratorServices } from '../../../../services/administrator.server';
 import { getRequestAdmin, readPositiveInteger } from '../../../../utils/administrator-request';
-import { isNonEmptyString, readValidatedAuthBody, toAuthErrorResponse } from '../../../../utils/auth-request';
+import { readValidatedAuthBody, toAuthErrorResponse } from '../../../../utils/auth-request';
 import { ApiError } from '../../../../utils/api-error';
 import { CreateResponse } from '../../../../utils/createResponse';
+import { permissionCodes, type PermissionCode, type PermissionGrant } from '../../../../types/permission.types';
 
-interface InviteProjectAdminBody {
-  email: string;
-  name?: string;
-}
+interface AssignProjectAdminBody { adminId: number; permissions: Record<PermissionCode, PermissionGrant>; }
 
-function isInviteProjectAdminBody(body: unknown): body is InviteProjectAdminBody {
+function isAssignProjectAdminBody(body: unknown): body is AssignProjectAdminBody {
   if (typeof body !== 'object' || body === null) return false;
   const value = body as Record<string, unknown>;
-  return isNonEmptyString(value.email)
-    && (value.name === undefined || isNonEmptyString(value.name));
+  if (!Number.isSafeInteger(value.adminId) || Number(value.adminId) < 1 || typeof value.permissions !== 'object' || value.permissions === null) return false;
+  const permissions = value.permissions as Record<string, unknown>;
+  return permissionCodes.every(code => permissions[code] === 'Y' || permissions[code] === 'N');
 }
 
 export default defineEventHandler(async event => {
   try {
     const actor = await getRequestAdmin(event);
     const projectId = readPositiveInteger(getRouterParam(event, 'projectId'));
-    const body = await readValidatedAuthBody(event, isInviteProjectAdminBody);
-
-    if (!/^\S+@\S+\.\S+$/.test(body.email) || body.email.length > 320 || (body.name?.length ?? 0) > 100) {
-      throw new ApiError(400, 'BAD_REQUEST');
-    }
-
-    const admin = await getAdministratorServices().projectAdmins.invite({
+    const body = await readValidatedAuthBody(event, isAssignProjectAdminBody);
+    await getAdministratorServices().projectAdmins.assign({
       actorAdminId: actor.id,
       projectId,
-      email: body.email,
-      name: body.name,
+      adminId: body.adminId,
+      grants: body.permissions,
     });
     setResponseStatus(event, 201);
-    return CreateResponse.data(admin, 'CREATED', 'CREATED');
+    return CreateResponse.data(null, 'CREATED', 'CREATED');
   } catch (error) {
     return toAuthErrorResponse(event, error);
   }
