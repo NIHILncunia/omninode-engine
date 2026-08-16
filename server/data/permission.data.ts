@@ -1,4 +1,3 @@
-import type { AdminRole } from '../../app/types/auth.types';
 import type { PermissionCode } from '../types/permission.types';
 
 export const permissionGroups = {
@@ -110,23 +109,3 @@ export const permissionDefinitions: readonly PermissionDefinition[] = [
     group: 'project_sub_admin',
   },
 ] as const;
-
-const subAdminPermissionCodes = new Set<PermissionCode>([
-  'document.create',
-  'document.update',
-  'document.delete',
-  'category.create',
-  'category.update',
-  'category.delete',
-  'template.create',
-  'template.update',
-  'template.delete',
-]);
-
-export function hasRoleDefaultPermission(role: AdminRole, code: PermissionCode): boolean {
-  if (role === 'SUPER_ADMIN' || role === 'ADMIN') {
-    return true;
-  }
-
-  return subAdminPermissionCodes.has(code);
-}
