@@ -72,7 +72,7 @@ describe('옴니노드 1차 라우트 골격', () => {
       expect(content).toContain('useSetMeta');
 
       if (routeFile === 'app/pages/index.vue') {
-        expect(content).toContain('<NavigateTo to="/docs" replace />');
+        expect(content).toContain('await navigateTo(\'/docs\', { replace: true, });');
       } else {
         expect(content).toContain('<span hidden />');
       }

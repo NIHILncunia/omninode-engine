@@ -3,8 +3,10 @@ useSetMeta({
   title: '홈',
   url: '/',
 });
+
+await navigateTo('/docs', { replace: true, });
 </script>
 
 <template>
-  <NavigateTo to="/docs" replace />
+  <span hidden />
 </template>
