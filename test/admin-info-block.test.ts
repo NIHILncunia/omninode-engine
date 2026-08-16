@@ -1,10 +1,10 @@
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia, type Pinia } from 'pinia';
 import { beforeEach, describe, expect, it } from 'vitest';
-import HeaderAuthenticatedAdmin from '../app/components/common/HeaderAuthenticatedAdmin.vue';
+import AdminInfoBlock from '../app/components/common/AdminInfoBlock.vue';
 import { useAuthStore } from '../app/stores/auth.store';
 
-describe('HeaderAuthenticatedAdmin', () => {
+describe('AdminInfoBlock', () => {
   let pinia: Pinia;
 
   beforeEach(() => {
@@ -22,11 +22,14 @@ describe('HeaderAuthenticatedAdmin', () => {
       passwordChangeRequired: false,
     });
 
-    const wrapper = mount(HeaderAuthenticatedAdmin, {
+    const wrapper = mount(AdminInfoBlock, {
       global: {
         plugins: [
           pinia,
         ],
+        stubs: {
+          UiIcon: true,
+        },
       },
     });
 
@@ -38,11 +41,14 @@ describe('HeaderAuthenticatedAdmin', () => {
     const auth = useAuthStore();
     auth.onSetUnauthenticated();
 
-    const wrapper = mount(HeaderAuthenticatedAdmin, {
+    const wrapper = mount(AdminInfoBlock, {
       global: {
         plugins: [
           pinia,
         ],
+        stubs: {
+          UiIcon: true,
+        },
       },
     });
 

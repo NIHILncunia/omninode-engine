@@ -12,7 +12,7 @@ describe('AppSidebar', () => {
     const layout = readFileSync(resolve(process.cwd(), 'app/layouts/default.vue'), 'utf8');
 
     expect(layout).toContain('<AppSidebar />');
-    expect(layout).toContain('<HeaderAuthenticatedAdmin />');
+    expect(layout).toContain('<AdminInfoBlock class="text-white" />');
   });
 
   it('defines navigation items with suitable icons in the site configuration', () => {
@@ -35,6 +35,7 @@ describe('AppSidebar', () => {
         ],
         stubs: {
           Icon: true,
+          UiIcon: true,
           NuxtLink: {
             props: {
               to: {
