@@ -18,3 +18,4 @@ export { documentRelationships } from './documentRelationships.table';
 export { documentRelationshipTargets } from './documentRelationshipTargets.table';
 export { permissions } from './permissions.table';
 export { adminPermissions } from './adminPermissions.table';
+export { adminPermissionRequests } from './adminPermissionRequests.table';

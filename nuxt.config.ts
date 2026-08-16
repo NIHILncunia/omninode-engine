@@ -9,6 +9,12 @@ export default defineNuxtConfig({
   runtimeConfig: {
     databaseUrl: process.env.DATABASE_URL,
     jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
+    smtpHost: process.env.SMTP_HOST,
+    smtpPort: process.env.SMTP_PORT,
+    smtpSecure: process.env.SMTP_SECURE,
+    smtpUser: process.env.SMTP_USER,
+    smtpPassword: process.env.SMTP_PASSWORD,
+    smtpFrom: process.env.SMTP_FROM,
   },
   modules: [
     '@nuxt/eslint',

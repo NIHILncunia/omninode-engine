@@ -1,0 +1,4907 @@
+{
+  "id": "9fb048fb-d894-457f-8e06-65c6979753aa",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.admin_permission_requests": {
+      "name": "admin_permission_requests",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(320)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PENDING'"
+        },
+        "reviewed_by_admin_id": {
+          "name": "reviewed_by_admin_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reviewed_date": {
+          "name": "reviewed_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rejection_reason": {
+          "name": "rejection_reason",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "credential_delivered_date": {
+          "name": "credential_delivered_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "credential_delivery_failed_date": {
+          "name": "credential_delivery_failed_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "uq_admin_permission_requests_pending_email": {
+          "name": "uq_admin_permission_requests_pending_email",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"admin_permission_requests\".\"status\" = 'PENDING' and \"admin_permission_requests\".\"del_yn\" = 'N'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_admin_permission_requests_status": {
+          "name": "idx_admin_permission_requests_status",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "admin_permission_requests_create_id_admins_id_fk": {
+          "name": "admin_permission_requests_create_id_admins_id_fk",
+          "tableFrom": "admin_permission_requests",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_permission_requests_update_id_admins_id_fk": {
+          "name": "admin_permission_requests_update_id_admins_id_fk",
+          "tableFrom": "admin_permission_requests",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_permission_requests_delete_id_admins_id_fk": {
+          "name": "admin_permission_requests_delete_id_admins_id_fk",
+          "tableFrom": "admin_permission_requests",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_permission_requests_reviewed_by_admin_id_admins_id_fk": {
+          "name": "admin_permission_requests_reviewed_by_admin_id_admins_id_fk",
+          "tableFrom": "admin_permission_requests",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "reviewed_by_admin_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_admin_permission_requests_use_yn": {
+          "name": "ck_admin_permission_requests_use_yn",
+          "value": "\"admin_permission_requests\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_admin_permission_requests_del_yn": {
+          "name": "ck_admin_permission_requests_del_yn",
+          "value": "\"admin_permission_requests\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_admin_permission_requests_status": {
+          "name": "ck_admin_permission_requests_status",
+          "value": "\"admin_permission_requests\".\"status\" in ('PENDING', 'APPROVED', 'REJECTED')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.admin_permissions": {
+      "name": "admin_permissions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "project_id": {
+          "name": "project_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "admin_id": {
+          "name": "admin_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "permission_id": {
+          "name": "permission_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "grant_yn": {
+          "name": "grant_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        }
+      },
+      "indexes": {
+        "uq_admin_permissions_project_admin_permission": {
+          "name": "uq_admin_permissions_project_admin_permission",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "admin_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "permission_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_admin_permissions_project_admin_status": {
+          "name": "idx_admin_permissions_project_admin_status",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "admin_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "admin_permissions_create_id_admins_id_fk": {
+          "name": "admin_permissions_create_id_admins_id_fk",
+          "tableFrom": "admin_permissions",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_permissions_update_id_admins_id_fk": {
+          "name": "admin_permissions_update_id_admins_id_fk",
+          "tableFrom": "admin_permissions",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_permissions_delete_id_admins_id_fk": {
+          "name": "admin_permissions_delete_id_admins_id_fk",
+          "tableFrom": "admin_permissions",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_permissions_project_id_projects_id_fk": {
+          "name": "admin_permissions_project_id_projects_id_fk",
+          "tableFrom": "admin_permissions",
+          "tableTo": "projects",
+          "columnsFrom": [
+            "project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_permissions_admin_id_admins_id_fk": {
+          "name": "admin_permissions_admin_id_admins_id_fk",
+          "tableFrom": "admin_permissions",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "admin_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_permissions_permission_id_permissions_id_fk": {
+          "name": "admin_permissions_permission_id_permissions_id_fk",
+          "tableFrom": "admin_permissions",
+          "tableTo": "permissions",
+          "columnsFrom": [
+            "permission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_admin_permissions_use_yn": {
+          "name": "ck_admin_permissions_use_yn",
+          "value": "\"admin_permissions\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_admin_permissions_del_yn": {
+          "name": "ck_admin_permissions_del_yn",
+          "value": "\"admin_permissions\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_admin_permissions_grant_yn": {
+          "name": "ck_admin_permissions_grant_yn",
+          "value": "\"admin_permissions\".\"grant_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.admin_refresh_tokens": {
+      "name": "admin_refresh_tokens",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "admin_id": {
+          "name": "admin_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_hash": {
+          "name": "token_hash",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_date": {
+          "name": "expires_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "revoked_yn": {
+          "name": "revoked_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "revoked_date": {
+          "name": "revoked_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "device_info": {
+          "name": "device_info",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "uq_admin_refresh_tokens_hash": {
+          "name": "uq_admin_refresh_tokens_hash",
+          "columns": [
+            {
+              "expression": "token_hash",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_admin_refresh_tokens_admin": {
+          "name": "idx_admin_refresh_tokens_admin",
+          "columns": [
+            {
+              "expression": "admin_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_admin_refresh_tokens_expire": {
+          "name": "idx_admin_refresh_tokens_expire",
+          "columns": [
+            {
+              "expression": "expires_date",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_admin_refresh_tokens_status": {
+          "name": "idx_admin_refresh_tokens_status",
+          "columns": [
+            {
+              "expression": "admin_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "revoked_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "admin_refresh_tokens_create_id_admins_id_fk": {
+          "name": "admin_refresh_tokens_create_id_admins_id_fk",
+          "tableFrom": "admin_refresh_tokens",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_refresh_tokens_update_id_admins_id_fk": {
+          "name": "admin_refresh_tokens_update_id_admins_id_fk",
+          "tableFrom": "admin_refresh_tokens",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_refresh_tokens_delete_id_admins_id_fk": {
+          "name": "admin_refresh_tokens_delete_id_admins_id_fk",
+          "tableFrom": "admin_refresh_tokens",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admin_refresh_tokens_admin_id_admins_id_fk": {
+          "name": "admin_refresh_tokens_admin_id_admins_id_fk",
+          "tableFrom": "admin_refresh_tokens",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "admin_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_admin_refresh_tokens_use_yn": {
+          "name": "ck_admin_refresh_tokens_use_yn",
+          "value": "\"admin_refresh_tokens\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_admin_refresh_tokens_del_yn": {
+          "name": "ck_admin_refresh_tokens_del_yn",
+          "value": "\"admin_refresh_tokens\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_admin_refresh_tokens_revoked_yn": {
+          "name": "ck_admin_refresh_tokens_revoked_yn",
+          "value": "\"admin_refresh_tokens\".\"revoked_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.admins": {
+      "name": "admins",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(320)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password_hash": {
+          "name": "password_hash",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password_change_required_yn": {
+          "name": "password_change_required_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "password_change_required_date": {
+          "name": "password_change_required_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_sign_in_date": {
+          "name": "last_sign_in_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "uq_admins_email": {
+          "name": "uq_admins_email",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_admins_role": {
+          "name": "idx_admins_role",
+          "columns": [
+            {
+              "expression": "role",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_admins_status": {
+          "name": "idx_admins_status",
+          "columns": [
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "admins_create_id_admins_id_fk": {
+          "name": "admins_create_id_admins_id_fk",
+          "tableFrom": "admins",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admins_update_id_admins_id_fk": {
+          "name": "admins_update_id_admins_id_fk",
+          "tableFrom": "admins",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "admins_delete_id_admins_id_fk": {
+          "name": "admins_delete_id_admins_id_fk",
+          "tableFrom": "admins",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_admins_use_yn": {
+          "name": "ck_admins_use_yn",
+          "value": "\"admins\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_admins_del_yn": {
+          "name": "ck_admins_del_yn",
+          "value": "\"admins\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_admins_role": {
+          "name": "ck_admins_role",
+          "value": "\"admins\".\"role\" in ('SUPER_ADMIN', 'ADMIN')"
+        },
+        "ck_admins_password_change_required_yn": {
+          "name": "ck_admins_password_change_required_yn",
+          "value": "\"admins\".\"password_change_required_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.categories": {
+      "name": "categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "world_id": {
+          "name": "world_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "upper_category_id": {
+          "name": "upper_category_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "template_id": {
+          "name": "template_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "name": "level",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {
+        "idx_categories_status": {
+          "name": "idx_categories_status",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_categories_world": {
+          "name": "idx_categories_world",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_categories_upper": {
+          "name": "idx_categories_upper",
+          "columns": [
+            {
+              "expression": "upper_category_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_categories_template": {
+          "name": "idx_categories_template",
+          "columns": [
+            {
+              "expression": "template_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_categories_tree": {
+          "name": "idx_categories_tree",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "upper_category_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "categories_create_id_admins_id_fk": {
+          "name": "categories_create_id_admins_id_fk",
+          "tableFrom": "categories",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "categories_update_id_admins_id_fk": {
+          "name": "categories_update_id_admins_id_fk",
+          "tableFrom": "categories",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "categories_delete_id_admins_id_fk": {
+          "name": "categories_delete_id_admins_id_fk",
+          "tableFrom": "categories",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "categories_world_id_worlds_id_fk": {
+          "name": "categories_world_id_worlds_id_fk",
+          "tableFrom": "categories",
+          "tableTo": "worlds",
+          "columnsFrom": [
+            "world_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "categories_upper_category_id_categories_id_fk": {
+          "name": "categories_upper_category_id_categories_id_fk",
+          "tableFrom": "categories",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "upper_category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "categories_template_id_templates_id_fk": {
+          "name": "categories_template_id_templates_id_fk",
+          "tableFrom": "categories",
+          "tableTo": "templates",
+          "columnsFrom": [
+            "template_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_categories_use_yn": {
+          "name": "ck_categories_use_yn",
+          "value": "\"categories\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_categories_del_yn": {
+          "name": "ck_categories_del_yn",
+          "value": "\"categories\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_categories_level": {
+          "name": "ck_categories_level",
+          "value": "\"categories\".\"level\" between 1 and 3"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.document_categories": {
+      "name": "document_categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "document_id": {
+          "name": "document_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category_id": {
+          "name": "category_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "name": "level",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "uq_document_categories_level": {
+          "name": "uq_document_categories_level",
+          "columns": [
+            {
+              "expression": "document_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "level",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "uq_document_categories_category": {
+          "name": "uq_document_categories_category",
+          "columns": [
+            {
+              "expression": "document_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "category_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_document_categories_category": {
+          "name": "idx_document_categories_category",
+          "columns": [
+            {
+              "expression": "category_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "document_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "document_categories_create_id_admins_id_fk": {
+          "name": "document_categories_create_id_admins_id_fk",
+          "tableFrom": "document_categories",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_categories_update_id_admins_id_fk": {
+          "name": "document_categories_update_id_admins_id_fk",
+          "tableFrom": "document_categories",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_categories_delete_id_admins_id_fk": {
+          "name": "document_categories_delete_id_admins_id_fk",
+          "tableFrom": "document_categories",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_categories_document_id_documents_id_fk": {
+          "name": "document_categories_document_id_documents_id_fk",
+          "tableFrom": "document_categories",
+          "tableTo": "documents",
+          "columnsFrom": [
+            "document_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_categories_category_id_categories_id_fk": {
+          "name": "document_categories_category_id_categories_id_fk",
+          "tableFrom": "document_categories",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_document_categories_use_yn": {
+          "name": "ck_document_categories_use_yn",
+          "value": "\"document_categories\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_document_categories_del_yn": {
+          "name": "ck_document_categories_del_yn",
+          "value": "\"document_categories\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_document_categories_level": {
+          "name": "ck_document_categories_level",
+          "value": "\"document_categories\".\"level\" between 1 and 3"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.document_relationship_targets": {
+      "name": "document_relationship_targets",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "document_relationship_id": {
+          "name": "document_relationship_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "relationship_type_role_id": {
+          "name": "relationship_type_role_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "document_id": {
+          "name": "document_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "uq_document_relationship_targets_role": {
+          "name": "uq_document_relationship_targets_role",
+          "columns": [
+            {
+              "expression": "document_relationship_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "relationship_type_role_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "uq_document_relationship_targets_document": {
+          "name": "uq_document_relationship_targets_document",
+          "columns": [
+            {
+              "expression": "document_relationship_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "document_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_document_relationship_targets_document": {
+          "name": "idx_document_relationship_targets_document",
+          "columns": [
+            {
+              "expression": "document_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_document_relationship_targets_role": {
+          "name": "idx_document_relationship_targets_role",
+          "columns": [
+            {
+              "expression": "relationship_type_role_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "document_relationship_targets_create_id_admins_id_fk": {
+          "name": "document_relationship_targets_create_id_admins_id_fk",
+          "tableFrom": "document_relationship_targets",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_relationship_targets_update_id_admins_id_fk": {
+          "name": "document_relationship_targets_update_id_admins_id_fk",
+          "tableFrom": "document_relationship_targets",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_relationship_targets_delete_id_admins_id_fk": {
+          "name": "document_relationship_targets_delete_id_admins_id_fk",
+          "tableFrom": "document_relationship_targets",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_relationship_targets_document_relationship_id_document_relationships_id_fk": {
+          "name": "document_relationship_targets_document_relationship_id_document_relationships_id_fk",
+          "tableFrom": "document_relationship_targets",
+          "tableTo": "document_relationships",
+          "columnsFrom": [
+            "document_relationship_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_relationship_targets_relationship_type_role_id_relationship_type_roles_id_fk": {
+          "name": "document_relationship_targets_relationship_type_role_id_relationship_type_roles_id_fk",
+          "tableFrom": "document_relationship_targets",
+          "tableTo": "relationship_type_roles",
+          "columnsFrom": [
+            "relationship_type_role_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_relationship_targets_document_id_documents_id_fk": {
+          "name": "document_relationship_targets_document_id_documents_id_fk",
+          "tableFrom": "document_relationship_targets",
+          "tableTo": "documents",
+          "columnsFrom": [
+            "document_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_document_relationship_targets_use_yn": {
+          "name": "ck_document_relationship_targets_use_yn",
+          "value": "\"document_relationship_targets\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_document_relationship_targets_del_yn": {
+          "name": "ck_document_relationship_targets_del_yn",
+          "value": "\"document_relationship_targets\".\"del_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.document_relationships": {
+      "name": "document_relationships",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "world_id": {
+          "name": "world_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "world_relationship_type_id": {
+          "name": "world_relationship_type_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "idx_document_relationships_world": {
+          "name": "idx_document_relationships_world",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_document_relationships_type": {
+          "name": "idx_document_relationships_type",
+          "columns": [
+            {
+              "expression": "world_relationship_type_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "document_relationships_create_id_admins_id_fk": {
+          "name": "document_relationships_create_id_admins_id_fk",
+          "tableFrom": "document_relationships",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_relationships_update_id_admins_id_fk": {
+          "name": "document_relationships_update_id_admins_id_fk",
+          "tableFrom": "document_relationships",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_relationships_delete_id_admins_id_fk": {
+          "name": "document_relationships_delete_id_admins_id_fk",
+          "tableFrom": "document_relationships",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_relationships_world_id_worlds_id_fk": {
+          "name": "document_relationships_world_id_worlds_id_fk",
+          "tableFrom": "document_relationships",
+          "tableTo": "worlds",
+          "columnsFrom": [
+            "world_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_relationships_world_relationship_type_id_world_relationship_types_id_fk": {
+          "name": "document_relationships_world_relationship_type_id_world_relationship_types_id_fk",
+          "tableFrom": "document_relationships",
+          "tableTo": "world_relationship_types",
+          "columnsFrom": [
+            "world_relationship_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_document_relationships_use_yn": {
+          "name": "ck_document_relationships_use_yn",
+          "value": "\"document_relationships\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_document_relationships_del_yn": {
+          "name": "ck_document_relationships_del_yn",
+          "value": "\"document_relationships\".\"del_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.document_sections": {
+      "name": "document_sections",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "document_id": {
+          "name": "document_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "section_id": {
+          "name": "section_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "upper_section_id": {
+          "name": "upper_section_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "template_section_yn": {
+          "name": "template_section_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "applied_template_version": {
+          "name": "applied_template_version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "uq_document_sections_document_section": {
+          "name": "uq_document_sections_document_section",
+          "columns": [
+            {
+              "expression": "document_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "section_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_document_sections_order": {
+          "name": "idx_document_sections_order",
+          "columns": [
+            {
+              "expression": "document_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_document_sections_upper": {
+          "name": "idx_document_sections_upper",
+          "columns": [
+            {
+              "expression": "document_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "upper_section_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "document_sections_create_id_admins_id_fk": {
+          "name": "document_sections_create_id_admins_id_fk",
+          "tableFrom": "document_sections",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_sections_update_id_admins_id_fk": {
+          "name": "document_sections_update_id_admins_id_fk",
+          "tableFrom": "document_sections",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_sections_delete_id_admins_id_fk": {
+          "name": "document_sections_delete_id_admins_id_fk",
+          "tableFrom": "document_sections",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_sections_document_id_documents_id_fk": {
+          "name": "document_sections_document_id_documents_id_fk",
+          "tableFrom": "document_sections",
+          "tableTo": "documents",
+          "columnsFrom": [
+            "document_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_sections_section_id_sections_id_fk": {
+          "name": "document_sections_section_id_sections_id_fk",
+          "tableFrom": "document_sections",
+          "tableTo": "sections",
+          "columnsFrom": [
+            "section_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "document_sections_upper_section_id_sections_id_fk": {
+          "name": "document_sections_upper_section_id_sections_id_fk",
+          "tableFrom": "document_sections",
+          "tableTo": "sections",
+          "columnsFrom": [
+            "upper_section_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_document_sections_use_yn": {
+          "name": "ck_document_sections_use_yn",
+          "value": "\"document_sections\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_document_sections_del_yn": {
+          "name": "ck_document_sections_del_yn",
+          "value": "\"document_sections\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_document_sections_template_section_yn": {
+          "name": "ck_document_sections_template_section_yn",
+          "value": "\"document_sections\".\"template_section_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.documents": {
+      "name": "documents",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "world_id": {
+          "name": "world_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "template_id": {
+          "name": "template_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "template_version": {
+          "name": "template_version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(300)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        }
+      },
+      "indexes": {
+        "uq_documents_world_title": {
+          "name": "uq_documents_world_title",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "title",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_documents_world": {
+          "name": "idx_documents_world",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_documents_template": {
+          "name": "idx_documents_template",
+          "columns": [
+            {
+              "expression": "template_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_documents_status": {
+          "name": "idx_documents_status",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "documents_create_id_admins_id_fk": {
+          "name": "documents_create_id_admins_id_fk",
+          "tableFrom": "documents",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "documents_update_id_admins_id_fk": {
+          "name": "documents_update_id_admins_id_fk",
+          "tableFrom": "documents",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "documents_delete_id_admins_id_fk": {
+          "name": "documents_delete_id_admins_id_fk",
+          "tableFrom": "documents",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "documents_world_id_worlds_id_fk": {
+          "name": "documents_world_id_worlds_id_fk",
+          "tableFrom": "documents",
+          "tableTo": "worlds",
+          "columnsFrom": [
+            "world_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "documents_template_id_templates_id_fk": {
+          "name": "documents_template_id_templates_id_fk",
+          "tableFrom": "documents",
+          "tableTo": "templates",
+          "columnsFrom": [
+            "template_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_documents_use_yn": {
+          "name": "ck_documents_use_yn",
+          "value": "\"documents\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_documents_del_yn": {
+          "name": "ck_documents_del_yn",
+          "value": "\"documents\".\"del_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.permissions": {
+      "name": "permissions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "uq_permissions_code": {
+          "name": "uq_permissions_code",
+          "columns": [
+            {
+              "expression": "code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "permissions_create_id_admins_id_fk": {
+          "name": "permissions_create_id_admins_id_fk",
+          "tableFrom": "permissions",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "permissions_update_id_admins_id_fk": {
+          "name": "permissions_update_id_admins_id_fk",
+          "tableFrom": "permissions",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "permissions_delete_id_admins_id_fk": {
+          "name": "permissions_delete_id_admins_id_fk",
+          "tableFrom": "permissions",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_permissions_use_yn": {
+          "name": "ck_permissions_use_yn",
+          "value": "\"permissions\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_permissions_del_yn": {
+          "name": "ck_permissions_del_yn",
+          "value": "\"permissions\".\"del_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.project_admins": {
+      "name": "project_admins",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "project_id": {
+          "name": "project_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "admin_id": {
+          "name": "admin_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "uq_project_admins_project_admin": {
+          "name": "uq_project_admins_project_admin",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "admin_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_project_admins_admin": {
+          "name": "idx_project_admins_admin",
+          "columns": [
+            {
+              "expression": "admin_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_project_admins_status": {
+          "name": "idx_project_admins_status",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "project_admins_create_id_admins_id_fk": {
+          "name": "project_admins_create_id_admins_id_fk",
+          "tableFrom": "project_admins",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "project_admins_update_id_admins_id_fk": {
+          "name": "project_admins_update_id_admins_id_fk",
+          "tableFrom": "project_admins",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "project_admins_delete_id_admins_id_fk": {
+          "name": "project_admins_delete_id_admins_id_fk",
+          "tableFrom": "project_admins",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "project_admins_project_id_projects_id_fk": {
+          "name": "project_admins_project_id_projects_id_fk",
+          "tableFrom": "project_admins",
+          "tableTo": "projects",
+          "columnsFrom": [
+            "project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "project_admins_admin_id_admins_id_fk": {
+          "name": "project_admins_admin_id_admins_id_fk",
+          "tableFrom": "project_admins",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "admin_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_project_admins_use_yn": {
+          "name": "ck_project_admins_use_yn",
+          "value": "\"project_admins\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_project_admins_del_yn": {
+          "name": "ck_project_admins_del_yn",
+          "value": "\"project_admins\".\"del_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.projects": {
+      "name": "projects",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "admin_id": {
+          "name": "admin_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "uq_projects_admin_name": {
+          "name": "uq_projects_admin_name",
+          "columns": [
+            {
+              "expression": "admin_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_projects_admin": {
+          "name": "idx_projects_admin",
+          "columns": [
+            {
+              "expression": "admin_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_projects_status": {
+          "name": "idx_projects_status",
+          "columns": [
+            {
+              "expression": "admin_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "projects_create_id_admins_id_fk": {
+          "name": "projects_create_id_admins_id_fk",
+          "tableFrom": "projects",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "projects_update_id_admins_id_fk": {
+          "name": "projects_update_id_admins_id_fk",
+          "tableFrom": "projects",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "projects_delete_id_admins_id_fk": {
+          "name": "projects_delete_id_admins_id_fk",
+          "tableFrom": "projects",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "projects_admin_id_admins_id_fk": {
+          "name": "projects_admin_id_admins_id_fk",
+          "tableFrom": "projects",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "admin_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_projects_use_yn": {
+          "name": "ck_projects_use_yn",
+          "value": "\"projects\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_projects_del_yn": {
+          "name": "ck_projects_del_yn",
+          "value": "\"projects\".\"del_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.relationship_type_roles": {
+      "name": "relationship_type_roles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "relationship_type_id": {
+          "name": "relationship_type_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "varchar(300)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_order": {
+          "name": "role_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "required_yn": {
+          "name": "required_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        }
+      },
+      "indexes": {
+        "uq_relationship_roles_order": {
+          "name": "uq_relationship_roles_order",
+          "columns": [
+            {
+              "expression": "relationship_type_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "role_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "uq_relationship_roles_name": {
+          "name": "uq_relationship_roles_name",
+          "columns": [
+            {
+              "expression": "relationship_type_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_relationship_roles_required": {
+          "name": "idx_relationship_roles_required",
+          "columns": [
+            {
+              "expression": "relationship_type_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "required_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "relationship_type_roles_create_id_admins_id_fk": {
+          "name": "relationship_type_roles_create_id_admins_id_fk",
+          "tableFrom": "relationship_type_roles",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "relationship_type_roles_update_id_admins_id_fk": {
+          "name": "relationship_type_roles_update_id_admins_id_fk",
+          "tableFrom": "relationship_type_roles",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "relationship_type_roles_delete_id_admins_id_fk": {
+          "name": "relationship_type_roles_delete_id_admins_id_fk",
+          "tableFrom": "relationship_type_roles",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "relationship_type_roles_relationship_type_id_relationship_types_id_fk": {
+          "name": "relationship_type_roles_relationship_type_id_relationship_types_id_fk",
+          "tableFrom": "relationship_type_roles",
+          "tableTo": "relationship_types",
+          "columnsFrom": [
+            "relationship_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_relationship_type_roles_use_yn": {
+          "name": "ck_relationship_type_roles_use_yn",
+          "value": "\"relationship_type_roles\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_relationship_type_roles_del_yn": {
+          "name": "ck_relationship_type_roles_del_yn",
+          "value": "\"relationship_type_roles\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_relationship_type_roles_required_yn": {
+          "name": "ck_relationship_type_roles_required_yn",
+          "value": "\"relationship_type_roles\".\"required_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.relationship_types": {
+      "name": "relationship_types",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "owner_admin_id": {
+          "name": "owner_admin_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(300)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "system_yn": {
+          "name": "system_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "min_target_count": {
+          "name": "min_target_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 2
+        },
+        "max_target_count": {
+          "name": "max_target_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 2
+        }
+      },
+      "indexes": {
+        "uq_relationship_types_system_name": {
+          "name": "uq_relationship_types_system_name",
+          "columns": [
+            {
+              "expression": "system_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"relationship_types\".\"system_yn\" = 'Y'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "uq_relationship_types_owner_name": {
+          "name": "uq_relationship_types_owner_name",
+          "columns": [
+            {
+              "expression": "owner_admin_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"relationship_types\".\"system_yn\" = 'N'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_relationship_types_owner": {
+          "name": "idx_relationship_types_owner",
+          "columns": [
+            {
+              "expression": "owner_admin_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_relationship_types_system": {
+          "name": "idx_relationship_types_system",
+          "columns": [
+            {
+              "expression": "system_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "relationship_types_create_id_admins_id_fk": {
+          "name": "relationship_types_create_id_admins_id_fk",
+          "tableFrom": "relationship_types",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "relationship_types_update_id_admins_id_fk": {
+          "name": "relationship_types_update_id_admins_id_fk",
+          "tableFrom": "relationship_types",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "relationship_types_delete_id_admins_id_fk": {
+          "name": "relationship_types_delete_id_admins_id_fk",
+          "tableFrom": "relationship_types",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "relationship_types_owner_admin_id_admins_id_fk": {
+          "name": "relationship_types_owner_admin_id_admins_id_fk",
+          "tableFrom": "relationship_types",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "owner_admin_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_relationship_types_use_yn": {
+          "name": "ck_relationship_types_use_yn",
+          "value": "\"relationship_types\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_relationship_types_del_yn": {
+          "name": "ck_relationship_types_del_yn",
+          "value": "\"relationship_types\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_relationship_types_system_yn": {
+          "name": "ck_relationship_types_system_yn",
+          "value": "\"relationship_types\".\"system_yn\" in ('Y', 'N')"
+        },
+        "ck_relationship_types_owner": {
+          "name": "ck_relationship_types_owner",
+          "value": "(\"relationship_types\".\"system_yn\" = 'Y' and \"relationship_types\".\"owner_admin_id\" is null) or (\"relationship_types\".\"system_yn\" = 'N' and \"relationship_types\".\"owner_admin_id\" is not null)"
+        },
+        "ck_relationship_types_count": {
+          "name": "ck_relationship_types_count",
+          "value": "\"relationship_types\".\"min_target_count\" >= 2 and \"relationship_types\".\"max_target_count\" >= \"relationship_types\".\"min_target_count\""
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.sections": {
+      "name": "sections",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(300)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "name": "level",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "section_type": {
+          "name": "section_type",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "idx_sections_type": {
+          "name": "idx_sections_type",
+          "columns": [
+            {
+              "expression": "section_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_sections_status": {
+          "name": "idx_sections_status",
+          "columns": [
+            {
+              "expression": "section_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "sections_create_id_admins_id_fk": {
+          "name": "sections_create_id_admins_id_fk",
+          "tableFrom": "sections",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "sections_update_id_admins_id_fk": {
+          "name": "sections_update_id_admins_id_fk",
+          "tableFrom": "sections",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "sections_delete_id_admins_id_fk": {
+          "name": "sections_delete_id_admins_id_fk",
+          "tableFrom": "sections",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_sections_use_yn": {
+          "name": "ck_sections_use_yn",
+          "value": "\"sections\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_sections_del_yn": {
+          "name": "ck_sections_del_yn",
+          "value": "\"sections\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_sections_level": {
+          "name": "ck_sections_level",
+          "value": "\"sections\".\"level\" between 1 and 6"
+        },
+        "ck_sections_section_type": {
+          "name": "ck_sections_section_type",
+          "value": "\"sections\".\"section_type\" in ('TEMPLATE', 'DOCUMENT')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.template_sections": {
+      "name": "template_sections",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "template_id": {
+          "name": "template_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "section_id": {
+          "name": "section_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "upper_section_id": {
+          "name": "upper_section_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "required_yn": {
+          "name": "required_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        }
+      },
+      "indexes": {
+        "uq_template_sections_template_section": {
+          "name": "uq_template_sections_template_section",
+          "columns": [
+            {
+              "expression": "template_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "section_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_template_sections_template_order": {
+          "name": "idx_template_sections_template_order",
+          "columns": [
+            {
+              "expression": "template_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_template_sections_upper": {
+          "name": "idx_template_sections_upper",
+          "columns": [
+            {
+              "expression": "template_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "upper_section_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "template_sections_create_id_admins_id_fk": {
+          "name": "template_sections_create_id_admins_id_fk",
+          "tableFrom": "template_sections",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "template_sections_update_id_admins_id_fk": {
+          "name": "template_sections_update_id_admins_id_fk",
+          "tableFrom": "template_sections",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "template_sections_delete_id_admins_id_fk": {
+          "name": "template_sections_delete_id_admins_id_fk",
+          "tableFrom": "template_sections",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "template_sections_template_id_templates_id_fk": {
+          "name": "template_sections_template_id_templates_id_fk",
+          "tableFrom": "template_sections",
+          "tableTo": "templates",
+          "columnsFrom": [
+            "template_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "template_sections_section_id_sections_id_fk": {
+          "name": "template_sections_section_id_sections_id_fk",
+          "tableFrom": "template_sections",
+          "tableTo": "sections",
+          "columnsFrom": [
+            "section_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "template_sections_upper_section_id_sections_id_fk": {
+          "name": "template_sections_upper_section_id_sections_id_fk",
+          "tableFrom": "template_sections",
+          "tableTo": "sections",
+          "columnsFrom": [
+            "upper_section_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_template_sections_use_yn": {
+          "name": "ck_template_sections_use_yn",
+          "value": "\"template_sections\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_template_sections_del_yn": {
+          "name": "ck_template_sections_del_yn",
+          "value": "\"template_sections\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_template_sections_required_yn": {
+          "name": "ck_template_sections_required_yn",
+          "value": "\"template_sections\".\"required_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.templates": {
+      "name": "templates",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "world_id": {
+          "name": "world_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version": {
+          "name": "version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        }
+      },
+      "indexes": {
+        "uq_templates_world_name": {
+          "name": "uq_templates_world_name",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_templates_world": {
+          "name": "idx_templates_world",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_templates_status": {
+          "name": "idx_templates_status",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "templates_create_id_admins_id_fk": {
+          "name": "templates_create_id_admins_id_fk",
+          "tableFrom": "templates",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "templates_update_id_admins_id_fk": {
+          "name": "templates_update_id_admins_id_fk",
+          "tableFrom": "templates",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "templates_delete_id_admins_id_fk": {
+          "name": "templates_delete_id_admins_id_fk",
+          "tableFrom": "templates",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "templates_world_id_worlds_id_fk": {
+          "name": "templates_world_id_worlds_id_fk",
+          "tableFrom": "templates",
+          "tableTo": "worlds",
+          "columnsFrom": [
+            "world_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_templates_use_yn": {
+          "name": "ck_templates_use_yn",
+          "value": "\"templates\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_templates_del_yn": {
+          "name": "ck_templates_del_yn",
+          "value": "\"templates\".\"del_yn\" in ('Y', 'N')"
+        },
+        "ck_templates_version": {
+          "name": "ck_templates_version",
+          "value": "\"templates\".\"version\" >= 1"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.world_relationship_role_categories": {
+      "name": "world_relationship_role_categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "world_relationship_type_id": {
+          "name": "world_relationship_type_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "relationship_type_role_id": {
+          "name": "relationship_type_role_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category_id": {
+          "name": "category_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "uq_world_role_categories": {
+          "name": "uq_world_role_categories",
+          "columns": [
+            {
+              "expression": "world_relationship_type_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "relationship_type_role_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "category_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_world_role_categories_role": {
+          "name": "idx_world_role_categories_role",
+          "columns": [
+            {
+              "expression": "world_relationship_type_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "relationship_type_role_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_world_role_categories_category": {
+          "name": "idx_world_role_categories_category",
+          "columns": [
+            {
+              "expression": "category_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "world_relationship_role_categories_create_id_admins_id_fk": {
+          "name": "world_relationship_role_categories_create_id_admins_id_fk",
+          "tableFrom": "world_relationship_role_categories",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "world_relationship_role_categories_update_id_admins_id_fk": {
+          "name": "world_relationship_role_categories_update_id_admins_id_fk",
+          "tableFrom": "world_relationship_role_categories",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "world_relationship_role_categories_delete_id_admins_id_fk": {
+          "name": "world_relationship_role_categories_delete_id_admins_id_fk",
+          "tableFrom": "world_relationship_role_categories",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "world_relationship_role_categories_world_relationship_type_id_world_relationship_types_id_fk": {
+          "name": "world_relationship_role_categories_world_relationship_type_id_world_relationship_types_id_fk",
+          "tableFrom": "world_relationship_role_categories",
+          "tableTo": "world_relationship_types",
+          "columnsFrom": [
+            "world_relationship_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "world_relationship_role_categories_relationship_type_role_id_relationship_type_roles_id_fk": {
+          "name": "world_relationship_role_categories_relationship_type_role_id_relationship_type_roles_id_fk",
+          "tableFrom": "world_relationship_role_categories",
+          "tableTo": "relationship_type_roles",
+          "columnsFrom": [
+            "relationship_type_role_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "world_relationship_role_categories_category_id_categories_id_fk": {
+          "name": "world_relationship_role_categories_category_id_categories_id_fk",
+          "tableFrom": "world_relationship_role_categories",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_world_relationship_role_categories_use_yn": {
+          "name": "ck_world_relationship_role_categories_use_yn",
+          "value": "\"world_relationship_role_categories\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_world_relationship_role_categories_del_yn": {
+          "name": "ck_world_relationship_role_categories_del_yn",
+          "value": "\"world_relationship_role_categories\".\"del_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.world_relationship_types": {
+      "name": "world_relationship_types",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "world_id": {
+          "name": "world_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "relationship_type_id": {
+          "name": "relationship_type_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "uq_world_relationship_types": {
+          "name": "uq_world_relationship_types",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "relationship_type_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_world_relationship_types_world": {
+          "name": "idx_world_relationship_types_world",
+          "columns": [
+            {
+              "expression": "world_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_world_relationship_types_type": {
+          "name": "idx_world_relationship_types_type",
+          "columns": [
+            {
+              "expression": "relationship_type_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "world_relationship_types_create_id_admins_id_fk": {
+          "name": "world_relationship_types_create_id_admins_id_fk",
+          "tableFrom": "world_relationship_types",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "world_relationship_types_update_id_admins_id_fk": {
+          "name": "world_relationship_types_update_id_admins_id_fk",
+          "tableFrom": "world_relationship_types",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "world_relationship_types_delete_id_admins_id_fk": {
+          "name": "world_relationship_types_delete_id_admins_id_fk",
+          "tableFrom": "world_relationship_types",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "world_relationship_types_world_id_worlds_id_fk": {
+          "name": "world_relationship_types_world_id_worlds_id_fk",
+          "tableFrom": "world_relationship_types",
+          "tableTo": "worlds",
+          "columnsFrom": [
+            "world_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "world_relationship_types_relationship_type_id_relationship_types_id_fk": {
+          "name": "world_relationship_types_relationship_type_id_relationship_types_id_fk",
+          "tableFrom": "world_relationship_types",
+          "tableTo": "relationship_types",
+          "columnsFrom": [
+            "relationship_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_world_relationship_types_use_yn": {
+          "name": "ck_world_relationship_types_use_yn",
+          "value": "\"world_relationship_types\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_world_relationship_types_del_yn": {
+          "name": "ck_world_relationship_types_del_yn",
+          "value": "\"world_relationship_types\".\"del_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.worlds": {
+      "name": "worlds",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "use_yn": {
+          "name": "use_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Y'"
+        },
+        "del_yn": {
+          "name": "del_yn",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'N'"
+        },
+        "create_id": {
+          "name": "create_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "update_id": {
+          "name": "update_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delete_id": {
+          "name": "delete_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "create_date": {
+          "name": "create_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "update_date": {
+          "name": "update_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "delete_date": {
+          "name": "delete_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "project_id": {
+          "name": "project_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "uq_worlds_project_name": {
+          "name": "uq_worlds_project_name",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_worlds_project": {
+          "name": "idx_worlds_project",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_worlds_status": {
+          "name": "idx_worlds_status",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "use_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "del_yn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "worlds_create_id_admins_id_fk": {
+          "name": "worlds_create_id_admins_id_fk",
+          "tableFrom": "worlds",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "create_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "worlds_update_id_admins_id_fk": {
+          "name": "worlds_update_id_admins_id_fk",
+          "tableFrom": "worlds",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "update_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "worlds_delete_id_admins_id_fk": {
+          "name": "worlds_delete_id_admins_id_fk",
+          "tableFrom": "worlds",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "delete_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "worlds_project_id_projects_id_fk": {
+          "name": "worlds_project_id_projects_id_fk",
+          "tableFrom": "worlds",
+          "tableTo": "projects",
+          "columnsFrom": [
+            "project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_worlds_use_yn": {
+          "name": "ck_worlds_use_yn",
+          "value": "\"worlds\".\"use_yn\" in ('Y', 'N')"
+        },
+        "ck_worlds_del_yn": {
+          "name": "ck_worlds_del_yn",
+          "value": "\"worlds\".\"del_yn\" in ('Y', 'N')"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
