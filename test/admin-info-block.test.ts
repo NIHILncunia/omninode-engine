@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia, type Pinia } from 'pinia';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AdminInfoBlock from '../app/components/common/AdminInfoBlock.vue';
 import { useAuthStore } from '../app/stores/auth.store';
 
@@ -10,6 +10,7 @@ describe('AdminInfoBlock', () => {
   beforeEach(() => {
     pinia = createPinia();
     setActivePinia(pinia);
+    vi.stubGlobal('navigateTo', vi.fn());
   });
 
   it('로그인한 관리자의 이메일과 이름을 표시한다', () => {
@@ -37,7 +38,7 @@ describe('AdminInfoBlock', () => {
     expect(wrapper.text()).toContain('관리자');
   });
 
-  it('비로그인 상태에서는 관리자 로그인 버튼을 표시한다', () => {
+  it('비로그인 상태에서 관리자 로그인 버튼을 누르면 로그인 화면으로 이동한다', async () => {
     const auth = useAuthStore();
     auth.onSetUnauthenticated();
 
@@ -48,11 +49,7 @@ describe('AdminInfoBlock', () => {
         ],
         stubs: {
           ElButton: {
-            template: '<a :href="to"><slot /></a>',
-            props: [
-              'to',
-              'tag',
-            ],
+            template: '<button><slot /></button>',
           },
           UiIcon: {
             template: '<i :data-icon-name="iconName" />',
@@ -65,9 +62,12 @@ describe('AdminInfoBlock', () => {
     });
 
     expect(wrapper.text()).toContain('관리자 로그인');
-    expect(wrapper.find('a').attributes('href')).toBe('/signin');
     expect(wrapper.find('[data-icon-name="lucide:settings"]').exists()).toBe(true);
-    expect(wrapper.find('a').classes()).toContain('bg-stone-800!');
-    expect(wrapper.find('a').classes()).toContain('hover:bg-blue-500!');
+    expect(wrapper.find('button').classes()).toContain('bg-stone-800!');
+    expect(wrapper.find('button').classes()).toContain('hover:bg-blue-500!');
+
+    await wrapper.get('button').trigger('click');
+
+    expect(navigateTo).toHaveBeenCalledWith('/signin');
   });
 });
