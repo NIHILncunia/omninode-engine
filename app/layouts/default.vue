@@ -9,7 +9,7 @@ const copyrightYears = currentYear === siteConfig.site.startedYear
 
 <template>
   <ElContainer class="dvh-100 overflow-hidden">
-    <ElHeader class="flex flex-row justify-between h-15! border-b border-b-black-300 bg-stone-900">
+    <ElHeader class="flex flex-row items-center justify-between h-15! border-b border-b-black-300 bg-stone-900">
       <h1 class="flex flex-row gap-1 items-center justify-center">
         <UiImage
           :src="siteConfig.images.logo"
