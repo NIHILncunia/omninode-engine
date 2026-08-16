@@ -1,12 +1,17 @@
 <script lang="ts" setup>
 import { cva } from 'class-variance-authority';
 import { siteConfig } from '~/config/site.config';
+import { useAuthStore } from '~/stores/auth.store';
 import type { NavigationItem } from '~/types/common.types';
 import { cn } from '~/utils/cn';
 
 const props = defineProps<{
   class?: string;
 }>();
+const auth = useAuthStore();
+const navigationItems = computed(() => auth.admin?.role === 'SUPER_ADMIN'
+  ? [...siteConfig.navigation, { label: '관리자', to: '/admins', }]
+  : siteConfig.navigation);
 
 const emit = defineEmits<{
   navigate: [item: NavigationItem];
@@ -39,7 +44,7 @@ const onNavigate = (item: NavigationItem): void => {
   >
     <ElMenu>
       <ElMenuItem
-        v-for="item in siteConfig.navigation"
+        v-for="item in navigationItems"
         :key="item.to"
         :index="item.to"
       >

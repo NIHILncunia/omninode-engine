@@ -1,4 +1,5 @@
 <script setup lang="ts">
+definePageMeta({ middleware: 'super-admin', });
 useSetMeta({
   title: '관리자 생성',
   url: '/admins/new',
@@ -6,5 +7,5 @@ useSetMeta({
 </script>
 
 <template>
-  <span hidden />
+  <AdminCreateForm />
 </template>
