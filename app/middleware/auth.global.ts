@@ -4,6 +4,7 @@ import { useAuthStore } from '../stores/auth.store';
 
 const publicPaths = new Set([
   '/signin',
+  '/admin-permission-request',
   '/docs',
   '/about',
 ]);

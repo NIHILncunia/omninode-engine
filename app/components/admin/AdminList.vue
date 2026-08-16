@@ -53,7 +53,6 @@ onMounted(onLoadAdmin);
         <h1 class="text-h3 font-700">관리자</h1>
         <p class="text-sm text-black-600">전역 관리자 계정과 상태를 관리합니다.</p>
       </div>
-      <ElButton type="primary" @click="navigateTo('/admins/new')">관리자 생성</ElButton>
     </header>
 
     <ElForm class="flex gap-2" @submit.prevent="onSearchAdmin">
@@ -94,5 +93,6 @@ onMounted(onLoadAdmin);
         @current-change="onChangeAdminPage"
       />
     </template>
+    <AdminPermissionRequestList />
   </section>
 </template>
