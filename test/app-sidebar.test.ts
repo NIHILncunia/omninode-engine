@@ -8,19 +8,31 @@ import { resolve } from 'node:path';
 import { siteConfig } from '../app/config/site.config';
 
 describe('AppSidebar', () => {
-  it('기본 레이아웃이 sidebar를 렌더링한다', () => {
-    const layout = readFileSync(resolve(process.cwd(), 'app/layouts/default.vue'), 'utf8');
+  it('기본·관리자 레이아웃 모두 sidebar를 렌더링한다', () => {
+    const adminLayout = readFileSync(resolve(process.cwd(), 'app/layouts/admin.vue'), 'utf8');
+    const defaultLayout = readFileSync(resolve(process.cwd(), 'app/layouts/default.vue'), 'utf8');
 
-    expect(layout).toContain('<AppSidebar />');
-    expect(layout).toContain('<AdminInfoBlock class="text-white" />');
+    expect(adminLayout).toContain('<AppSidebar />');
+    expect(adminLayout).toContain('<AdminInfoBlock class="text-white" />');
+    expect(defaultLayout).toContain('<AppSidebar />');
   });
 
-  it('defines navigation items with suitable icons in the site configuration', () => {
-    expect(siteConfig.navigation.length).toBeGreaterThan(0);
+  it('프로젝트 메뉴만 정의하고 홈·전역 설정·소개 메뉴를 제공하지 않는다', () => {
+    expect(siteConfig.navigation).toEqual([
+      {
+        icon: 'lucide:folder-kanban',
+        label: '프로젝트',
+        to: '/projects',
+      },
+    ]);
+  });
 
-    for (const item of siteConfig.navigation) {
-      expect(item.icon).toBeTruthy();
-    }
+  it('/admin은 관리자 레이아웃을, /docs는 기본 레이아웃을 사용한다', () => {
+    const adminPage = readFileSync(resolve(process.cwd(), 'app/pages/admin/index.vue'), 'utf8');
+    const docsPage = readFileSync(resolve(process.cwd(), 'app/pages/docs/index.vue'), 'utf8');
+
+    expect(adminPage).toContain('definePageMeta({ layout: \'admin\', });');
+    expect(docsPage).toContain('definePageMeta({ layout: \'default\', });');
   });
 
   it('renders every configured navigation item and emits navigate', async () => {

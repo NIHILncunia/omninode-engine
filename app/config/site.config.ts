@@ -41,24 +41,9 @@ export const siteConfig: SiteConfig = {
   ],
   navigation: [
     {
-      icon: 'lucide:house',
-      label: '홈',
-      to: '/',
-    },
-    {
       icon: 'lucide:folder-kanban',
       label: '프로젝트',
       to: '/projects',
-    },
-    {
-      icon: 'lucide:settings',
-      label: '설정',
-      to: '/settings',
-    },
-    {
-      icon: 'lucide:circle-help',
-      label: '소개',
-      to: '/about',
     },
   ],
 } as const;
