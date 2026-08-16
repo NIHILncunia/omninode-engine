@@ -91,7 +91,7 @@ Run: `pnpm exec vitest run test/admin-info-block.test.ts test/app-sidebar.test.t
 
 Expected: 두 테스트 파일이 통과하고 공백 오류가 없다.
 
-- [ ] **Step 6: 완료 기록과 커밋을 작성한다.**
+- [x] **Step 6: 완료 기록과 커밋을 작성한다.**
 
 `TODO.md`는 단계 2.5의 실제 완료 항목이 없으므로 변경하지 않는다. 아래 파일만 명시적으로 stage하여 커밋한다.
 
