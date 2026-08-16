@@ -8,14 +8,6 @@ import type {
 
 function toRecord(row: typeof adminPermissionRequests.$inferSelect): AdminPermissionRequestRecord {
   return {
-    async list() {
-      const rows = await database.select().from(adminPermissionRequests).where(eq(
-        adminPermissionRequests.delYn,
-        'N',
-      )).orderBy(desc(adminPermissionRequests.id));
-      return rows.map(toRecord);
-    },
-
     id: row.id,
     email: row.email,
     name: row.name,
@@ -40,6 +32,14 @@ export function createAdminPermissionRequestRepository(database: DatabaseClient)
   };
 
   return {
+    async list() {
+      const rows = await database.select().from(adminPermissionRequests).where(eq(
+        adminPermissionRequests.delYn,
+        'N',
+      )).orderBy(desc(adminPermissionRequests.id));
+      return rows.map(toRecord);
+    },
+
     async findPendingByEmail(email) {
       const [
         row,
