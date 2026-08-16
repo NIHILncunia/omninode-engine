@@ -130,6 +130,23 @@ describe('admin permission request service', () => {
     })).rejects.toMatchObject({ code: 'CONFLICT', });
   });
 
+  it('does not accept a request for an email that already belongs to a deleted account', async () => {
+    const fixture = createDependencies();
+    fixture.admins.set('a@example.com', {
+      id: 1,
+      email: 'a@example.com',
+      delYn: 'Y',
+    });
+    const service = createAdminPermissionRequestService(fixture.dependencies);
+
+    await expect(service.submit({
+      email: 'a@example.com',
+      name: '가람',
+    })).rejects.toMatchObject({
+      code: 'CONFLICT',
+    });
+  });
+
   it('approves only a pending request and never returns its initial password', async () => {
     const fixture = createDependencies();
     const service = createAdminPermissionRequestService(fixture.dependencies);

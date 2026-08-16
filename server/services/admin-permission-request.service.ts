@@ -105,7 +105,7 @@ export function createAdminPermissionRequestService(dependencies: AdminPermissio
         dependencies.administrators.findByEmail(email),
       ]);
 
-      if (!email || !name || pending || existing?.delYn === 'N') {
+      if (!email || !name || pending || existing) {
         throw new ApiError(409, 'CONFLICT');
       }
 
