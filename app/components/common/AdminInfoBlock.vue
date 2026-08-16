@@ -26,4 +26,14 @@ const cssVariants = cva([
       <strong class="font-600">{{ admin.name }}</strong> ({{ admin.email }})
     </span>
   </div>
+  <ElButton
+    v-else
+    tag="NuxtLink"
+    to="/signin"
+    type="primary"
+    class="bg-stone-800! border-stone-700! text-white! shadow-md hover:bg-blue-500! hover:border-blue-500! focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900"
+  >
+    <UiIcon icon-name="lucide:settings" class="mr-1 size-4" />
+    관리자 로그인
+  </ElButton>
 </template>

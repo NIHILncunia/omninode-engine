@@ -37,7 +37,7 @@ describe('AdminInfoBlock', () => {
     expect(wrapper.text()).toContain('관리자');
   });
 
-  it('비로그인 상태에서는 관리자 정보를 렌더링하지 않는다', () => {
+  it('비로그인 상태에서는 관리자 로그인 버튼을 표시한다', () => {
     const auth = useAuthStore();
     auth.onSetUnauthenticated();
 
@@ -47,11 +47,27 @@ describe('AdminInfoBlock', () => {
           pinia,
         ],
         stubs: {
-          UiIcon: true,
+          ElButton: {
+            template: '<a :href="to"><slot /></a>',
+            props: [
+              'to',
+              'tag',
+            ],
+          },
+          UiIcon: {
+            template: '<i :data-icon-name="iconName" />',
+            props: [
+              'iconName',
+            ],
+          },
         },
       },
     });
 
-    expect(wrapper.find('div').exists()).toBe(false);
+    expect(wrapper.text()).toContain('관리자 로그인');
+    expect(wrapper.find('a').attributes('href')).toBe('/signin');
+    expect(wrapper.find('[data-icon-name="lucide:settings"]').exists()).toBe(true);
+    expect(wrapper.find('a').classes()).toContain('bg-stone-800!');
+    expect(wrapper.find('a').classes()).toContain('hover:bg-blue-500!');
   });
 });
