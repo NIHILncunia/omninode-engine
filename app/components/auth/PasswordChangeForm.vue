@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { cva } from 'class-variance-authority';
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { useAuthStore } from '~/stores/auth.store';
 import { cn } from '~/utils/cn';
 
 const auth = useAuthStore();
+const {
+  errorMessage,
+  isLoading,
+} = storeToRefs(auth);
+const { onChangePassword, } = auth;
 const currentPassword = ref('');
 const newPassword = ref('');
 
@@ -33,7 +39,7 @@ const onSubmitPasswordChange = async (): Promise<void> => {
     return;
   }
 
-  const changed = await auth.onChangePassword(currentPassword.value, newPassword.value);
+  const changed = await onChangePassword(currentPassword.value, newPassword.value);
 
   if (changed) {
     await navigateTo('/account');
@@ -54,8 +60,8 @@ const onSubmitPasswordChange = async (): Promise<void> => {
       </header>
 
       <ElAlert
-        v-if="auth.errorMessage"
-        :description="auth.errorMessage"
+        v-if="errorMessage"
+        :description="errorMessage"
         title="비밀번호를 변경하지 못했습니다."
         type="error"
         :closable="false"
@@ -87,11 +93,11 @@ const onSubmitPasswordChange = async (): Promise<void> => {
 
       <ElButton
         :disabled="newPassword.length < 8"
-        :loading="auth.isLoading"
+        :loading="isLoading"
         native-type="submit"
         type="primary"
       >
-        {{ auth.isLoading ? '변경 중입니다.' : '비밀번호 변경' }}
+        {{ isLoading ? '변경 중입니다.' : '비밀번호 변경' }}
       </ElButton>
     </ElForm>
   </section>

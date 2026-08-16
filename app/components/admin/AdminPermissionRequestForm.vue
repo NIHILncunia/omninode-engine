@@ -28,12 +28,13 @@ const cssVariants = cva([
   defaultVariants: {},
 });
 const requestStore = useAdminPermissionRequestStore();
+const { onSetSubmittedRequest, } = requestStore;
 const submitMutation = useMutation({
   mutationFn: (input: { email: string; name: string }) => $fetch<{ data: AdminPermissionRequestSummary }>('/api/admin-permission-requests', {
     method: 'POST',
     body: input,
   }),
-  onSuccess: response => requestStore.onSetSubmittedRequest(response.data),
+  onSuccess: response => onSetSubmittedRequest(response.data),
 });
 
 const onSubmitRequest = async (): Promise<void> => {

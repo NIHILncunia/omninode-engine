@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query';
 import { cva } from 'class-variance-authority';
+import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import type { AdministratorListResponse } from '~/types/administrator.types';
 import { adminRoleLabels } from '~/types/auth.types';
@@ -9,6 +10,11 @@ import { cn } from '~/utils/cn';
 
 const props = defineProps<{ class?: string }>();
 const administratorStore = useAdministratorStore();
+const {
+  list,
+  totalElements,
+} = storeToRefs(administratorStore);
+const { onSetList, } = administratorStore;
 const search = ref('');
 const appliedSearch = ref('');
 const page = ref(0);
@@ -41,13 +47,13 @@ const listQuery = useQuery({
   }),
 });
 watch(listQuery.data, response => {
-  administratorStore.onSetList({
+  onSetList({
     list: response?.data?.list ?? [
     ],
     totalElements: response?.data?.totalElements ?? 0,
   });
 }, { immediate: true, });
-const admins = computed(() => administratorStore.list);
+const admins = computed(() => list.value);
 
 const onSearchAdmin = (): void => {
   page.value = 0;
@@ -104,7 +110,7 @@ const onChangeAdminPage = (value: number): void => {
         layout="prev, pager, next, total"
         :current-page="page + 1"
         :page-size="pageSize"
-        :total="administratorStore.totalElements"
+        :total="totalElements"
         @current-change="onChangeAdminPage"
       />
     </template>

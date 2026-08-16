@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { cva } from 'class-variance-authority';
+import { storeToRefs } from 'pinia';
 import { computed, reactive, ref, watch } from 'vue';
 import type { ProjectAdministratorListResponse } from '~/types/administrator.types';
 import { useProjectAdminStore } from '~/stores/project-admin.store';
@@ -9,6 +10,8 @@ import { cn } from '~/utils/cn';
 const props = defineProps<{ projectId: number; class?: string }>();
 const emit = defineEmits<{ assigned: [] }>();
 const projectAdminStore = useProjectAdminStore();
+const { assignableByProject, } = storeToRefs(projectAdminStore);
+const { onSetAssignable, } = projectAdminStore;
 const queryClient = useQueryClient();
 const dialogVisible = ref(false);
 const selectedAdminId = ref<number>();
@@ -83,9 +86,9 @@ const availableQuery = useQuery({
   queryFn: () => $fetch<ProjectAdministratorListResponse>(`/api/projects/${props.projectId}/admins/available`, { credentials: 'include', }),
 });
 watch(availableQuery.data, response => {
-  if (response?.data) projectAdminStore.onSetAssignable(props.projectId, response.data);
+  if (response?.data) onSetAssignable(props.projectId, response.data);
 }, { immediate: true, });
-const availableAdmins = computed(() => projectAdminStore.assignableByProject[props.projectId] ?? [
+const availableAdmins = computed(() => assignableByProject.value[props.projectId] ?? [
 ]);
 const assignMutation = useMutation({
   mutationFn: () => $fetch(`/api/projects/${props.projectId}/admins`, {

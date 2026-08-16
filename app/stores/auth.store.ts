@@ -20,6 +20,25 @@ function hasAuthenticatedAdmin(response: AuthResponse): response is AuthResponse
   return !response.error && response.data !== null;
 }
 
+function getAuthenticatedAdmin(response: AuthResponse): AuthenticatedAdmin {
+  if (!hasAuthenticatedAdmin(response)) {
+    throw new Error('세션 정보를 확인할 수 없습니다.');
+  }
+
+  return response.data.admin;
+}
+
+function isUnauthorizedError(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null) {
+    return false;
+  }
+
+  const statusCode = 'statusCode' in error ? error.statusCode : undefined;
+  const status = 'status' in error ? error.status : undefined;
+
+  return statusCode === 401 || status === 401;
+}
+
 export const useAuthStore = defineStore('auth', () => {
   const status = ref<AuthStatus>('unknown');
   const admin = ref<AuthenticatedAdmin | null>(null);
@@ -50,23 +69,43 @@ export const useAuthStore = defineStore('auth', () => {
   const onRestoreSession = async (): Promise<boolean> => {
     isLoading.value = true;
     errorMessage.value = null;
+    const requestFetch = useRequestFetch();
 
     try {
-      const response = await $fetch<AuthResponse>('/api/auth/me', {
+      const response = await requestFetch<AuthResponse>('/api/auth/me', {
         credentials: 'include',
       });
 
-      if (!hasAuthenticatedAdmin(response)) {
-        throw new Error('세션 정보를 확인할 수 없습니다.');
-      }
-
-      onApplyAuthenticatedAdmin(response.data.admin);
+      onApplyAuthenticatedAdmin(getAuthenticatedAdmin(response));
 
       return true;
-    } catch {
-      onSetUnauthenticated();
+    } catch (error: unknown) {
+      if (!isUnauthorizedError(error)) {
+        throw error;
+      }
 
-      return false;
+      try {
+        await requestFetch<AuthResponse>('/api/auth/refresh', {
+          method: 'POST',
+          credentials: 'include',
+        });
+
+        const response = await requestFetch<AuthResponse>('/api/auth/me', {
+          credentials: 'include',
+        });
+
+        onApplyAuthenticatedAdmin(getAuthenticatedAdmin(response));
+
+        return true;
+      } catch (refreshError: unknown) {
+        if (!isUnauthorizedError(refreshError)) {
+          throw refreshError;
+        }
+
+        onSetUnauthenticated();
+
+        return false;
+      }
     } finally {
       isLoading.value = false;
     }

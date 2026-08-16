@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { cva } from 'class-variance-authority';
+import { storeToRefs } from 'pinia';
 import { computed, watch } from 'vue';
 import type { AdministratorResponse } from '~/types/administrator.types';
 import { adminRoleLabels } from '~/types/auth.types';
@@ -9,6 +10,8 @@ import { cn } from '~/utils/cn';
 
 const props = defineProps<{ adminId: number; class?: string }>();
 const administratorStore = useAdministratorStore();
+const { detailById, } = storeToRefs(administratorStore);
+const { onSetDetail, } = administratorStore;
 const queryClient = useQueryClient();
 const cssVariants = cva([
   'flex',
@@ -30,9 +33,9 @@ const detailQuery = useQuery({
   queryFn: () => $fetch<AdministratorResponse>(`/api/admins/${props.adminId}`, { credentials: 'include', }),
 });
 watch(detailQuery.data, response => {
-  if (response?.data) administratorStore.onSetDetail(response.data);
+  if (response?.data) onSetDetail(response.data);
 }, { immediate: true, });
-const admin = computed(() => administratorStore.detailById[props.adminId] ?? null);
+const admin = computed(() => detailById.value[props.adminId] ?? null);
 
 const onDeleteAdmin = async (): Promise<void> => {
   if (!confirm('이 관리자 계정을 삭제하시겠습니까?')) return;

@@ -1,11 +1,12 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import argon2 from 'argon2';
 import { jwtVerify, SignJWT } from 'jose';
 import { adminRoles, type AdminRole } from '../../app/types/auth.types';
-import type { AccessTokenPayload } from '../types/auth.types';
+import type { AccessTokenPayload, RefreshTokenPayload } from '../types/auth.types';
 
 const accessTokenIssuer = 'omninode';
-const accessTokenExpiration = '15m';
+const accessTokenExpiration = '1h';
+const refreshTokenExpiration = '7d';
 
 function toSecretKey(secret: string): Uint8Array {
   return new TextEncoder().encode(secret);
@@ -34,6 +35,20 @@ function toAccessTokenPayload(payload: Record<string, unknown>): AccessTokenPayl
     role: payload.role,
     passwordChangeRequired: payload.passwordChangeRequired,
   };
+}
+
+function toRefreshTokenPayload(payload: Record<string, unknown>): RefreshTokenPayload {
+  const adminId = Number(payload.sub);
+
+  if (
+    !Number.isSafeInteger(adminId)
+    || adminId < 1
+    || payload.tokenUse !== 'refresh'
+  ) {
+    throw new Error('리프레시 토큰 형식이 올바르지 않습니다.');
+  }
+
+  return { adminId, };
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -72,6 +87,28 @@ export async function verifyAccessToken(
   });
 
   return toAccessTokenPayload(payload);
+}
+
+export async function createRefreshToken(adminId: number, secret: string): Promise<string> {
+  return new SignJWT({ tokenUse: 'refresh', })
+    .setProtectedHeader({ alg: 'HS256', })
+    .setIssuer(accessTokenIssuer)
+    .setSubject(String(adminId))
+    .setJti(randomBytes(24).toString('base64url'))
+    .setIssuedAt()
+    .setExpirationTime(refreshTokenExpiration)
+    .sign(toSecretKey(secret));
+}
+
+export async function verifyRefreshToken(
+  refreshToken: string,
+  secret: string,
+): Promise<RefreshTokenPayload> {
+  const { payload, } = await jwtVerify(refreshToken, toSecretKey(secret), {
+    issuer: accessTokenIssuer,
+  });
+
+  return toRefreshTokenPayload(payload);
 }
 
 export function hashRefreshToken(refreshToken: string): string {

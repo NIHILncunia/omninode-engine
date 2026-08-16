@@ -1,8 +1,9 @@
-import type { RouteLocationNormalized } from 'vue-router';
+import type { AuthenticatedAdmin } from '../types/auth.types';
 import type { AuthStatus } from '../stores/auth.store';
 import { useAuthStore } from '../stores/auth.store';
 
 const publicPaths = new Set([
+  '/',
   '/signin',
   '/admin-permission-request',
   '/docs',
@@ -29,10 +30,19 @@ export const getAuthRedirect = (
   return null;
 };
 
-export default async (to: RouteLocationNormalized) => {
+export default defineNuxtRouteMiddleware(async to => {
   const auth = useAuthStore();
 
-  if (!publicPaths.has(to.path) && auth.status === 'unknown') {
+  if (import.meta.server) {
+    const authenticatedAdmin = useRequestEvent()?.context.authenticatedAdmin as AuthenticatedAdmin | undefined;
+
+    if (authenticatedAdmin) {
+      auth.onSetAuthenticated(
+        authenticatedAdmin.passwordChangeRequired,
+        authenticatedAdmin,
+      );
+    }
+  } else if (!publicPaths.has(to.path) && auth.status === 'unknown') {
     await auth.onRestoreSession();
   }
 
@@ -43,4 +53,4 @@ export default async (to: RouteLocationNormalized) => {
   );
 
   return redirect ? navigateTo(redirect) : undefined;
-};
+});

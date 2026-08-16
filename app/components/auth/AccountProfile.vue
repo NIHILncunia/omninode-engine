@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { cva } from 'class-variance-authority';
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from '~/stores/auth.store';
 import { cn } from '~/utils/cn';
 
 const auth = useAuthStore();
+const {
+  admin,
+  isLoading,
+  status,
+} = storeToRefs(auth);
+const { onSignOut, } = auth;
 
 const cssVariants = cva([
   'flex',
@@ -23,7 +30,7 @@ const cssVariants = cva([
 });
 
 const onClickSignOut = async (): Promise<void> => {
-  await auth.onSignOut();
+  await onSignOut();
   await navigateTo('/signin');
 };
 </script>
@@ -35,17 +42,17 @@ const onClickSignOut = async (): Promise<void> => {
       <p class="text-sm text-black-600">현재 로그인한 관리자 정보입니다.</p>
     </header>
 
-    <ElSkeleton v-if="auth.status === 'unknown'" :rows="3" animated />
+    <ElSkeleton v-if="status === 'unknown'" :rows="3" animated />
 
-    <template v-else-if="auth.admin">
+    <template v-else-if="admin">
       <ElDescriptions :column="1" border>
-        <ElDescriptionsItem label="이름">{{ auth.admin.name }}</ElDescriptionsItem>
-        <ElDescriptionsItem label="이메일">{{ auth.admin.email }}</ElDescriptionsItem>
-        <ElDescriptionsItem label="역할">{{ auth.admin.role }}</ElDescriptionsItem>
+        <ElDescriptionsItem label="이름">{{ admin.name }}</ElDescriptionsItem>
+        <ElDescriptionsItem label="이메일">{{ admin.email }}</ElDescriptionsItem>
+        <ElDescriptionsItem label="역할">{{ admin.role }}</ElDescriptionsItem>
       </ElDescriptions>
 
       <ElButton
-        :loading="auth.isLoading"
+        :loading="isLoading"
         plain
         type="info"
         @click="onClickSignOut"

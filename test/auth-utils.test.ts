@@ -1,13 +1,17 @@
 import { describe, expect, it } from 'vitest';
+import { decodeJwt } from 'jose';
 import {
   createAccessToken,
+  createRefreshToken,
   hashPassword,
   hashRefreshToken,
   verifyAccessToken,
+  verifyRefreshToken,
   verifyPassword,
 } from '../server/utils/auth';
 
 const accessTokenSecret = 'test-access-token-secret-that-is-long-enough';
+const refreshTokenSecret = 'test-refresh-token-secret-that-is-long-enough';
 
 describe('인증 유틸리티', () => {
   it('Argon2id로 비밀번호를 해시하고 검증한다', async () => {
@@ -32,6 +36,20 @@ describe('인증 유틸리티', () => {
       role: 'ADMIN',
       passwordChangeRequired: true,
     });
+
+    const payload = decodeJwt(accessToken);
+    expect(payload.exp).toBe((payload.iat ?? 0) + 60 * 60);
+  });
+
+  it('리프레시 JWT는 별도 secret과 7일 만료를 사용한다', async () => {
+    const refreshToken = await createRefreshToken(1, refreshTokenSecret);
+
+    await expect(verifyRefreshToken(refreshToken, refreshTokenSecret)).resolves.toEqual({ adminId: 1, });
+    await expect(verifyRefreshToken(refreshToken, accessTokenSecret)).rejects.toThrow();
+
+    const payload = decodeJwt(refreshToken);
+    expect(payload.tokenUse).toBe('refresh');
+    expect(payload.exp).toBe((payload.iat ?? 0) + 7 * 24 * 60 * 60);
   });
 
   it('리프레시 토큰은 결정론적 SHA-256 해시로 변환한다', () => {

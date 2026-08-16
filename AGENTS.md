@@ -100,6 +100,19 @@ const cssVariants = cva(
 - 상태는 페이지 지역 상태, composable 공유 상태, Pinia store 순서로 확장한다.
 - 서버 데이터 조회는 Vue Query로 수행하고, 조회 성공 데이터는 도메인별 `<domain>.store.ts` Pinia store에 동기화한다.
 - Pinia store는 도메인별로 나누고, UI 컴포넌트가 store 구현 세부 사항에 직접 의존하지 않게 한다.
+- UI 컴포넌트에서 Pinia store를 사용할 때 반응형 상태와 getter는 반드시 `storeToRefs(store)`에서 필요한 항목만 구조 분해한다. 액션은 원본 store에서 필요한 함수만 구조 분해한다. 템플릿·computed·watch·이벤트 함수에서 `store.member` 직접 접근을 사용하지 않는다.
+
+```ts
+const auth = useAuthStore();
+const {
+  admin,
+  isLoading,
+} = storeToRefs(auth);
+const {
+  onSignOut,
+} = auth;
+```
+
 - 서버 API는 `server/api/`에 두며, 입력 검증과 오류 응답 형식을 일관되게 유지한다.
 - `any`를 사용하지 않는다. API, 폼, 데이터 경계에는 명시적 타입과 검증을 둔다.
 

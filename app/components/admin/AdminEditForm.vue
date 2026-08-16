@@ -9,6 +9,7 @@ import { cn } from '~/utils/cn';
 
 const props = defineProps<{ adminId: number; class?: string }>();
 const administratorStore = useAdministratorStore();
+const { onSetDetail, } = administratorStore;
 const queryClient = useQueryClient();
 const form = reactive({
   name: '',
@@ -36,7 +37,7 @@ const detailQuery = useQuery({
 });
 watch(detailQuery.data, response => {
   if (response?.data) {
-    administratorStore.onSetDetail(response.data);
+    onSetDetail(response.data);
     form.name = response.data.name;
     form.role = response.data.role;
     form.useYn = response.data.useYn;

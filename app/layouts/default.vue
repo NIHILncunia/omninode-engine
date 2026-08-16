@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { siteConfig } from '#imports';
+
 const currentYear = DateTime.now().year;
 const copyrightYears = currentYear === siteConfig.site.startedYear
   ? String(siteConfig.site.startedYear)
@@ -7,17 +9,16 @@ const copyrightYears = currentYear === siteConfig.site.startedYear
 
 <template>
   <ElContainer class="dvh-100 overflow-hidden">
-    <ElHeader class="flex flex-row justify-between h-15! border-b border-b-black-300">
+    <ElHeader class="flex flex-row justify-between h-15! border-b border-b-black-300 bg-stone-900">
       <h1 class="flex flex-row gap-1 items-center justify-center">
         <UiImage
           :src="siteConfig.images.logo"
-          alt="로고 이미지"
+          alt="옴니노드 로고 이미지"
           loading="lazy"
-          width="40"
           height="40"
         />
-        <span class="text-md font-500">{{siteConfig.site.title}}</span>
       </h1>
+      <AdminInfoBlock class="text-white" />
     </ElHeader>
     <ElContainer>
       <ElAside class="border-r border-r-black-300">

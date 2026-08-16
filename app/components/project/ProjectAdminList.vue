@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { cva } from 'class-variance-authority';
+import { storeToRefs } from 'pinia';
 import { computed, watch } from 'vue';
 import type { ProjectAdministrator, ProjectAdministratorListResponse } from '~/types/administrator.types';
 import { useProjectAdminStore } from '~/stores/project-admin.store';
@@ -8,6 +9,8 @@ import { cn } from '~/utils/cn';
 
 const props = defineProps<{ projectId: number; revision?: number; class?: string }>();
 const projectAdminStore = useProjectAdminStore();
+const { assignedByProject, } = storeToRefs(projectAdminStore);
+const { onSetAssigned, } = projectAdminStore;
 const queryClient = useQueryClient();
 const cssVariants = cva([
   'flex',
@@ -27,10 +30,10 @@ const assignedQuery = useQuery({
   queryFn: () => $fetch<ProjectAdministratorListResponse>(`/api/projects/${props.projectId}/admins`, { credentials: 'include', }),
 });
 watch(assignedQuery.data, response => {
-  if (response?.data) projectAdminStore.onSetAssigned(props.projectId, response.data);
+  if (response?.data) onSetAssigned(props.projectId, response.data);
 }, { immediate: true, });
 watch(() => props.revision, async () => { await assignedQuery.refetch(); });
-const admins = computed(() => projectAdminStore.assignedByProject[props.projectId] ?? [
+const admins = computed(() => assignedByProject.value[props.projectId] ?? [
 ]);
 const removeMutation = useMutation({
   mutationFn: (adminId: number) => $fetch(`/api/projects/${props.projectId}/admins/${adminId}`, {

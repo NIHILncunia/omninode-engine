@@ -3,8 +3,8 @@ import type { H3Event } from 'h3';
 export const accessCookieName = 'omninode_access';
 export const refreshCookieName = 'omninode_refresh';
 
-const accessMaxAge = 15 * 60;
-const refreshMaxAge = 14 * 24 * 60 * 60;
+const accessMaxAge = 60 * 60;
+const refreshMaxAge = 7 * 24 * 60 * 60;
 const secureCookie = process.env.NODE_ENV === 'production';
 
 export function setAuthCookies(

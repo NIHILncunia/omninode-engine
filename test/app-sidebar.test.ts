@@ -12,13 +12,14 @@ describe('AppSidebar', () => {
     const layout = readFileSync(resolve(process.cwd(), 'app/layouts/default.vue'), 'utf8');
 
     expect(layout).toContain('<AppSidebar />');
+    expect(layout).toContain('<HeaderAuthenticatedAdmin />');
   });
 
-  it('defines navigation items in the site configuration', () => {
+  it('defines navigation items with suitable icons in the site configuration', () => {
     expect(siteConfig.navigation.length).toBeGreaterThan(0);
 
     for (const item of siteConfig.navigation) {
-      expect(item).not.toHaveProperty('icon');
+      expect(item.icon).toBeTruthy();
     }
   });
 

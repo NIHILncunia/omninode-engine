@@ -6,3 +6,7 @@ export interface AccessTokenPayload {
   role: AdminRole;
   passwordChangeRequired: boolean;
 }
+
+export interface RefreshTokenPayload {
+  adminId: number;
+}

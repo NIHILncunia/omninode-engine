@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { cva } from 'class-variance-authority';
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { useAuthStore } from '~/stores/auth.store';
 import { cn } from '~/utils/cn';
 
 const auth = useAuthStore();
+const {
+  errorMessage,
+  isLoading,
+  passwordChangeRequired,
+} = storeToRefs(auth);
+const { onSignin, } = auth;
 const email = ref('');
 const password = ref('');
 
@@ -29,15 +36,15 @@ const cssVariants = cva([
 });
 
 const onSubmitSignin = async (): Promise<void> => {
-  const signedIn = await auth.onSignin(email.value, password.value);
+  const signedIn = await onSignin(email.value, password.value);
 
   if (!signedIn) {
     return;
   }
 
-  await navigateTo(auth.passwordChangeRequired
+  await navigateTo(passwordChangeRequired.value
     ? '/account/password-change'
-    : '/account');
+    : '/admin');
 };
 </script>
 
@@ -54,8 +61,8 @@ const onSubmitSignin = async (): Promise<void> => {
       </header>
 
       <ElAlert
-        v-if="auth.errorMessage"
-        :description="auth.errorMessage"
+        v-if="errorMessage"
+        :description="errorMessage"
         title="로그인하지 못했습니다."
         type="error"
         :closable="false"
@@ -84,11 +91,11 @@ const onSubmitSignin = async (): Promise<void> => {
       </ElFormItem>
 
       <ElButton
-        :loading="auth.isLoading"
+        :loading="isLoading"
         native-type="submit"
         type="primary"
       >
-        {{ auth.isLoading ? '로그인 중입니다.' : '로그인' }}
+        {{ isLoading ? '로그인 중입니다.' : '로그인' }}
       </ElButton>
     </ElForm>
   </section>

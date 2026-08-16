@@ -70,14 +70,14 @@ describe('인증 API', () => {
       sameSite: 'lax',
       secure: false,
       path: '/',
-      maxAge: 900,
+      maxAge: 3600,
     });
     expect(setCookie).toHaveBeenNthCalledWith(2, event, 'omninode_refresh', 'refresh-token', {
       httpOnly: true,
       sameSite: 'lax',
       secure: false,
       path: '/api/auth',
-      maxAge: 1209600,
+      maxAge: 604800,
     });
   });
 

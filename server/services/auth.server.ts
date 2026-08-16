@@ -6,8 +6,8 @@ import { createAuthService, createDefaultAuthServiceDependencies } from './auth.
 export function getAuthService() {
   const runtimeConfig = useRuntimeConfig();
 
-  if (!runtimeConfig.jwtAccessSecret) {
-    throw new Error('JWT_ACCESS_SECRET is not set.');
+  if (!runtimeConfig.jwtAccessSecret || !runtimeConfig.jwtRefreshSecret) {
+    throw new Error('JWT_ACCESS_SECRET or JWT_REFRESH_SECRET is not set.');
   }
 
   const database = createDatabaseClient(runtimeConfig.databaseUrl);
@@ -18,5 +18,6 @@ export function getAuthService() {
     admins,
     refreshTokens,
     runtimeConfig.jwtAccessSecret,
+    runtimeConfig.jwtRefreshSecret,
   ));
 }

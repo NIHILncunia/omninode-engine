@@ -40,7 +40,7 @@ function createDependencies(): AuthServiceDependencies & {
     admins,
     refreshTokens,
     createAccessToken: vi.fn().mockResolvedValue('access-token'),
-    createRefreshToken: vi.fn().mockReturnValue('refresh-token'),
+    createRefreshToken: vi.fn().mockResolvedValue('refresh-token'),
     hashRefreshToken: vi.fn().mockReturnValue('refresh-token-hash'),
     hashPassword: vi.fn().mockResolvedValue('new-password-hash'),
     verifyPassword: vi.fn().mockResolvedValue(true),
@@ -50,6 +50,7 @@ function createDependencies(): AuthServiceDependencies & {
       role: activeAdmin.role,
       passwordChangeRequired: true,
     }),
+    verifyRefreshToken: vi.fn().mockResolvedValue({ adminId: activeAdmin.id, }),
     now: () => new Date('2026-08-15T00:00:00.000Z'),
   };
 }
@@ -74,10 +75,28 @@ describe('인증 서비스', () => {
     expect(dependencies.refreshTokens.create).toHaveBeenCalledWith({
       adminId: activeAdmin.id,
       tokenHash: 'refresh-token-hash',
-      expiresDate: new Date('2026-08-29T00:00:00.000Z'),
+      expiresDate: new Date('2026-08-22T00:00:00.000Z'),
       deviceInfo: 'test-device',
     });
+    expect(dependencies.createRefreshToken).toHaveBeenCalledWith(activeAdmin.id);
     expect(dependencies.admins.updateLastSignInDate).toHaveBeenCalledWith(activeAdmin.id, new Date('2026-08-15T00:00:00.000Z'));
+  });
+
+  it('SUPER_ADMIN은 비밀번호 변경 요구값을 무시하고 로그인한다', async () => {
+    const dependencies = createDependencies();
+    const superAdmin = {
+      ...activeAdmin,
+      role: 'SUPER_ADMIN' as const,
+    };
+    vi.mocked(dependencies.admins.findByEmail).mockResolvedValue(superAdmin);
+    const authService = createAuthService(dependencies);
+
+    await expect(authService.signin({
+      email: superAdmin.email,
+      password: 'password123',
+    })).resolves.toMatchObject({
+      admin: { passwordChangeRequired: false, },
+    });
   });
 
   it('비활성 또는 삭제 관리자의 로그인 실패 사유를 UNAUTHORIZED로 통일한다', async () => {
@@ -114,8 +133,24 @@ describe('인증 서비스', () => {
       previousTokenId: 10,
       adminId: activeAdmin.id,
       tokenHash: 'refresh-token-hash',
-      expiresDate: new Date('2026-08-29T00:00:00.000Z'),
+      expiresDate: new Date('2026-08-22T00:00:00.000Z'),
       deviceInfo: undefined,
+    });
+  });
+
+  it('refresh JWT subject와 DB token 관리자가 다르면 거부한다', async () => {
+    const dependencies = createDependencies();
+    vi.mocked(dependencies.verifyRefreshToken).mockResolvedValue({ adminId: 2, });
+    vi.mocked(dependencies.refreshTokens.findActiveByTokenHash).mockResolvedValue({
+      id: 10,
+      adminId: activeAdmin.id,
+      expiresDate: new Date('2026-08-20T00:00:00.000Z'),
+    });
+    const authService = createAuthService(dependencies);
+
+    await expect(authService.refresh({ refreshToken: 'old-refresh-token', })).rejects.toMatchObject<ApiError>({
+      statusCode: 401,
+      code: 'UNAUTHORIZED',
     });
   });
 

@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { cva } from 'class-variance-authority';
+import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { useAdminPermissionRequestStore, type AdminPermissionRequestSummary } from '~/stores/admin-permission-request.store';
 import { cn } from '~/utils/cn';
 
 const props = defineProps<{ class?: string }>();
 const requestStore = useAdminPermissionRequestStore();
+const { requests, } = storeToRefs(requestStore);
+const { onSetRequests, } = requestStore;
 const queryClient = useQueryClient();
 const selectedRequest = ref<AdminPermissionRequestSummary | null>(null);
 const dialogVisible = ref(false);
@@ -28,7 +31,7 @@ const listQuery = useQuery({
   queryFn: () => $fetch<{ data: AdminPermissionRequestSummary[] }>('/api/admin-permission-requests', { credentials: 'include', }),
 });
 watch(listQuery.data, response => {
-  if (response?.data) requestStore.onSetRequests(response.data);
+  if (response?.data) onSetRequests(response.data);
 }, { immediate: true, });
 const reviewMutation = useMutation({
   mutationFn: (input: { requestId: number; action: 'approve' | 'reject' | 'resend'; reason?: string }) => {
@@ -71,8 +74,8 @@ const onReview = async (action: 'approve' | 'reject' | 'resend'): Promise<void> 
     </header>
     <LoadingState v-if="listQuery.isPending.value" />
     <ErrorState v-else-if="listQuery.isError.value" description="권한 요청 목록을 불러오지 못했습니다." />
-    <EmptyState v-else-if="requestStore.requests.length === 0" description="대기 중인 권한 요청이 없습니다." />
-    <ElTable v-else :data="requestStore.requests" border>
+    <EmptyState v-else-if="requests.length === 0" description="대기 중인 권한 요청이 없습니다." />
+    <ElTable v-else :data="requests" border>
       <ElTableColumn prop="name" label="닉네임" />
       <ElTableColumn prop="email" label="이메일" />
       <ElTableColumn prop="status" label="상태" />

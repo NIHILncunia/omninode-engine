@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { cva } from 'class-variance-authority';
+import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { siteConfig } from '~/config/site.config';
 import { useAuthStore } from '~/stores/auth.store';
@@ -10,7 +11,8 @@ const props = defineProps<{
   class?: string;
 }>();
 const auth = useAuthStore();
-const navigationItems = computed(() => auth.admin?.role === 'SUPER_ADMIN'
+const { admin, } = storeToRefs(auth);
+const navigationItems = computed(() => admin.value?.role === 'SUPER_ADMIN'
   ? [
     ...siteConfig.navigation,
     {
@@ -60,9 +62,9 @@ const onNavigate = (item: NavigationItem): void => {
           class="flex items-center gap-2"
           @click="onNavigate(item)"
         >
-          <Icon
+          <UiIcon
             v-if="item.icon"
-            :name="item.icon"
+            :icon-name="item.icon"
           />
           <span>{{ item.label }}</span>
         </NuxtLink>

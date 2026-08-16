@@ -1,16 +1,17 @@
-import { randomBytes } from 'node:crypto';
 import type { AuthenticatedAdmin } from '../../app/types/auth.types';
-import type { AccessTokenPayload } from '../types/auth.types';
+import type { AccessTokenPayload, RefreshTokenPayload } from '../types/auth.types';
 import {
   createAccessToken as createAccessTokenValue,
+  createRefreshToken as createRefreshTokenValue,
   hashPassword as hashPasswordValue,
   hashRefreshToken as hashRefreshTokenValue,
   verifyAccessToken as verifyAccessTokenValue,
+  verifyRefreshToken as verifyRefreshTokenValue,
   verifyPassword as verifyPasswordValue,
 } from '../utils/auth';
 import { ApiError } from '../utils/api-error';
 
-const refreshTokenDurationMilliseconds = 14 * 24 * 60 * 60 * 1000;
+const refreshTokenDurationMilliseconds = 7 * 24 * 60 * 60 * 1000;
 
 export interface AdminAuthenticationRecord extends AuthenticatedAdmin {
   passwordHash: string;
@@ -55,7 +56,8 @@ export interface AuthServiceDependencies {
   admins: AdminRepository;
   refreshTokens: AdminRefreshTokenRepository;
   createAccessToken: (payload: AccessTokenPayload) => Promise<string>;
-  createRefreshToken: () => string;
+  createRefreshToken: (adminId: number) => Promise<string>;
+  verifyRefreshToken: (refreshToken: string) => Promise<RefreshTokenPayload>;
   hashRefreshToken: (refreshToken: string) => string;
   hashPassword: (password: string) => Promise<string>;
   verifyPassword: (passwordHash: string, password: string) => Promise<boolean>;
@@ -101,7 +103,7 @@ function toAuthenticatedAdmin(admin: AdminAuthenticationRecord): AuthenticatedAd
     email: admin.email,
     name: admin.name,
     role: admin.role,
-    passwordChangeRequired: admin.passwordChangeRequiredYn === 'Y',
+    passwordChangeRequired: admin.role !== 'SUPER_ADMIN' && admin.passwordChangeRequiredYn === 'Y',
   };
 }
 
@@ -113,7 +115,7 @@ export function createAuthService(dependencies: AuthServiceDependencies) {
   ): Promise<AuthSession> => {
     const authenticatedAdmin = toAuthenticatedAdmin(admin);
     const now = dependencies.now();
-    const refreshToken = dependencies.createRefreshToken();
+    const refreshToken = await dependencies.createRefreshToken(admin.id);
     const refreshTokenInput: CreateRefreshTokenInput = {
       adminId: admin.id,
       tokenHash: dependencies.hashRefreshToken(refreshToken),
@@ -163,12 +165,23 @@ export function createAuthService(dependencies: AuthServiceDependencies) {
 
     async refresh(input: RefreshInput): Promise<AuthSession> {
       const now = dependencies.now();
+      let refreshPayload: RefreshTokenPayload;
+
+      try {
+        refreshPayload = await dependencies.verifyRefreshToken(input.refreshToken);
+      } catch {
+        throw createUnauthorizedError();
+      }
       const refreshToken = await dependencies.refreshTokens.findActiveByTokenHash(
         dependencies.hashRefreshToken(input.refreshToken),
         now,
       );
 
       if (!refreshToken) {
+        throw createUnauthorizedError();
+      }
+
+      if (refreshPayload.adminId !== refreshToken.adminId) {
         throw createUnauthorizedError();
       }
 
@@ -232,16 +245,18 @@ export function createDefaultAuthServiceDependencies(
   admins: AdminRepository,
   refreshTokens: AdminRefreshTokenRepository,
   accessTokenSecret: string,
+  refreshTokenSecret: string,
 ): AuthServiceDependencies {
   return {
     admins,
     refreshTokens,
     createAccessToken: payload => createAccessTokenValue(payload, accessTokenSecret),
-    createRefreshToken: () => randomBytes(48).toString('base64url'),
+    createRefreshToken: adminId => createRefreshTokenValue(adminId, refreshTokenSecret),
     hashRefreshToken: hashRefreshTokenValue,
     hashPassword: hashPasswordValue,
     verifyPassword: verifyPasswordValue,
     verifyAccessToken: accessToken => verifyAccessTokenValue(accessToken, accessTokenSecret),
+    verifyRefreshToken: refreshToken => verifyRefreshTokenValue(refreshToken, refreshTokenSecret),
     now: () => new Date(),
   };
 }
