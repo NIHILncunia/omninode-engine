@@ -14,6 +14,7 @@ describe('project permission service', () => {
       };
       return undefined;
     },
+    hasActiveProjectAssignment: async () => true,
     findActiveProjectPermission: async (projectId, adminId, code) => (
       projectId === 10 && adminId === 2 && code === 'world.create' ? 'Y' : 'N'
     ),
@@ -28,6 +29,23 @@ describe('project permission service', () => {
     await expect(service.can({
       adminId: 2,
       projectId: 11,
+      permission: 'world.create',
+    })).resolves.toBe(false);
+  });
+
+  it('does not authorize a permission when the project assignment is inactive', async () => {
+    const service = createPermissionService({
+      findActiveAdmin: async () => ({
+        id: 2,
+        role: 'ADMIN',
+      }),
+      hasActiveProjectAssignment: async () => false,
+      findActiveProjectPermission: async () => 'Y',
+    });
+
+    await expect(service.can({
+      adminId: 2,
+      projectId: 10,
       permission: 'world.create',
     })).resolves.toBe(false);
   });

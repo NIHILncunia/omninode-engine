@@ -41,6 +41,7 @@ export interface PermissionAdminRecord {
 
 export interface PermissionServiceDependencies {
   findActiveAdmin(adminId: number): Promise<PermissionAdminRecord | undefined>;
+  hasActiveProjectAssignment(projectId: number, adminId: number): Promise<boolean>;
   findActiveProjectPermission(projectId: number, adminId: number, code: PermissionCode): Promise<PermissionGrant | undefined>;
 }
 

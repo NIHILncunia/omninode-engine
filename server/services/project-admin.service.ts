@@ -75,7 +75,7 @@ export function createProjectAdminService(dependencies: ProjectAdminServiceDepen
       await requireProjectPermission(dependencies, actorAdminId, projectId, 'project_sub_admin.expel');
       const assignment = await dependencies.permissionRepository.findProjectAssignment(projectId, adminId);
       if (!assignment || assignment.delYn === 'Y') throw new ApiError(404, 'NOT_FOUND');
-      await dependencies.permissionRepository.softDeleteProjectAssignment(projectId, adminId, actorAdminId, dependencies.now());
+      await dependencies.permissionRepository.softDeleteProjectAdminWithPermissions(projectId, adminId, actorAdminId, dependencies.now());
     },
   };
 }

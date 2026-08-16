@@ -25,6 +25,7 @@ export function createPermissionService(
     }
 
     if (input.projectId === undefined) return false;
+    if (!await dependencies.hasActiveProjectAssignment(input.projectId, input.adminId)) return false;
     return (await dependencies.findActiveProjectPermission(input.projectId, input.adminId, input.permission)) === 'Y';
   };
 

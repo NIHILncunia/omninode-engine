@@ -69,6 +69,18 @@ export function createPermissionRepository(database: DatabaseClient): Permission
       return row?.grantYn;
     },
 
+    async hasActiveProjectAssignment(projectId, adminId) {
+      const [
+        row,
+      ] = await database.select({ id: projectAdmins.id, }).from(projectAdmins).where(and(
+        eq(projectAdmins.projectId, projectId),
+        eq(projectAdmins.adminId, adminId),
+        eq(projectAdmins.useYn, 'Y'),
+        eq(projectAdmins.delYn, 'N'),
+      )).limit(1);
+      return row !== undefined;
+    },
+
     async listPermissionMasters() {
       const rows = await database.select({
         id: permissions.id,
@@ -164,19 +176,33 @@ export function createPermissionRepository(database: DatabaseClient): Permission
       ));
     },
 
-    async softDeleteProjectAssignment(projectId, adminId, actorAdminId, now) {
-      await database.update(projectAdmins).set({
-        useYn: 'N',
-        delYn: 'Y',
-        deleteId: actorAdminId,
-        deleteDate: now,
-        updateId: actorAdminId,
-        updateDate: now,
-      }).where(and(
-        eq(projectAdmins.projectId, projectId),
-        eq(projectAdmins.adminId, adminId),
-        eq(projectAdmins.delYn, 'N'),
-      ));
+    async softDeleteProjectAdminWithPermissions(projectId, adminId, actorAdminId, now) {
+      await database.transaction(async transaction => {
+        await transaction.update(projectAdmins).set({
+          useYn: 'N',
+          delYn: 'Y',
+          deleteId: actorAdminId,
+          deleteDate: now,
+          updateId: actorAdminId,
+          updateDate: now,
+        }).where(and(
+          eq(projectAdmins.projectId, projectId),
+          eq(projectAdmins.adminId, adminId),
+          eq(projectAdmins.delYn, 'N'),
+        ));
+        await transaction.update(adminPermissions).set({
+          useYn: 'N',
+          delYn: 'Y',
+          deleteId: actorAdminId,
+          deleteDate: now,
+          updateId: actorAdminId,
+          updateDate: now,
+        }).where(and(
+          eq(adminPermissions.projectId, projectId),
+          eq(adminPermissions.adminId, adminId),
+          eq(adminPermissions.delYn, 'N'),
+        ));
+      });
     },
 
     async assignProjectAdmin(input) {
