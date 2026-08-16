@@ -22,7 +22,11 @@ async function requireProjectPermission(
   projectId: number,
   permission: 'project_sub_admin.invite' | 'project_sub_admin.update' | 'project_sub_admin.expel',
 ): Promise<void> {
-  if (!await dependencies.permissionService.can({ adminId: actorAdminId, projectId, permission, })) {
+  if (!await dependencies.permissionService.can({
+    adminId: actorAdminId,
+    projectId,
+    permission,
+  })) {
     throw new ApiError(404, 'NOT_FOUND');
   }
 }
@@ -32,6 +36,23 @@ export function createProjectAdminService(dependencies: ProjectAdminServiceDepen
     async list(actorAdminId: number, projectId: number): Promise<ProjectAdminSummary[]> {
       await requireProjectPermission(dependencies, actorAdminId, projectId, 'project_sub_admin.update');
       return dependencies.permissionRepository.listProjectAdmins(projectId);
+    },
+
+    async listAssignable(actorAdminId: number, projectId: number): Promise<ProjectAdminSummary[]> {
+      await requireProjectPermission(dependencies, actorAdminId, projectId, 'project_sub_admin.invite');
+      const result = await dependencies.administrators.list({
+        page: 0,
+        pageSize: 100,
+      });
+      return result.list.filter(admin => admin.role === 'ADMIN' && admin.useYn === 'Y').map(admin => ({
+        adminId: admin.id,
+        email: admin.email,
+        name: admin.name,
+        role: admin.role,
+        accountUseYn: admin.useYn,
+        assignmentUseYn: 'N',
+        assignedDate: admin.createDate,
+      }));
     },
 
     async assign(input: AssignProjectAdminInput): Promise<void> {
@@ -44,7 +65,10 @@ export function createProjectAdminService(dependencies: ProjectAdminServiceDepen
       if (permissionCodes.some(code => input.grants[code] !== 'Y' && input.grants[code] !== 'N')) {
         throw new ApiError(400, 'BAD_REQUEST');
       }
-      await dependencies.permissionRepository.assignProjectAdmin({ ...input, now: dependencies.now(), });
+      await dependencies.permissionRepository.assignProjectAdmin({
+        ...input,
+        now: dependencies.now(),
+      });
     },
 
     async remove(actorAdminId: number, projectId: number, adminId: number): Promise<void> {
@@ -61,5 +85,10 @@ export function createDefaultProjectAdminServiceDependencies(
   permissionRepository: PermissionRepository,
   permissionService: PermissionService,
 ): ProjectAdminServiceDependencies {
-  return { administrators, permissionRepository, permissionService, now: () => new Date(), };
+  return {
+    administrators,
+    permissionRepository,
+    permissionService,
+    now: () => new Date(),
+  };
 }
