@@ -9,14 +9,6 @@ import type {
 
 interface RequestAdministratorRepository {
   findByEmail(email: string): Promise<{ id: number; email: string; delYn: 'Y' | 'N' } | undefined>;
-  insert(input: {
-    email: string;
-    name: string;
-    role: Exclude<AdminRole, 'SUPER_ADMIN'>;
-    passwordHash: string;
-    actorAdminId: number;
-    now: Date;
-  }): Promise<unknown>;
   resetTemporaryPassword(adminId: number, passwordHash: string, actorAdminId: number, now: Date): Promise<void>;
 }
 
@@ -105,7 +97,7 @@ export function createAdminPermissionRequestService(dependencies: AdminPermissio
         dependencies.administrators.findByEmail(email),
       ]);
 
-      if (!email || !name || pending || existing) {
+      if (!email || !name || pending || existing?.delYn === 'N') {
         throw new ApiError(409, 'CONFLICT');
       }
 
@@ -129,29 +121,21 @@ export function createAdminPermissionRequestService(dependencies: AdminPermissio
         throw new ApiError(409, 'CONFLICT');
       }
 
-      const existing = await dependencies.administrators.findByEmail(request.email);
-      if (existing?.delYn === 'N') {
-        throw new ApiError(409, 'CONFLICT');
-      }
-
       const password = dependencies.createTemporaryPassword();
       const now = dependencies.now();
-      await dependencies.administrators.insert({
-        email: request.email,
-        name: request.name,
-        role: 'ADMIN',
+      const result = await dependencies.requests.approveAndProvisionAdmin({
+        requestId: input.requestId,
         passwordHash: await dependencies.hashPassword(password),
         actorAdminId: input.actorAdminId,
         now,
       });
-      const approved = await dependencies.requests.markApproved(input.requestId, input.actorAdminId, now);
 
-      if (!approved) {
+      if (result.status !== 'APPROVED') {
         throw new ApiError(409, 'CONFLICT');
       }
 
-      await deliverInitialPassword(approved, password);
-      return toSummary((await dependencies.requests.findById(input.requestId)) ?? approved);
+      await deliverInitialPassword(result.request, password);
+      return toSummary((await dependencies.requests.findById(input.requestId)) ?? result.request);
     },
 
     async reject(input: { actorAdminId: number; requestId: number; reason: string }): Promise<AdminPermissionRequestSummary> {

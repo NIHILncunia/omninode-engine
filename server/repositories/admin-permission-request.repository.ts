@@ -1,6 +1,6 @@
 import { and, desc, eq } from 'drizzle-orm';
 import type { DatabaseClient } from '../db/client';
-import { adminPermissionRequests } from '../db/schema/postgresql';
+import { adminPermissionRequests, admins } from '../db/schema/postgresql';
 import type {
   AdminPermissionRequestRecord,
   AdminPermissionRequestRepository,
@@ -67,21 +67,79 @@ export function createAdminPermissionRequestRepository(database: DatabaseClient)
       return toRecord(row);
     },
 
-    async markApproved(requestId, actorAdminId, now) {
-      const [
-        row,
-      ] = await database.update(adminPermissionRequests).set({
-        status: 'APPROVED',
-        reviewedByAdminId: actorAdminId,
-        reviewedDate: now,
-        updateId: actorAdminId,
-        updateDate: now,
-      }).where(and(
-        eq(adminPermissionRequests.id, requestId),
-        eq(adminPermissionRequests.status, 'PENDING'),
-        eq(adminPermissionRequests.delYn, 'N'),
-      )).returning();
-      return row ? toRecord(row) : undefined;
+    async approveAndProvisionAdmin(input) {
+      return database.transaction(async transaction => {
+        const [
+          request,
+        ] = await transaction.select().from(adminPermissionRequests).where(and(
+          eq(adminPermissionRequests.id, input.requestId),
+          eq(adminPermissionRequests.status, 'PENDING'),
+          eq(adminPermissionRequests.delYn, 'N'),
+        )).for('update').limit(1);
+
+        if (!request) {
+          return { status: 'REQUEST_NOT_PENDING' as const, };
+        }
+
+        const [
+          existingAdmin,
+        ] = await transaction.select().from(admins).where(eq(admins.email, request.email)).limit(1);
+
+        if (existingAdmin?.delYn === 'N') {
+          return { status: 'ACTIVE_ADMIN_EXISTS' as const, };
+        }
+
+        if (existingAdmin) {
+          await transaction.update(admins).set({
+            name: request.name,
+            role: 'ADMIN',
+            passwordHash: input.passwordHash,
+            passwordChangeRequiredYn: 'Y',
+            passwordChangeRequiredDate: input.now,
+            useYn: 'Y',
+            delYn: 'N',
+            deleteId: null,
+            deleteDate: null,
+            updateId: input.actorAdminId,
+            updateDate: input.now,
+          }).where(and(
+            eq(admins.id, existingAdmin.id),
+            eq(admins.delYn, 'Y'),
+          ));
+        } else {
+          await transaction.insert(admins).values({
+            email: request.email,
+            name: request.name,
+            role: 'ADMIN',
+            passwordHash: input.passwordHash,
+            passwordChangeRequiredYn: 'Y',
+            passwordChangeRequiredDate: input.now,
+            createId: input.actorAdminId,
+            updateId: input.actorAdminId,
+            createDate: input.now,
+            updateDate: input.now,
+          });
+        }
+
+        const [
+          approved,
+        ] = await transaction.update(adminPermissionRequests).set({
+          status: 'APPROVED',
+          reviewedByAdminId: input.actorAdminId,
+          reviewedDate: input.now,
+          updateId: input.actorAdminId,
+          updateDate: input.now,
+        }).where(eq(adminPermissionRequests.id, input.requestId)).returning();
+
+        if (!approved) {
+          throw new Error('관리자 권한 요청 승인 결과를 확인할 수 없습니다.');
+        }
+
+        return {
+          status: 'APPROVED' as const,
+          request: toRecord(approved),
+        };
+      });
     },
 
     async markRejected(requestId, actorAdminId, reason, now) {

@@ -26,12 +26,29 @@ export interface AdminPermissionRequestSummary {
   credentialDeliveryStatus: 'PENDING' | 'DELIVERED' | 'FAILED';
 }
 
+export type AdminPermissionRequestApprovalResult =
+  | {
+    status: 'APPROVED';
+    request: AdminPermissionRequestRecord;
+  }
+  | {
+    status: 'ACTIVE_ADMIN_EXISTS';
+  }
+  | {
+    status: 'REQUEST_NOT_PENDING';
+  };
+
 export interface AdminPermissionRequestRepository {
   list(): Promise<AdminPermissionRequestRecord[]>;
   findPendingByEmail(email: string): Promise<AdminPermissionRequestRecord | undefined>;
   findById(requestId: number): Promise<AdminPermissionRequestRecord | undefined>;
   insert(input: { email: string; name: string; now: Date }): Promise<AdminPermissionRequestRecord>;
-  markApproved(requestId: number, actorAdminId: number, now: Date): Promise<AdminPermissionRequestRecord | undefined>;
+  approveAndProvisionAdmin(input: {
+    requestId: number;
+    actorAdminId: number;
+    passwordHash: string;
+    now: Date;
+  }): Promise<AdminPermissionRequestApprovalResult>;
   markRejected(requestId: number, actorAdminId: number, reason: string, now: Date): Promise<AdminPermissionRequestRecord | undefined>;
   markCredentialDelivered(requestId: number, now: Date): Promise<void>;
   markCredentialDeliveryFailed(requestId: number, now: Date): Promise<void>;

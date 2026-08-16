@@ -51,13 +51,33 @@ function createDependencies() {
         async findById(requestId: number) {
           return requests.get(requestId);
         },
-        async markApproved(requestId: number, actorAdminId: number, at: Date) {
-          const request = requests.get(requestId);
-          if (!request || request.status !== 'PENDING') return undefined;
+        async approveAndProvisionAdmin(input: {
+          requestId: number;
+          actorAdminId: number;
+          passwordHash: string;
+          now: Date;
+        }) {
+          const request = requests.get(input.requestId);
+          if (!request || request.status !== 'PENDING') {
+            return { status: 'REQUEST_NOT_PENDING' as const, };
+          }
+          const existing = admins.get(request.email);
+          if (existing?.delYn === 'N') {
+            return { status: 'ACTIVE_ADMIN_EXISTS' as const, };
+          }
+          const admin = {
+            id: existing?.id ?? admins.size + 1,
+            email: request.email,
+            delYn: 'N' as const,
+          };
+          admins.set(request.email, admin);
           request.status = 'APPROVED';
-          request.reviewedByAdminId = actorAdminId;
-          request.reviewedDate = at;
-          return request;
+          request.reviewedByAdminId = input.actorAdminId;
+          request.reviewedDate = input.now;
+          return {
+            status: 'APPROVED' as const,
+            request,
+          };
         },
         async markRejected(requestId: number, actorAdminId: number, reason: string, at: Date) {
           const request = requests.get(requestId);
@@ -130,7 +150,7 @@ describe('admin permission request service', () => {
     })).rejects.toMatchObject({ code: 'CONFLICT', });
   });
 
-  it('does not accept a request for an email that already belongs to a deleted account', async () => {
+  it('restores a deleted ADMIN when a new request is approved', async () => {
     const fixture = createDependencies();
     fixture.admins.set('a@example.com', {
       id: 1,
@@ -139,12 +159,18 @@ describe('admin permission request service', () => {
     });
     const service = createAdminPermissionRequestService(fixture.dependencies);
 
-    await expect(service.submit({
+    const request = await service.submit({
       email: 'a@example.com',
       name: '가람',
-    })).rejects.toMatchObject({
-      code: 'CONFLICT',
     });
+
+    await expect(service.approve({
+      actorAdminId: 99,
+      requestId: request.id,
+    })).resolves.toMatchObject({
+      status: 'APPROVED',
+    });
+    expect(fixture.admins.get('a@example.com')?.delYn).toBe('N');
   });
 
   it('approves only a pending request and never returns its initial password', async () => {
