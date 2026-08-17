@@ -27,7 +27,8 @@ interface DocumentEditorFormModel {
 
 const route = useRoute();
 const deleteDialogVisible = ref(false);
-const saveFeedback = ref('아직 저장 준비를 실행하지 않았습니다.');
+const initialSaveFeedback = '아직 저장 준비를 실행하지 않았습니다.';
+const saveFeedback = ref(initialSaveFeedback);
 
 const cssVariants = cva(
   [
@@ -65,30 +66,34 @@ const templates = computed(() => uiFixture.templates.filter((template) => templa
 const findTemplateForCategory = (categoryId: string | undefined): UiFixtureTemplate | undefined => templates.value.find((template) => template.categoryId === categoryId)
   ?? templates.value[0];
 
-const defaultCategoryId = computed(() => currentDocument.value?.categoryId ?? categories.value[0]?.id ?? '');
-const defaultTemplateId = computed(() => findTemplateForCategory(defaultCategoryId.value)?.id ?? '');
+const buildInitialFormState = (document: UiFixtureDocument | null): DocumentEditorFormModel => ({
+  title: document?.title ?? '',
+  categoryId: document?.categoryId ?? categories.value[0]?.id ?? '',
+  templateId: findTemplateForCategory(document?.categoryId ?? categories.value[0]?.id ?? '')?.id ?? '',
+  status: document?.status ?? 'DRAFT',
+  shouldExposeAfterReview: document?.status === 'PUBLIC',
+  summary: document
+    ? `${document.title} 문서의 요약 초안을 로컬 fixture 기반으로 검토합니다.`
+    : '',
+});
+
+const applyFormState = (nextState: DocumentEditorFormModel): void => {
+  form.title = nextState.title;
+  form.categoryId = nextState.categoryId;
+  form.templateId = nextState.templateId;
+  form.status = nextState.status;
+  form.shouldExposeAfterReview = nextState.shouldExposeAfterReview;
+  form.summary = nextState.summary;
+};
 
 const form = reactive<DocumentEditorFormModel>({
-  title: currentDocument.value?.title ?? '',
-  categoryId: defaultCategoryId.value,
-  templateId: defaultTemplateId.value,
-  status: currentDocument.value?.status ?? 'DRAFT',
-  shouldExposeAfterReview: currentDocument.value?.status === 'PUBLIC',
-  summary: currentDocument.value
-    ? `${currentDocument.value.title} 문서의 요약 초안을 로컬 fixture 기반으로 검토합니다.`
-    : '',
+  ...buildInitialFormState(currentDocument.value),
 });
 
 watch(
   () => currentDocument.value,
   (document) => {
-    form.title = document?.title ?? '';
-    form.categoryId = document?.categoryId ?? categories.value[0]?.id ?? '';
-    form.status = document?.status ?? 'DRAFT';
-    form.shouldExposeAfterReview = document?.status === 'PUBLIC';
-    form.summary = document
-      ? `${document.title} 문서의 요약 초안을 로컬 fixture 기반으로 검토합니다.`
-      : '';
+    applyFormState(buildInitialFormState(document));
   },
   {
     immediate: true,
@@ -169,6 +174,12 @@ const onSaveDocument = (): void => {
   const timestamp = DateTime.now().toFormat('yyyy.MM.dd HH:mm');
 
   saveFeedback.value = `저장 준비: ${timestamp} · 로컬 UI 상태만 갱신되었습니다.`;
+};
+
+const onCancelEditing = (): void => {
+  applyFormState(buildInitialFormState(currentDocument.value));
+  saveFeedback.value = initialSaveFeedback;
+  deleteDialogVisible.value = false;
 };
 
 const onOpenDeleteDialog = (): void => {
@@ -320,6 +331,14 @@ const onCloseDeleteDialog = (): void => {
           @click="onSaveDocument"
         >
           저장 준비
+        </ElButton>
+
+        <ElButton
+          plain
+          data-testid="document-cancel"
+          @click="onCancelEditing"
+        >
+          취소
         </ElButton>
 
         <ElButton

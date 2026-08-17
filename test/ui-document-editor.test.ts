@@ -65,6 +65,70 @@ describe('UI-2 문서 편집', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  it('취소 버튼은 edit/create 모두에서 로컬 입력값과 저장 피드백을 초기화한다', async () => {
+    const DocumentEditor = await loadComponent('../app/components/docs/DocumentEditor.vue');
+
+    expect(DocumentEditor).not.toBeNull();
+
+    if (!DocumentEditor) {
+      return;
+    }
+
+    vi.stubGlobal('useRoute', () => ({
+      params: {
+        projectId: 'project-yggdrasil',
+        worldId: 'world-luxtera',
+        documentId: 'document-amiyu',
+      },
+    }));
+
+    const editWrapper = mount(DocumentEditor, {
+      props: {
+        mode: 'edit',
+      },
+      global: {
+        plugins: [
+          ElementPlus,
+        ],
+      },
+    });
+
+    await editWrapper.get('input[name="documentTitle"]').setValue('임시 제목');
+    await editWrapper.get('[data-testid="document-save"]').trigger('click');
+    await editWrapper.get('[data-testid="document-cancel"]').trigger('click');
+
+    expect((editWrapper.get('input[name="documentTitle"]').element as HTMLInputElement).value).toBe('아미유');
+    expect(editWrapper.get('[data-testid="save-feedback"]').text()).toContain('아직 저장 준비를 실행하지 않았습니다.');
+
+    vi.stubGlobal('useRoute', () => ({
+      params: {
+        projectId: 'project-yggdrasil',
+        worldId: 'world-luxtera',
+      },
+    }));
+
+    const createWrapper = mount(DocumentEditor, {
+      props: {
+        mode: 'create',
+      },
+      global: {
+        plugins: [
+          ElementPlus,
+        ],
+      },
+    });
+
+    await createWrapper.get('input[name="documentTitle"]').setValue('새 문서 초안');
+    await createWrapper.get('textarea').setValue('임시 요약');
+    await createWrapper.get('[data-testid="document-save"]').trigger('click');
+    await createWrapper.get('[data-testid="document-cancel"]').trigger('click');
+
+    expect((createWrapper.get('input[name="documentTitle"]').element as HTMLInputElement).value).toBe('');
+    expect((createWrapper.get('textarea').element as HTMLTextAreaElement).value).toBe('');
+    expect(createWrapper.get('[data-testid="save-feedback"]').text()).toContain('아직 저장 준비를 실행하지 않았습니다.');
+    expect(createWrapper.get('[data-testid="document-outline"]').text()).toContain('새 설정 문서');
+  });
+
   it('편집 모드에서는 삭제 버튼과 확인 대화상자를 제공하고 생성 모드에서는 숨긴다', async () => {
     const DocumentEditor = await loadComponent('../app/components/docs/DocumentEditor.vue');
 
