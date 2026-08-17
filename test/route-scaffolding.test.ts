@@ -63,6 +63,62 @@ const excludedRouteFiles = [
 
 const renderedRouteViews = [
   {
+    routeFile: 'app/pages/projects/index.vue',
+    component: '<ProjectManagementView mode="list" />',
+  },
+  {
+    routeFile: 'app/pages/projects/new.vue',
+    component: '<ProjectManagementView mode="create" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/index.vue',
+    component: '<ProjectDashboard />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/worlds.vue',
+    component: '<ProjectManagementView mode="worlds" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/settings.vue',
+    component: '<ProjectManagementView mode="settings" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/categories.vue',
+    component: '<ProjectManagementView section-description="월드별 카테고리 구조를 관리하기 위한 프로젝트 범위 진입 화면입니다." section-title="프로젝트 카테고리" mode="derived" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/templates.vue',
+    component: '<ProjectManagementView section-description="월드별 문서 템플릿을 프로젝트 범위에서 탐색합니다." section-title="프로젝트 템플릿" mode="derived" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/relations.vue',
+    component: '<ProjectManagementView section-description="월드 간 문서 관계를 프로젝트 범위에서 탐색하는 화면입니다." section-title="문서 관계" mode="derived" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/timeline.vue',
+    component: '<ProjectManagementView section-description="프로젝트 범위의 시간 정보와 문서 변경을 탐색합니다." section-title="프로젝트 타임라인" mode="derived" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/search.vue',
+    component: '<ProjectManagementView section-description="프로젝트에 속한 월드와 문서를 탐색할 수 있는 작업 화면입니다." section-title="프로젝트 검색" mode="derived" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/recent.vue',
+    component: '<ProjectManagementView section-description="프로젝트 범위의 최근 접근 문서를 fixture 기준으로 표시합니다." section-title="최근 문서" mode="derived" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/favorites.vue',
+    component: '<ProjectManagementView section-description="프로젝트 범위에서 빠르게 다시 열 문서를 모아 확인합니다." section-title="즐겨찾기" mode="derived" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/activity.vue',
+    component: '<ProjectManagementView section-description="프로젝트 안의 최근 변경 흐름을 fixture 기준으로 검토합니다." section-title="프로젝트 활동" mode="derived" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/trash.vue',
+    component: '<ProjectManagementView section-description="삭제·보관 상태의 항목을 프로젝트 범위에서 검토합니다." section-title="휴지통" mode="derived" />',
+  },
+  {
     routeFile: 'app/pages/docs/index.vue',
     component: '<DocumentExplorerRouteView scope="public" />',
   },

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ layout: 'project-dashboard', });
+
 useSetMeta({
   title: '프로젝트 설정',
   url: '/projects/:projectId/settings',
@@ -6,5 +8,5 @@ useSetMeta({
 </script>
 
 <template>
-  <span hidden />
+  <ProjectManagementView mode="settings" />
 </template>

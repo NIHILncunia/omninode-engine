@@ -2,10 +2,11 @@
 import { computed, ref } from 'vue';
 import { uiFixture } from '~/data/ui-fixture.data';
 
+const route = useRoute();
 const isSidebarOpen = ref(false);
 const isPanelOpen = ref(false);
 
-const currentProject = computed(() => uiFixture.projects[0]);
+const currentProject = computed(() => uiFixture.projects.find((project) => project.id === String(route.params.projectId ?? '')) ?? uiFixture.projects[0]);
 const projectWorlds = computed(() => uiFixture.worlds.filter((world) => world.projectId === currentProject.value.id));
 const projectLinks = computed(() => [
   {

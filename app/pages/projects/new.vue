@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ layout: 'project-dashboard', });
+
 useSetMeta({
   title: '새 프로젝트',
   url: '/projects/new',
@@ -6,5 +8,5 @@ useSetMeta({
 </script>
 
 <template>
-  <span hidden />
+  <ProjectManagementView mode="create" />
 </template>

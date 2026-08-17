@@ -1,5 +1,8 @@
 <script setup lang="ts">
-definePageMeta({ middleware: 'project-admin', });
+definePageMeta({
+  layout: 'project-dashboard',
+  middleware: 'project-admin',
+});
 const projectId = Number(useRoute().params.projectId);
 useSetMeta({
   title: '프로젝트 관리자',

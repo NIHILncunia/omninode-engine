@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ layout: 'project-dashboard', });
+
 useSetMeta({
   title: '프로젝트 대시보드',
   url: '/projects/:projectId',
@@ -6,5 +8,5 @@ useSetMeta({
 </script>
 
 <template>
-  <span hidden />
+  <ProjectDashboard />
 </template>
