@@ -327,4 +327,9 @@
   --color-black-800: oklch(0.269 0 0);
   --color-black-900: oklch(0.205 0 0);
   --color-black-950: oklch(0.145 0 0);
+
+  --color-shell-50: oklch(0.993 0.003 250);
+  --color-shell-100: oklch(0.978 0.004 250);
+  --color-shell-200: oklch(0.934 0.01 252);
+  --color-shell-900: oklch(0.221 0.02 255);
 }

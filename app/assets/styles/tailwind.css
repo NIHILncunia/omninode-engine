@@ -64,7 +64,7 @@
   }
 
   body {
-    @apply bg-black-100!;
+    @apply bg-black-50! text-black-900;
   }
 
   button {
