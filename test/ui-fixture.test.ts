@@ -8,4 +8,13 @@ describe('uiFixture', () => {
     expect(uiFixture.documents.some((document) => document.status === 'HIDDEN')).toBe(true);
     expect(uiFixture.documents.every((document) => document.worldId.length > 0 && document.categoryId.length > 0)).toBe(true);
   });
+
+  it('모든 문서는 같은 월드의 카테고리를 참조한다', () => {
+    for (const document of uiFixture.documents) {
+      const category = uiFixture.categories.find((item) => item.id === document.categoryId);
+
+      expect(category).toBeDefined();
+      expect(category?.worldId).toBe(document.worldId);
+    }
+  });
 });

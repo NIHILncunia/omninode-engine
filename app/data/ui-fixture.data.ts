@@ -152,9 +152,23 @@ export const uiFixture: UiFixture = {
       depth: 2,
     },
     {
+      id: 'category-eldros-region',
+      worldId: 'world-eldros',
+      name: '지역',
+      parentCategoryId: null,
+      depth: 1,
+    },
+    {
       id: 'category-event',
       worldId: 'world-machinaz-core',
       name: '사건',
+      parentCategoryId: null,
+      depth: 1,
+    },
+    {
+      id: 'category-archive-event',
+      worldId: 'world-archive-sandbox',
+      name: '보관 사건',
       parentCategoryId: null,
       depth: 1,
     },
@@ -187,7 +201,7 @@ export const uiFixture: UiFixture = {
     {
       id: 'document-hidden-relay',
       worldId: 'world-eldros',
-      categoryId: 'category-region',
+      categoryId: 'category-eldros-region',
       title: '숨겨진 중계탑',
       status: 'HIDDEN',
       updatedAt: '2026-08-15T11:45:00+09:00',
@@ -203,7 +217,7 @@ export const uiFixture: UiFixture = {
     {
       id: 'document-archive-note',
       worldId: 'world-archive-sandbox',
-      categoryId: 'category-event',
+      categoryId: 'category-archive-event',
       title: '삭제 대기 메모',
       status: 'DELETED',
       updatedAt: '2026-08-10T14:10:00+09:00',
