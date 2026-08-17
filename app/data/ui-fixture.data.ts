@@ -39,6 +39,15 @@ export interface UiFixtureDocument {
   updatedAt: string;
 }
 
+export interface UiFixtureTemplate {
+  id: string;
+  worldId: string;
+  categoryId: string;
+  name: string;
+  description: string;
+  sectionHeadings: string[];
+}
+
 export interface UiFixtureAdmin {
   id: string;
   email: string;
@@ -54,6 +63,7 @@ export interface UiFixture {
   worlds: UiFixtureWorld[];
   categories: UiFixtureCategory[];
   documents: UiFixtureDocument[];
+  templates: UiFixtureTemplate[];
   admins: UiFixtureAdmin[];
 }
 
@@ -221,6 +231,44 @@ export const uiFixture: UiFixture = {
       title: '삭제 대기 메모',
       status: 'DELETED',
       updatedAt: '2026-08-10T14:10:00+09:00',
+    },
+  ],
+  templates: [
+    {
+      id: 'template-character-default',
+      worldId: 'world-luxtera',
+      categoryId: 'category-character',
+      name: '인물 기본 템플릿',
+      description: '인물 소개, 동기, 관계를 빠르게 채우기 위한 기본 편집 뼈대입니다.',
+      sectionHeadings: [
+        '기본 정보',
+        '배경',
+        '관계',
+      ],
+    },
+    {
+      id: 'template-city-overview',
+      worldId: 'world-luxtera',
+      categoryId: 'category-city',
+      name: '도시 개요 템플릿',
+      description: '도시 성격, 주요 지점, 현재 사건을 정리하는 개요 템플릿입니다.',
+      sectionHeadings: [
+        '기본 정보',
+        '주요 지점',
+        '현재 사건',
+      ],
+    },
+    {
+      id: 'template-region-brief',
+      worldId: 'world-eldros',
+      categoryId: 'category-eldros-region',
+      name: '지역 브리프 템플릿',
+      description: '후속 월드용 지역 개요 템플릿입니다.',
+      sectionHeadings: [
+        '개요',
+        '세력',
+        '갈등',
+      ],
     },
   ],
   admins: [

@@ -7,5 +7,5 @@ useSetMeta({
 });
 </script>
 <template>
-  <span hidden />
+  <DocumentEditor mode="edit" />
 </template>
