@@ -26,6 +26,18 @@ describe('UI-0 layouts', () => {
     expect(worldLayout).toContain('<DashboardSidebar');
   });
 
+  it('헤더와 본문을 세로로 배치해 헤더가 전체 폭을 사용한다', () => {
+    for (const layoutName of [
+      'default',
+      'document-editor',
+      'super-admin-dashboard',
+      'project-dashboard',
+      'world-dashboard',
+    ]) {
+      expect(readLayout(layoutName)).toContain('<ElContainer direction="vertical"');
+    }
+  });
+
   it('기본·인증 레이아웃은 밝은 UI 기반을 따르며 auth에는 사이드바가 없다', () => {
     const defaultLayout = readLayout('default');
     const authLayout = readLayout('auth');

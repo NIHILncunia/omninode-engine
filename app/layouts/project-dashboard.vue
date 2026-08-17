@@ -33,7 +33,7 @@ const onOpenPanel = (): void => {
 </script>
 
 <template>
-  <ElContainer class="min-h-dvh bg-black-50 text-black-900">
+  <ElContainer direction="vertical" class="min-h-dvh bg-black-50 text-black-900">
     <AppHeader
       description="프로젝트 컨텍스트"
       panel-toggle-label="프로젝트 상태 패널 열기"

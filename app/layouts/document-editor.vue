@@ -18,7 +18,7 @@ const onOpenPanel = (): void => {
 </script>
 
 <template>
-  <ElContainer class="min-h-dvh bg-black-50 text-black-900">
+  <ElContainer direction="vertical" class="min-h-dvh bg-black-50 text-black-900">
     <AppHeader
       description="문서 편집 컨텍스트"
       panel-toggle-label="문서 메타 패널 열기"

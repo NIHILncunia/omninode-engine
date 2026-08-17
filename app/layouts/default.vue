@@ -9,7 +9,7 @@ const onOpenSidebar = (): void => {
 </script>
 
 <template>
-  <ElContainer class="min-h-dvh bg-black-50 text-black-900">
+  <ElContainer direction="vertical" class="min-h-dvh bg-black-50 text-black-900">
     <AppHeader
       description="공개 문서와 기본 탐색 컨텍스트"
       :show-sidebar-toggle="true"

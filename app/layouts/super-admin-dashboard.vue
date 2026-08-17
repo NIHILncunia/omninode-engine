@@ -36,7 +36,7 @@ const onOpenPanel = (): void => {
 </script>
 
 <template>
-  <ElContainer class="min-h-dvh bg-black-50 text-black-900">
+  <ElContainer direction="vertical" class="min-h-dvh bg-black-50 text-black-900">
     <AppHeader
       description="슈퍼 어드민 컨텍스트"
       panel-toggle-label="전역 상태 패널 열기"
