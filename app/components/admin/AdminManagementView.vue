@@ -320,17 +320,6 @@ const onPreviewDraft = (): void => {
         </ElTableColumn>
       </ElTable>
 
-      <div class="flex flex-wrap gap-2 border-t border-black-200 pt-3">
-        <ElButton
-          v-for="row in adminRows"
-          :key="row.id"
-          :data-testid="`open-admin-action-${row.id}`"
-          size="small"
-          @click="onOpenAdminAction(row, 'review')"
-        >
-          {{ row.name }} 검토
-        </ElButton>
-      </div>
     </UiStatePanel>
 
     <template v-else-if="selectedAdmin">

@@ -65,7 +65,7 @@ describe('UI-3 슈퍼 어드민 대시보드', () => {
     expect(recentDocuments).not.toContain('숨겨진 중계탑');
   });
 
-  it('관리자 관리 뷰는 테이블과 로컬 dialog 기반 관리 액션을 제공한다', async () => {
+  it('관리자 관리 뷰는 fixture 기반 관리자 테이블을 제공한다', async () => {
     const AdminManagementView = await loadComponent('../app/components/admin/AdminManagementView.vue');
 
     expect(AdminManagementView).not.toBeNull();
@@ -95,10 +95,42 @@ describe('UI-3 슈퍼 어드민 대시보드', () => {
 
     expect(wrapper.get('[data-testid="admin-table"]').findAll('tr').length).toBeGreaterThan(1);
 
-    await wrapper.get('[data-testid="open-admin-action-admin-master"]').trigger('click');
+  });
 
-    expect(wrapper.text()).toContain('로컬 검토 메모');
-    expect(wrapper.text()).toContain('저장 없이 검토');
+  it('관리자 수정 초안은 저장 없이 로컬 dialog로만 확인한다', async () => {
+    const AdminManagementView = await loadComponent('../app/components/admin/AdminManagementView.vue');
+
+    expect(AdminManagementView).not.toBeNull();
+
+    if (!AdminManagementView) {
+      return;
+    }
+
+    vi.stubGlobal('useRoute', () => ({
+      params: {
+        adminId: 'admin-master',
+      },
+      query: {},
+    }));
+
+    const wrapper = mount(AdminManagementView, {
+      props: {
+        mode: 'edit',
+      },
+      global: {
+        plugins: [
+          ElementPlus,
+        ],
+        stubs: {
+          NuxtLink: nuxtLinkStub,
+        },
+      },
+    });
+
+    await wrapper.get('[data-testid="admin-edit-form"] form').trigger('submit');
+
+    expect(wrapper.text()).toContain('변경안 확인');
+    expect(wrapper.text()).toContain('저장 없이 검토하는 로컬 변경안입니다.');
   });
 
   it('슈퍼 어드민 라우트는 super-admin-dashboard 레이아웃과 렌더링 컴포넌트만 조합한다', () => {
