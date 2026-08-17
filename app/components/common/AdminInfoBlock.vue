@@ -28,10 +28,10 @@ const cssVariants = cva([
 <template>
   <div
     v-if="admin"
-    :class="cn(
+    :class="cn([
       cssVariants({}),
-      props.class
-    )"
+      props.class,
+    ])"
   >
     <div class="flex size-9 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/70">
       <UiIcon icon-name="lucide:user-round" class="size-5" />

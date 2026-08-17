@@ -60,6 +60,38 @@ const excludedRouteFiles = [
   'app/pages/projects/[projectId]/worlds/[worldId]/documents/[documentId]/compare.vue',
   'app/pages/projects/[projectId]/worlds/[worldId]/documents/[documentId]/discussions.vue',
 ] as const;
+
+const renderedRouteViews = [
+  {
+    routeFile: 'app/pages/docs/index.vue',
+    component: '<DocumentExplorerRouteView scope="public" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/documents.vue',
+    component: '<DocumentExplorerRouteView scope="project" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/worlds/[worldId]/documents.vue',
+    component: '<DocumentExplorerRouteView scope="world" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/worlds/[worldId]/categories/[categoryId]/documents.vue',
+    component: '<DocumentExplorerRouteView scope="category" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/worlds/[worldId]/documents/new.vue',
+    component: '<DocumentEditor mode="create" />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/worlds/[worldId]/documents/[documentId]/index.vue',
+    component: '<DocumentDetailRouteView />',
+  },
+  {
+    routeFile: 'app/pages/projects/[projectId]/worlds/[worldId]/documents/[documentId]/edit.vue',
+    component: '<DocumentEditor mode="edit" />',
+  },
+] as const;
+
 describe('옴니노드 1차 라우트 골격', () => {
   it('모든 대상 페이지 파일을 제공한다', () => {
     for (const routeFile of routeFiles) {
@@ -73,6 +105,13 @@ describe('옴니노드 1차 라우트 골격', () => {
 
       if (routeFile === 'app/pages/index.vue') {
         expect(content).toContain('await navigateTo(\'/docs\', { replace: true, });');
+        continue;
+      }
+
+      const renderedRouteView = renderedRouteViews.find((item) => item.routeFile === routeFile);
+
+      if (renderedRouteView) {
+        expect(content).toContain(renderedRouteView.component);
       } else {
         expect(content).toContain('<span hidden />');
       }
