@@ -6,6 +6,7 @@ import type { UiFixtureCategory, UiFixtureDocument, UiFixtureProject, UiFixtureW
 import UiPageHeader from '~/components/ui/UiPageHeader.vue';
 import UiStatePanel from '~/components/ui/UiStatePanel.vue';
 import UiStatusBadge from '~/components/ui/UiStatusBadge.vue';
+import type { DocumentViewMode } from '~/components/docs/document-route.shared';
 import { cn } from '~/utils/cn';
 
 const props = withDefaults(defineProps<{
@@ -14,12 +15,14 @@ const props = withDefaults(defineProps<{
   project?: UiFixtureProject | null;
   world?: UiFixtureWorld | null;
   category?: UiFixtureCategory | null;
+  mode?: DocumentViewMode;
 }>(), {
   class: undefined,
   document: null,
   project: null,
   world: null,
   category: null,
+  mode: 'ready',
 });
 
 const cssVariants = cva(
@@ -92,7 +95,7 @@ const overviewItems = computed(() => {
       :title="props.document?.title ?? '문서를 찾을 수 없습니다.'"
     >
       <template
-        v-if="props.document"
+        v-if="props.document && props.mode === 'ready'"
         #actions
       >
         <UiStatusBadge
@@ -103,12 +106,24 @@ const overviewItems = computed(() => {
     </UiPageHeader>
 
     <UiStatePanel
-      v-if="!props.document"
-      title="문서를 찾을 수 없습니다"
-      description="현재 fixture 범위에서 요청한 문서를 찾지 못했습니다."
+      v-if="props.mode === 'loading'"
+      title="문서를 불러오는 중입니다"
+      description="본문 패널도 query state 기반 fixture 모드로 전환됩니다."
     />
 
-    <template v-else>
+    <UiStatePanel
+      v-else-if="props.mode === 'error'"
+      title="문서 본문을 표시하지 못했습니다"
+      description="상세 패널과 메타 패널이 같은 오류 상태 모델을 공유합니다."
+    />
+
+    <UiStatePanel
+      v-else-if="props.mode === 'empty' || !props.document"
+      title="문서를 찾을 수 없습니다"
+      description="현재 fixture 범위에서 요청한 문서를 찾지 못했거나 empty 상태가 선택되었습니다."
+    />
+
+    <template v-else-if="props.document">
       <UiStatePanel
         title="문서 개요"
         description="프로젝트, 월드, 카테고리 맥락을 한 번에 확인할 수 있도록 정리한 상세 패널입니다."

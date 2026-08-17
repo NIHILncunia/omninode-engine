@@ -3,16 +3,10 @@ import { DateTime } from 'luxon';
 import { cva } from 'class-variance-authority';
 import { computed } from 'vue';
 import type { UiFixtureCategory, UiFixtureDocument, UiFixtureProject, UiFixtureWorld } from '~/data/ui-fixture.data';
+import type { DocumentViewMode, RelatedRouteItem } from '~/components/docs/document-route.shared';
 import UiStatePanel from '~/components/ui/UiStatePanel.vue';
 import UiStatusBadge from '~/components/ui/UiStatusBadge.vue';
 import { cn } from '~/utils/cn';
-
-interface RelatedRouteItem {
-  label: string;
-  to: string;
-}
-
-type DocumentMetaMode = 'ready' | 'loading' | 'empty' | 'error';
 
 const props = withDefaults(defineProps<{
   class?: string;
@@ -21,7 +15,7 @@ const props = withDefaults(defineProps<{
   world?: UiFixtureWorld | null;
   category?: UiFixtureCategory | null;
   relatedRoutes?: RelatedRouteItem[];
-  mode?: DocumentMetaMode;
+  mode?: DocumentViewMode;
 }>(), {
   class: undefined,
   document: null,
