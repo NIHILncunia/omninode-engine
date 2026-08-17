@@ -9,3 +9,4 @@ minimumReleaseAgeExclude:
   - eslint@10.8.0
   - '@iconify-json/lucide@1.2.123'
   - tsx@4.23.12
+  - dayjs@1.11.22

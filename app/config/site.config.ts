@@ -1,4 +1,6 @@
 import type { SiteConfig } from '~/types/common.types.ts';
+import { linkConfig } from '~/config/link.config.ts';
+import { navConfig } from '~/config/nav.config.ts';
 
 export const siteConfig: SiteConfig = {
   site: {
@@ -32,18 +34,6 @@ export const siteConfig: SiteConfig = {
   api: {
     route: '/api',
   },
-  links: [
-    {
-      icon: 'mdi:github',
-      link: 'https://github.com/nihilncunia',
-      label: 'NIHILncunia GitHub',
-    },
-  ],
-  navigation: [
-    {
-      icon: 'lucide:folder-kanban',
-      label: '프로젝트',
-      to: '/projects',
-    },
-  ],
+  links: linkConfig,
+  navigation: navConfig,
 } as const;
