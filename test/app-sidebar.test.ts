@@ -14,7 +14,7 @@ describe('AppSidebar', () => {
 
     expect(adminLayout).toContain('<AppSidebar />');
     expect(adminLayout).toContain('<AdminInfoBlock class="text-white" />');
-    expect(defaultLayout).toContain('<AppSidebar />');
+    expect(defaultLayout).toContain('<AppSidebar class="p-5" />');
   });
 
   it('프로젝트 메뉴만 정의하고 홈·전역 설정·소개 메뉴를 제공하지 않는다', () => {
@@ -27,11 +27,11 @@ describe('AppSidebar', () => {
     ]);
   });
 
-  it('/admin은 관리자 레이아웃을, /docs는 기본 레이아웃을 사용한다', () => {
+  it('/admin은 super-admin-dashboard 레이아웃을, /docs는 기본 레이아웃을 사용한다', () => {
     const adminPage = readFileSync(resolve(process.cwd(), 'app/pages/admin/index.vue'), 'utf8');
     const docsPage = readFileSync(resolve(process.cwd(), 'app/pages/docs/index.vue'), 'utf8');
 
-    expect(adminPage).toContain('definePageMeta({ layout: \'admin\', });');
+    expect(adminPage).toContain('layout: \'super-admin-dashboard\'');
     expect(docsPage).toContain('definePageMeta({ layout: \'default\', });');
   });
 

@@ -1,6 +1,8 @@
 <script setup lang="ts">
-definePageMeta({ middleware: 'super-admin', });
-const adminId = Number(useRoute().params.adminId);
+definePageMeta({
+  layout: 'super-admin-dashboard',
+  middleware: 'super-admin',
+});
 useSetMeta({
   title: '관리자 수정',
   url: '/admins/:adminId/edit',
@@ -8,5 +10,5 @@ useSetMeta({
 </script>
 
 <template>
-  <AdminEditForm :admin-id="adminId" />
+  <AdminManagementView mode="edit" />
 </template>

@@ -1,12 +1,15 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'admin', });
+definePageMeta({
+  layout: 'super-admin-dashboard',
+  middleware: 'super-admin',
+});
 
 useSetMeta({
-  title: '어드민 대시보드',
+  title: '슈퍼 어드민 대시보드',
   url: '/admin',
 });
 </script>
 
 <template>
-  <span hidden />
+  <SuperAdminDashboard />
 </template>

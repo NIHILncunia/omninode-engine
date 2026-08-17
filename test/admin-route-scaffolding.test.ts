@@ -39,16 +39,26 @@ describe('관리자 라우트 골격', () => {
         expect(content).toContain('<PasswordChangeForm />');
       } else if (routeFile === 'app/pages/admin-permission-request.vue') {
         expect(content).toContain('<AdminPermissionRequestForm />');
+      } else if (routeFile === 'app/pages/admin/index.vue') {
+        expect(content).toContain('<SuperAdminDashboard />');
       } else if (routeFile === 'app/pages/admins/index.vue') {
-        expect(content).toContain('<AdminList />');
+        expect(content).toContain('<AdminManagementView />');
       } else if (routeFile === 'app/pages/admins/[adminId]/index.vue') {
-        expect(content).toContain('<AdminDetail :admin-id="adminId" />');
+        expect(content).toContain('<AdminManagementView mode="detail" />');
       } else if (routeFile === 'app/pages/admins/[adminId]/edit.vue') {
-        expect(content).toContain('<AdminEditForm :admin-id="adminId" />');
+        expect(content).toContain('<AdminManagementView mode="edit" />');
       } else if (routeFile === 'app/pages/projects/[projectId]/admins.vue') {
         expect(content).toContain('<ProjectAdminManagement');
       } else {
         expect(content).toContain('<span hidden />');
+      }
+
+      if (
+        routeFile === 'app/pages/admin/index.vue'
+        || routeFile.startsWith('app/pages/admins/')
+        || routeFile === 'app/pages/admins/index.vue'
+      ) {
+        expect(content).toContain('middleware: \'super-admin\'');
       }
     }
   });

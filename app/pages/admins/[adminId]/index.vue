@@ -1,6 +1,8 @@
 <script setup lang="ts">
-definePageMeta({ middleware: 'super-admin', });
-const adminId = Number(useRoute().params.adminId);
+definePageMeta({
+  layout: 'super-admin-dashboard',
+  middleware: 'super-admin',
+});
 useSetMeta({
   title: '관리자 상세',
   url: '/admins/:adminId',
@@ -8,5 +10,5 @@ useSetMeta({
 </script>
 
 <template>
-  <AdminDetail :admin-id="adminId" />
+  <AdminManagementView mode="detail" />
 </template>
