@@ -27,6 +27,8 @@ defaultOptions: {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
+    refetchInterval: false,
+    refetchIntervalInBackground: false,
     staleTime: 10 * 60 * 1_000,
     gcTime: 10 * 60 * 1_000,
   },
