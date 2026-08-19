@@ -1,4 +1,5 @@
-﻿import { bigint, pgTable, unique } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { bigint, pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
 import { categories } from './categories.table';
 import { commonColumns } from './common.columns';
@@ -13,6 +14,7 @@ export const projectCategories = pgTable('project_categories', {
     .notNull()
     .references(() => categories.id, { onDelete: 'no action', }),
 }, table => [
-  unique('uq_project_categories_project_id_category_id')
-    .on(table.projectId, table.categoryId),
+  uniqueIndex('uq_project_categories_category_id_active')
+    .on(table.categoryId)
+    .where(sql`${table.delYn} = 'N'`),
 ]);
