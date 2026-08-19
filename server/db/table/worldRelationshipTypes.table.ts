@@ -1,4 +1,5 @@
-﻿import { bigint, pgTable, unique } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { bigint, pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
 import { commonColumns } from './common.columns';
 import { relationshipTypes } from './relationshipTypes.table';
@@ -13,6 +14,7 @@ export const worldRelationshipTypes = pgTable('world_relationship_types', {
     .notNull()
     .references(() => relationshipTypes.id, { onDelete: 'no action', }),
 }, table => [
-  unique('uq_world_relationship_types_world_id_relationship_type_id')
-    .on(table.worldId, table.relationshipTypeId),
+  uniqueIndex('uq_world_relationship_types_world_id_relationship_type_id_active')
+    .on(table.worldId, table.relationshipTypeId)
+    .where(sql`${table.delYn} = 'N'`),
 ]);
