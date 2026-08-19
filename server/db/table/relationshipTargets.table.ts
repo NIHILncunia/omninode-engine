@@ -1,4 +1,5 @@
-﻿import { bigint, pgTable, unique } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { bigint, pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
 import { commonColumns } from './common.columns';
 import { documents } from './documents.table';
@@ -17,6 +18,7 @@ export const relationshipTargets = pgTable('relationship_targets', {
     .notNull()
     .references(() => documents.id, { onDelete: 'no action', }),
 }, table => [
-  unique('uq_relationship_targets_relationship_id_relationship_role_id')
-    .on(table.relationshipId, table.relationshipRoleId),
+  uniqueIndex('uq_relationship_targets_relationship_id_relationship_role_id_active')
+    .on(table.relationshipId, table.relationshipRoleId)
+    .where(sql`${table.delYn} = 'N'`),
 ]);
