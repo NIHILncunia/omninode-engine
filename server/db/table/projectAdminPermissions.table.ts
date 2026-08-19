@@ -1,4 +1,5 @@
-﻿import { bigint, char, pgTable, unique } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { bigint, char, pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
 import { commonColumns } from './common.columns';
 import { projects } from './projects.table';
@@ -75,6 +76,7 @@ export const projectAdminPermissions = pgTable('project_admin_permissions', {
     .notNull()
     .default('N'),
 }, table => [
-  unique('uq_project_admin_permissions_project_id_admin_id')
-    .on(table.projectId, table.adminId),
+  uniqueIndex('uq_project_admin_permissions_project_id_admin_id_active')
+    .on(table.projectId, table.adminId)
+    .where(sql`${table.delYn} = 'N'`),
 ]);
