@@ -168,7 +168,7 @@
 - 진행 위치: `admins` 테이블 CRUD와 최초 SUPER_ADMIN 초기 데이터 주입 경로 점검 전
 - 부가 완료: Vue Query 공통 QueryClient와 `useGet`·`usePost`·`usePut`·`usePatch`·`useDelete` 래퍼를 도입했고, 전역 재시도·자동 재요청은 비활성화했으며 stale·gc 시간은 10분으로 설정했다.
 - 다음 시작 항목: 단계 2.5 점검 범위 설계 승인 및 구현 계획 작성
-- 검증 결과: Vue Query 대상 4개 테스트 파일·12개 테스트, lint, 타입 검사, 빌드를 통과했다. 전체 테스트는 기존 `world_admins` 복합 UNIQUE 제약 테스트 1건 실패로 통과하지 못했다. 인증 세션의 실제 SSR cookie 왕복도 확인했다.
+- 검증 결과: 전체 5개 테스트 파일·16개 테스트, lint, 타입 검사, 빌드를 통과했다. 인증 세션의 실제 SSR cookie 왕복도 확인했다.
 - 차단 사항: 없음.
 
 ## 참고 문서
