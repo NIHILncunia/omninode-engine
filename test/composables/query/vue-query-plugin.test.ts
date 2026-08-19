@@ -5,7 +5,7 @@ let queryClientDefaultOptions: typeof import('../../../app/plugins/vue-query').q
 describe('Vue Query 전역 기본 옵션', () => {
   beforeAll(async () => {
     vi.stubGlobal('defineNuxtPlugin', <TPlugin>(plugin: TPlugin) => plugin);
-    ({ queryClientDefaultOptions } = await import('../../../app/plugins/vue-query'));
+    queryClientDefaultOptions = (await import('../../../app/plugins/vue-query')).queryClientDefaultOptions;
   });
 
   it('자동 재요청을 끄고 stale 및 gc 시간을 10분으로 둔다', () => {

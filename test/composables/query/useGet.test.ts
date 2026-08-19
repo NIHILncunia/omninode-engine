@@ -41,7 +41,9 @@ afterEach(() => {
 describe('useGet', () => {
   it('기본 queryFn은 $fetch를 호출하고 execute는 데이터를 반환한다', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
-      list: [],
+      list: [
+
+      ],
     });
     vi.stubGlobal('$fetch', fetchMock);
     const mounted = mountQuery(() => useGet<{ list: string[] }>({
@@ -49,7 +51,9 @@ describe('useGet', () => {
     }));
 
     await expect(mounted.query.execute()).resolves.toEqual({
-      list: [],
+      list: [
+
+      ],
     });
     await nextTick();
 
