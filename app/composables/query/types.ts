@@ -1,4 +1,5 @@
 import type { FetchOptions, ResponseType } from 'ofetch';
+import type { QueryKey, UseMutationOptions, UseQueryOptions } from '@tanstack/vue-query';
 import type { ComputedRef, Ref } from 'vue';
 
 export type QueryParams = Record<string, unknown>;
@@ -18,19 +19,28 @@ export interface QueryBaseInput<TParams extends QueryParams = QueryParams> {
   url: string;
   params?: TParams;
   headers?: QueryHeaders;
-  options?: QueryFetchOptions;
+  fetchOptions?: QueryFetchOptions;
 }
 
-export interface GetQueryInput<TParams extends QueryParams = QueryParams>
+export interface GetQueryInput<
+  TParams extends QueryParams = QueryParams,
+  TResponse = unknown,
+>
   extends QueryBaseInput<TParams> {
-  immediate?: boolean;
+  queryOptions?: Partial<UseQueryOptions<TResponse, ApiError, TResponse, TResponse, QueryKey>>;
 }
 
 export interface MutationQueryInput<
   TBody = QueryBody,
   TParams extends QueryParams = QueryParams,
+  TResponse = unknown,
 > extends QueryBaseInput<TParams> {
   body?: TBody;
+  mutationOptions?: Partial<UseMutationOptions<
+    TResponse,
+    ApiError,
+    Partial<QueryRequestInput<TBody, TParams>>
+  >>;
 }
 
 export interface ApiError {
@@ -56,13 +66,14 @@ export interface QueryRequestInput<
   params?: TParams;
   body?: TBody;
   headers?: QueryHeaders;
-  options?: QueryFetchOptions;
+  fetchOptions?: QueryFetchOptions;
 }
 
 export interface NormalizedRequest<
   TBody = QueryBody,
   TParams extends QueryParams = QueryParams,
 > {
+  url: string;
   method: QueryMethod;
   query?: TParams;
   body?: TBody;

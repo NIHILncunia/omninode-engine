@@ -1,5 +1,6 @@
 import { computed, ref, shallowRef } from 'vue';
 import type { Ref } from 'vue';
+import type { QueryKey } from '@tanstack/vue-query';
 
 import type { ApiError, MutationResult, MutationState, NormalizedRequest, QueryBaseInput, QueryBody, QueryFetchOptions, QueryHeaders, QueryMethod, QueryParams, QueryRequestInput, QueryResult, QueryStatus } from './types';
 
@@ -42,14 +43,15 @@ export function normalizeRequestInput<
   method: QueryMethod,
   input: QueryRequestInput<TBody, TParams> = {},
 ): NormalizedRequest<TBody, TParams> {
-  const { params, body, headers, options, } = input;
+  const { url, params, body, headers, fetchOptions, } = input;
 
   return {
+    url,
     method,
     query: params,
     body,
     headers,
-    fetchOptions: (options ?? {}) as QueryFetchOptions,
+    fetchOptions: (fetchOptions ?? {}) as QueryFetchOptions,
   };
 }
 
@@ -66,6 +68,29 @@ export function buildFetchRequestOptions<
     headers: request.headers,
     ...request.fetchOptions,
   };
+}
+
+export function createDefaultQueryKey<TParams extends QueryParams>(
+  url: string,
+  params?: TParams,
+): QueryKey {
+  return [
+    'GET',
+    url,
+    params ?? {},
+  ];
+}
+
+export async function executeFetch<TResponse>(
+  request: NormalizedRequest,
+): Promise<TResponse> {
+  return await $fetch<TResponse>(request.url, {
+    method: request.method,
+    query: request.query,
+    body: request.body,
+    headers: request.headers,
+    ...request.fetchOptions,
+  });
 }
 
 export function mergeQueryInput<TInput extends QueryBaseInput>(
