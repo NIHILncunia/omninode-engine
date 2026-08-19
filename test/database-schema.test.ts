@@ -79,15 +79,15 @@ describe('옴니노드 PostgreSQL 스키마', () => {
       .toContain('uq_document_revisions_document_id_current');
   });
 
-  it('명세의 복합 UNIQUE 제약을 선언한다', () => {
-    const getUniqueNames = (table: Parameters<typeof getTableConfig>[0]) => getTableConfig(table).uniqueConstraints
-      .map(constraint => constraint.name);
+  it('활성 행과 관계 대상의 복합 UNIQUE 제약을 선언한다', () => {
+    const getIndexNames = (table: Parameters<typeof getTableConfig>[0]) => getTableConfig(table).indexes
+      .map(index => index.config.name);
 
-    expect(getUniqueNames(schema.worldAdmins))
-      .toContain('uq_world_admins_world_id_admin_id');
-    expect(getUniqueNames(schema.projectAdminPermissions))
-      .toContain('uq_project_admin_permissions_project_id_admin_id');
-    expect(getUniqueNames(schema.relationshipTargets))
-      .toContain('uq_relationship_targets_relationship_id_relationship_role_id');
+    expect(getIndexNames(schema.worldAdmins))
+      .toContain('uq_world_admins_world_id_admin_id_active');
+    expect(getIndexNames(schema.projectAdminPermissions))
+      .toContain('uq_project_admin_permissions_project_id_admin_id_active');
+    expect(getIndexNames(schema.relationshipTargets))
+      .toContain('uq_relationship_targets_relationship_id_relationship_role_id_active');
   });
 });
