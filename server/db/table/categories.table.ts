@@ -1,11 +1,11 @@
 import { sql } from 'drizzle-orm';
-import { check, foreignKey, pgTable, smallint, varchar } from 'drizzle-orm/pg-core';
+import { bigint, check, foreignKey, pgTable, smallint, varchar } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
 import { commonColumns } from './common.columns';
 
 export const categories = pgTable('categories', {
   ...commonColumns(() => admins.id),
-  parentId: smallint('parent_id', { mode: 'number', }),
+  parentId: bigint('parent_id', { mode: 'number', }),
   name: varchar('name')
     .notNull(),
   depth: smallint('depth')
