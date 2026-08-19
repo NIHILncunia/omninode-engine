@@ -1,4 +1,5 @@
-﻿import { bigint, pgTable, unique } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { bigint, pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
 import { commonColumns } from './common.columns';
 import { worlds } from './worlds.table';
@@ -12,6 +13,7 @@ export const worldAdmins = pgTable('world_admins', {
     .notNull()
     .references(() => admins.id, { onDelete: 'no action', }),
 }, table => [
-  unique('uq_world_admins_world_id_admin_id')
-    .on(table.worldId, table.adminId),
+  uniqueIndex('uq_world_admins_world_id_admin_id_active')
+    .on(table.worldId, table.adminId)
+    .where(sql`${table.delYn} = 'N'`),
 ]);
