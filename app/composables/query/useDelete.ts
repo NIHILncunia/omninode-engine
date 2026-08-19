@@ -5,6 +5,6 @@ export function useDelete<
   TResponse,
   TBody extends QueryBody = QueryBody,
   TParams extends QueryParams = QueryParams,
->(input: MutationQueryInput<TBody, TParams>) {
+>(input: MutationQueryInput<TBody, TParams, TResponse>) {
   return createMutation<TResponse, TBody, TParams>('DELETE', input);
 }
