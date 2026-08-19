@@ -1,4 +1,5 @@
-﻿import { bigint, pgTable, smallint, unique, varchar } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { bigint, check, pgTable, smallint, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
 import { commonColumns } from './common.columns';
 import { relationshipTypes } from './relationshipTypes.table';
@@ -12,12 +13,21 @@ export const relationshipRoles = pgTable('relationship_roles', {
     .notNull(),
   sortOrder: smallint('sort_order')
     .notNull(),
-  requiredYn: varchar('required_yn', { length: 1, })
+  requiredYn: varchar('required_yn', {
+    enum: [
+      'Y',
+      'N',
+    ],
+    length: 1,
+  })
     .notNull()
     .default('Y'),
 }, table => [
-  unique('uq_relationship_roles_relationship_type_id_name')
-    .on(table.relationshipTypeId, table.name),
-  unique('uq_relationship_roles_relationship_type_id_sort_order')
-    .on(table.relationshipTypeId, table.sortOrder),
+  uniqueIndex('uq_relationship_roles_relationship_type_id_name_active')
+    .on(table.relationshipTypeId, table.name)
+    .where(sql`${table.delYn} = 'N'`),
+  uniqueIndex('uq_relationship_roles_relationship_type_id_sort_order_active')
+    .on(table.relationshipTypeId, table.sortOrder)
+    .where(sql`${table.delYn} = 'N'`),
+  check('ck_relationship_roles_sort_order', sql`${table.sortOrder} between 1 and 4`),
 ]);
