@@ -18,13 +18,17 @@
 
 ## 전역 QueryClient 정책
 
-`app/plugins/vue-query.ts`는 앱당 하나의 `QueryClient`를 만들고 `VueQueryPlugin`으로 등록한다. 기본 옵션은 기존 요청이 자동 재시도·자동 포커스 갱신을 하지 않았던 동작을 유지한다.
+`app/plugins/vue-query.ts`는 앱당 하나의 `QueryClient`를 만들고 `VueQueryPlugin`으로 등록한다. 기본 옵션은 기존 요청이 자동 재시도·자동 재요청을 하지 않았던 동작을 유지한다. 캐시 데이터의 신선도와 미사용 캐시 보관 기간은 각각 10분으로 고정한다.
 
 ```ts
 defaultOptions: {
   queries: {
     retry: false,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: 10 * 60 * 1_000,
+    gcTime: 10 * 60 * 1_000,
   },
   mutations: {
     retry: false,
@@ -32,7 +36,7 @@ defaultOptions: {
 }
 ```
 
-캐시 시간, stale 시간, 재시도, 활성화 조건, 성공·오류 콜백, 무효화는 전역 정책에 고정하지 않는다. 각 호출의 옵션으로 명시하며, Vue Query의 표준 병합 규칙에 따라 전역 기본값을 덮어쓴다.
+`retry`, 모든 `refetchOn*` 옵션, `staleTime`, `gcTime`, 활성화 조건, 성공·오류 콜백, 무효화는 각 호출의 옵션으로 명시할 수 있으며, Vue Query의 표준 병합 규칙에 따라 전역 기본값을 덮어쓴다.
 
 ## 컴포저블 인터페이스
 
@@ -86,7 +90,7 @@ const createProject = usePost<ProjectResponse, CreateProjectBody>({
 
 ## 오류 및 SSR 경계
 
-기본 요청 함수는 Nuxt의 `$fetch`를 사용하고 실패 값을 기존 `ApiError` 형태로 정규화한다. 인증 쿠키가 필요한 브라우저 요청에는 브라우저의 same-origin cookie 전달을 유지한다. 서버 렌더링에서 데이터를 미리 가져오는 것은 개별 화면이 `prefetchQuery` 또는 `useQuery` 수명주기를 명시적으로 선택하는 후속 범위이며, 이 공통 계층은 QueryClient 상태의 수동 직렬화·복원을 추가하지 않는다.
+기본 요청 함수는 반드시 Nuxt의 `$fetch`를 사용하고 실패 값을 기존 `ApiError` 형태로 정규화한다. 인증 쿠키가 필요한 브라우저 요청에는 브라우저의 same-origin cookie 전달을 유지한다. 서버 렌더링에서 데이터를 미리 가져오는 것은 개별 화면이 `prefetchQuery` 또는 `useQuery` 수명주기를 명시적으로 선택하는 후속 범위이며, 이 공통 계층은 QueryClient 상태의 수동 직렬화·복원을 추가하지 않는다.
 
 ## 파일 책임
 
