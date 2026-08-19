@@ -1,7 +1,7 @@
 ﻿import { sql } from 'drizzle-orm';
 import { bigint, pgTable, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
-import { commonChecks, commonColumns } from './common.columns';
+import { commonColumns } from './common.columns';
 import { worlds } from './worlds.table';
 
 export const projects = pgTable('projects', {
@@ -15,5 +15,4 @@ export const projects = pgTable('projects', {
   uniqueIndex('uq_projects_world_id_name_active')
     .on(table.worldId, table.name)
     .where(sql`${table.delYn} = 'N'`),
-  ...commonChecks('projects', table.useYn, table.delYn),
 ]);

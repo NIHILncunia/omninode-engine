@@ -1,7 +1,7 @@
 ﻿import { bigint, pgTable, unique } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
 import { categories } from './categories.table';
-import { commonChecks, commonColumns } from './common.columns';
+import { commonColumns } from './common.columns';
 import { projects } from './projects.table';
 import { templates } from './templates.table';
 
@@ -19,5 +19,4 @@ export const projectTemplates = pgTable('project_templates', {
 }, table => [
   unique('uq_project_templates_project_id_category_id')
     .on(table.projectId, table.categoryId),
-  ...commonChecks('project_templates', table.useYn, table.delYn),
 ]);

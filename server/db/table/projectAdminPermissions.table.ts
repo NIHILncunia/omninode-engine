@@ -1,6 +1,6 @@
 ﻿import { bigint, char, pgTable, unique } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
-import { commonChecks, commonColumns, ynCheck } from './common.columns';
+import { commonColumns } from './common.columns';
 import { projects } from './projects.table';
 
 export const projectAdminPermissions = pgTable('project_admin_permissions', {
@@ -77,13 +77,4 @@ export const projectAdminPermissions = pgTable('project_admin_permissions', {
 }, table => [
   unique('uq_project_admin_permissions_project_id_admin_id')
     .on(table.projectId, table.adminId),
-  ...commonChecks('project_admin_permissions', table.useYn, table.delYn),
-  ...Object.entries(table)
-    .filter(([
-      key,
-    ]) => key.endsWith('Yn') && key !== 'useYn' && key !== 'delYn')
-    .map(([
-      _key,
-      column,
-    ]) => ynCheck(`ck_project_admin_permissions_${column.name}`, column)),
 ]);

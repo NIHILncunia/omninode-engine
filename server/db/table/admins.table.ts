@@ -1,6 +1,5 @@
-﻿import { sql } from 'drizzle-orm';
-import { check, foreignKey, pgTable, unique, varchar } from 'drizzle-orm/pg-core';
-import { commonChecks, commonColumns, ynCheck } from './common.columns';
+﻿import { foreignKey, pgTable, unique, varchar } from 'drizzle-orm/pg-core';
+import { commonColumns } from './common.columns';
 
 export const admins = pgTable('admins', {
   ...commonColumns(),
@@ -54,7 +53,4 @@ export const admins = pgTable('admins', {
     name: 'fk_admins_delete_id',
   })
     .onDelete('no action'),
-  ...commonChecks('admins', table.useYn, table.delYn),
-  ynCheck('ck_admins_password_changed_yn', table.passwordChangedYn),
-  check('ck_admins_role', sql`${table.role} in ('SUPER_ADMIN', 'ADMIN', 'SUB_ADMIN')`),
 ]);

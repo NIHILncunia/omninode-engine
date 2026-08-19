@@ -1,6 +1,6 @@
 ﻿import { bigint, pgTable, unique } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
-import { commonChecks, commonColumns } from './common.columns';
+import { commonColumns } from './common.columns';
 import { relationshipTypes } from './relationshipTypes.table';
 import { worlds } from './worlds.table';
 
@@ -15,5 +15,4 @@ export const worldRelationshipTypes = pgTable('world_relationship_types', {
 }, table => [
   unique('uq_world_relationship_types_world_id_relationship_type_id')
     .on(table.worldId, table.relationshipTypeId),
-  ...commonChecks('world_relationship_types', table.useYn, table.delYn),
 ]);

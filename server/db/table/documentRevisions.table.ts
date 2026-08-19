@@ -1,7 +1,7 @@
 ﻿import { sql } from 'drizzle-orm';
 import { bigint, pgTable, text, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
-import { commonChecks, commonColumns, ynCheck } from './common.columns';
+import { commonColumns } from './common.columns';
 import { documents } from './documents.table';
 
 export const documentRevisions = pgTable('document_revisions', {
@@ -19,6 +19,4 @@ export const documentRevisions = pgTable('document_revisions', {
   uniqueIndex('uq_document_revisions_document_id_current')
     .on(table.documentId)
     .where(sql`${table.currentYn} = 'Y'`),
-  ...commonChecks('document_revisions', table.useYn, table.delYn),
-  ynCheck('ck_document_revisions_current_yn', table.currentYn),
 ]);

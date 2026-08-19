@@ -2,7 +2,7 @@
 import { bigint, pgTable, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
 import { categories } from './categories.table';
-import { commonChecks, commonColumns } from './common.columns';
+import { commonColumns } from './common.columns';
 import { projects } from './projects.table';
 
 export const documents = pgTable('documents', {
@@ -23,5 +23,4 @@ export const documents = pgTable('documents', {
   uniqueIndex('uq_documents_project_id_title_active')
     .on(table.projectId, table.title)
     .where(sql`${table.delYn} = 'N'`),
-  ...commonChecks('documents', table.useYn, table.delYn),
 ]);

@@ -1,7 +1,6 @@
-﻿import { sql } from 'drizzle-orm';
-import { bigint, check, integer, pgTable, smallint, unique, varchar } from 'drizzle-orm/pg-core';
+﻿import { bigint, integer, pgTable, smallint, unique, varchar } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
-import { commonChecks, commonColumns } from './common.columns';
+import { commonColumns } from './common.columns';
 import { templates } from './templates.table';
 
 export const templateHeadings = pgTable('template_headings', {
@@ -18,6 +17,4 @@ export const templateHeadings = pgTable('template_headings', {
 }, table => [
   unique('uq_template_headings_template_id_sort_order')
     .on(table.templateId, table.sortOrder),
-  ...commonChecks('template_headings', table.useYn, table.delYn),
-  check('ck_template_headings_level', sql`${table.level} in (1, 2, 3)`),
 ]);

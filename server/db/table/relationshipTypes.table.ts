@@ -1,7 +1,6 @@
-﻿import { sql } from 'drizzle-orm';
-import { bigint, check, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+﻿import { bigint, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
-import { commonChecks, commonColumns, ynCheck } from './common.columns';
+import { commonColumns } from './common.columns';
 import { worlds } from './worlds.table';
 
 export const relationshipTypes = pgTable('relationship_types', {
@@ -23,8 +22,4 @@ export const relationshipTypes = pgTable('relationship_types', {
   defaultYn: varchar('default_yn', { length: 1, })
     .notNull()
     .default('N'),
-}, table => [
-  ...commonChecks('relationship_types', table.useYn, table.delYn),
-  ynCheck('ck_relationship_types_default_yn', table.defaultYn),
-  check('ck_relationship_types_direction_type', sql`${table.directionType} in ('DIRECTED', 'SYMMETRIC')`),
-]);
+});

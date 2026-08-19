@@ -1,6 +1,6 @@
 ﻿import { bigint, pgTable, unique } from 'drizzle-orm/pg-core';
 import { admins } from './admins.table';
-import { commonChecks, commonColumns } from './common.columns';
+import { commonColumns } from './common.columns';
 import { documents } from './documents.table';
 import { relationshipRoles } from './relationshipRoles.table';
 import { relationships } from './relationships.table';
@@ -19,5 +19,4 @@ export const relationshipTargets = pgTable('relationship_targets', {
 }, table => [
   unique('uq_relationship_targets_relationship_id_relationship_role_id')
     .on(table.relationshipId, table.relationshipRoleId),
-  ...commonChecks('relationship_targets', table.useYn, table.delYn),
 ]);
