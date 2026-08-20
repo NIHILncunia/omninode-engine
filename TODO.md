@@ -1,181 +1,473 @@
 # Omninode 개발 진행 대장
 
-> 이 파일은 개발 진척도의 단일 기준이다. 새 세션은 먼저 `현재 상태`와 가장 이른 미완료 항목을 확인한다.
+> 이 파일은 현재 `nihil-work` 브랜치의 개발 진척도를 추적하는 단일 기준이다.
+> 최신 설계 기준은 `references/옴니노드 데이터베이스 명세서.md`와 `references/옴니노드 API 명세서.md`를 따른다.
 
 ## 운영 규칙
 
-- `[x]`는 구현·대상 테스트·필요한 통합 검증까지 끝난 항목에만 사용한다.
-- `[ ]`는 아직 시작하지 않았거나, 검증이 남은 항목이다.
-- 차단된 항목은 체크하지 않는다. 원인과 재개 조건을 `현재 상태`에 기록한다.
-- 기능 단계는 화면만 또는 API만 분리해 완료 처리하지 않는다. 계약, API, UI, 권한, 테스트, 검증을 함께 끝낸다.
-- 단계 완료 시 이 파일의 상태·검증 결과·다음 시작 지점을 갱신한다.
+- `[x]`는 실제 구현 또는 문서 반영이 완료된 항목에만 사용한다.
+- `[ ]`는 아직 시작하지 않았거나 완료되지 않은 항목이다.
+- 현재 설계와 충돌하는 과거 구조는 진행 대장에서 제거한다.
+- 기능 단계는 DB, API, 권한, UI가 필요한 범위까지 함께 본다.
+- 완료되지 않은 작업을 추정으로 완료 처리하지 않는다.
+- 단계가 끝나면 완료 범위와 다음 시작 지점을 이 파일에 갱신한다.
 
-## 확정 결정
+---
 
-- [x] 1차 범위: 프로젝트 → 월드 → 카테고리 → 템플릿 → 설정 문서 → 문서 관계로 이어지는 관계형 세계관 관리
-- [x] 개발 방식: 기능별 수직 슬라이스(UI·API·권한·검증·테스트 동시 완료)
-- [x] 데이터베이스: 개발·운영 PostgreSQL 단일 Drizzle 스키마, 환경별 `DATABASE_URL`
-- [x] 인증 진입 경로: `/signin` (`app/pages/signin.vue`), `/login` 미사용
-- [x] API 표준 응답: `CreateResponse`의 `error`, `data`, `code`, `message`
-- [x] 문서 본문 정본: `documents.content` 하나
-- [x] 공개 설정 문서 진입: `/`는 `/docs`로 이동하고, `/docs`는 모든 프로젝트·월드의 공개 문서만 나열하는 비로그인 목록
-- [x] 어드민 계정 생성: 계정명은 이메일, `admins.name`은 닉네임으로 사용하며 요청자는 이메일·닉네임으로 권한을 요청하고, SUPER_ADMIN의 승인 시에만 관리자 계정을 생성
-- [x] 어드민 권한 요청 범위: 요청은 프로젝트 권한을 갖지 않으며, 승인된 관리자가 프로젝트를 생성한 시점에 해당 프로젝트 범위가 처음 생김
-- [x] 프로젝트별 권한 초기화: 프로젝트 생성 트랜잭션에서 생성 관리자에게 18개 `admin_permissions` 행을 모두 생성하고 기본값은 `Y`
-- [x] 프로젝트 관리자 권한 범위: `admin_permissions.project_id`로 프로젝트별 권한을 관리하고, `(project_id, admin_id, permission_id)`를 고유하게 유지
-- [x] 관리자 표현: SUPER_ADMIN과 프로젝트 소유·배정 관리자는 같은 `admins` 테이블 구조를 사용하며, 어드민·서브 어드민 차이는 프로젝트 소유·배정 맥락의 UI에서 표현
-- [x] SUPER_ADMIN 권한: 별도 권한 행 없이 모든 프로젝트·모든 권한을 허용하며, 본인 권한 수정 대상에서 제외
-- [x] 클라이언트 데이터 흐름: 화면 조회는 Vue Query로 수행하고, 성공 데이터는 도메인별 `<domain>.store.ts` Pinia store에 동기화
-- [x] Vue 템플릿 가독성: 태그·속성·슬롯의 중첩 구조를 들여쓰고 한 줄 압축을 지양
-- [x] 1차 제외: 리비전·비교·롤백·토론·공개 뷰어·실시간 공동 편집·복잡한 감사 로그 화면
+# 1. 현재 확정 구조
 
-## 전체 로드맵
+## 계층
 
-| 상태 | 단계 | 선행 단계 | 핵심 결과 |
-| --- | --- | --- | --- |
-| 완료 | 0. 기준 정합화·공통 기반 | - | PostgreSQL·응답·`signin` 기준, DB/API/상태 UI 기반 |
-| 완료 | 1. 인증·계정 | 0 | 로그인, 토큰 갱신·폐기, 비밀번호 변경 강제 |
-| 완료 | 2. 관리자·권한 | 1 | 역할·세부 권한·프로젝트 관리자 접근 제어 |
-| 진행 중 | 2.5. 관리자 CRUD 점검 | 2 | `admins` 테이블 CRUD·초기 데이터 주입 경로·권한 경계 점검 |
-| 진행 전 | 3. 월드 | 2.5 | 월드 CRUD·접근 범위 |
-| 진행 전 | 4. 카테고리 | 3 | 3단계 트리·정렬·복구 |
-| 진행 전 | 5. 템플릿·섹션 | 4 | 템플릿·섹션 트리·카테고리 매핑 |
-| 진행 전 | 6. 설정 문서 | 5 | Markdown 문서·카테고리·섹션 |
-| 진행 전 | 7. 관계 타입·문서 관계 | 6 | 역할 기반 관계 생성·검증 |
-| 진행 전 | 8. 관계 기반 표현 | 7 | 연표·가계도·문서 관계 조회 |
-| 진행 전 | 9. 파생 탐색 | 6, 7 | 검색·최근·즐겨찾기·활동·휴지통 |
+```text
+System
+├─ 기본 Category
+├─ 기본 Template
+└─ 기본 Relationship Type
 
-## 단계 0 — 기준 정합화·공통 기반
+World
+├─ Admin
+├─ Project
+├─ 사용자 정의 Relationship Type
+└─ Relationship
 
-완료 기준: PostgreSQL 단일 기준과 API 표준 계약이 문서·테스트·기반 코드에 일치하고, 이후 수직 슬라이스가 재사용할 최소 공통 기반이 동작한다.
+Project
+├─ 사용자 정의 Category
+├─ 사용자 정의 Template
+└─ Document
+```
 
-- [x] 통합 설계서의 SQLite 개발·방언 병기·SQLite 검증 표기를 PostgreSQL 단일 기준으로 정정
-- [x] 통합 설계서의 성공·목록·오류 응답 예시를 `CreateResponse` 계약으로 정정
-- [x] 관리자 라우트 골격 테스트의 `login.vue` 기대값을 `signin.vue`로 정정
-- [x] PostgreSQL DB 클라이언트와 환경 변수 예시를 정의
-- [x] `/api/health`와 공통 성공·오류 응답 계약을 구현·테스트
-- [x] 서버 API 오류 변환의 공통 경계를 확정 (도메인 입력 검증은 각 API 계약 단계에서 확정)
-- [x] 인증 상태 Pinia store와 보호 경로 middleware의 최소 인터페이스를 정의
-- [x] 공통 로딩·빈 상태·오류 상태 컴포넌트를 정의
-- [x] 기본 레이아웃에 실제 `AppSidebar` 연결 범위를 확정·구현
-- [x] 대상 테스트, 전체 테스트, 린트, 타입 검사, 빌드 실행 및 결과 기록
-- [x] 커밋: `2026 0815 feat: 공통 실행 기반 추가` (`3d69b73`)
+## 관리자
 
-## 단계 1 — 인증·계정
+```text
+SUPER_ADMIN
+ADMIN
+SUB_ADMIN
+```
 
-완료 기준: 인증되지 않은 접근을 차단하고, 로그인·토큰 갱신·로그아웃·임시 비밀번호 변경 흐름을 UI와 API에서 검증한다.
+- SUPER_ADMIN은 시스템 전체 접근.
+- ADMIN은 SUPER_ADMIN 승인 후 생성되며 World 없이 존재 가능.
+- ADMIN은 직접 World를 생성할 수 있다.
+- SUB_ADMIN은 World에 소속되고 Project별 `project_admin_permissions`로 접근과 권한을 관리한다.
+- 활성 `project_admin_permissions`가 없으면 SUB_ADMIN은 해당 Project를 열람할 수 없다.
 
-- [x] 인증 API 계약과 쿠키·토큰 보관 방식 확정
-- [x] JWT·비밀번호 해시·refresh token 해시/만료/폐기 서비스 테스트 작성
-- [x] `POST /api/auth/signin`, `refresh`, `signout`, `GET me`, `POST password` 구현
-- [x] `/signin`, `/account`, `/account/password-change` UI 구현
-- [x] 임시 비밀번호 변경 전 일반 보호 경로 차단
-- [x] 인증 실패, 비활성·삭제 계정, 권한 없는 접근, 토큰 폐기 테스트
-- [x] access 1시간·refresh 7일 persistent cookie, SSR 세션 복원·회전, 클라이언트 자동 재발급 및 실서버 cookie 왕복 검증
-- [x] 대상 테스트, 전체 테스트, 린트, 타입 검사, 빌드 실행 및 결과 기록
-- [x] 커밋: `2026 0815 feat: 인증 기반 추가` (`97931cb`)
+## Category
 
-## 단계 2 — 어드민 요청·관리자·권한
+- 기본 Category는 시스템 전역.
+- 사용자 정의 Category는 Project 종속.
+- 사용자 정의 Category의 Project 소속은 `project_categories`로 관리.
+- 기본 Category는 `project_categories`에 넣지 않는다.
+- Category는 최대 3단계.
+- 생성 후 `parentId`, `depth` 변경 불가.
 
-완료 기준: 승인 기반 어드민 계정 생성과 프로젝트별 18개 권한이 동일한 DB·서비스·API·UI 경계에서 동작하고, 기존 전역 역할 기반 권한 구현과 추적 불일치가 제거된다.
+## Template
 
-- [x] 어드민 권한 요청의 이메일·닉네임·상태·승인 감사 데이터 계약과 마이그레이션을 확정
-- [x] 공개 요청 제출, SUPER_ADMIN 요청 목록·상세·승인·거절 API와 UI를 구현
-- [x] 승인 시 ADMIN 계정·임시 비밀번호·비밀번호 변경 요구를 생성하고 SMTP 이메일 전송·재발송 상태를 구현
-- [x] `admin_permissions.project_id`와 3열 고유 제약으로 전역 override 모델을 교체
-- [x] 프로젝트 생성 시 생성 관리자에게 18개 권한 행을 생성하는 트랜잭션을 단계 3 계약에 포함
-- [x] 활성 배정·권한 행 동시 소프트 삭제·복구와 프로젝트별 권한 판정을 정정·테스트
-- [x] 전역 `/admins/:adminId/permissions`와 관련 API를 제거하고 프로젝트 관리자 권한 편집으로 일원화
-- [x] 프로젝트 관리자 `ElDialog`에서 기존 승인 관리자 배정, 18개 권한 설정, 배정 해제를 구현
-- [x] 삭제 ADMIN 재승인 transaction과 최신 Vue Query/store 상태를 구현·검증
-- [x] 권한 마스터 seed·역할 기본 권한 제거·TODO 및 완료 리포트를 동기화
-- [x] 후속 정정 검증·완료 리포트 갱신·커밋
+- 기본 Template은 시스템 전역.
+- 사용자 정의 Template은 Project 종속.
+- Project 소속 및 Category 적용은 `project_templates`로 관리.
+- `project_templates.categoryId`는 NULL 가능.
+- Template은 Category에 할당되지 않은 상태에서도 존재 가능.
 
+## Document
 
-## 단계 2.5 — 관리자 CRUD 점검
+- Document는 Project 종속.
+- 본문은 `documents`가 아니라 `document_revisions.content`에 저장.
+- 현재 Revision은 `currentYn=Y`로 관리.
+- Document `title`은 생성 후 변경 불가.
 
-- [ ] `admins` 테이블의 생성·조회·수정·소프트 삭제·복구 계약과 현재 서비스·API 노출 범위를 점검
-- [ ] 최초 SUPER_ADMIN 초기 데이터 주입과 권한 마스터 18개 동기화의 실행 경로를 확정
-- [ ] 최초 계정 bootstrap과 일반 ADMIN 권한 요청 흐름이 섞이지 않도록 권한·보안 경계를 검증
-- [ ] 필요한 API·일회성 seed 도구·테스트·운영 문서를 구현하고 검증
-- [ ] 완료 리포트·TODO 갱신 및 커밋
+## Relationship
 
-## 단계 3 — 월드
+- 기본 Relationship Type은 시스템 전역.
+- 사용자 정의 Relationship Type은 World 종속.
+- 실제 Relationship도 World 종속.
+- 같은 World에 속한 서로 다른 Project의 Document끼리 연결 가능.
+- 실제 Relationship의 `relationshipTypeId`는 생성 후 변경 불가.
 
-- [ ] 월드 CRUD 계약·접근 범위·상위 프로젝트 삭제 접근 차단 규칙 확정
-- [ ] 월드 서비스·API·권한 테스트 작성 및 구현
-- [ ] 월드 목록·생성·대시보드·설정 UI 구현
-- [ ] 공통 검증 실행·결과 기록
-- [ ] 커밋: `yyyy MMdd feat: 월드 관리 추가`
+## 삭제 / 복구
 
-## 단계 4 — 카테고리
+- 삭제는 소프트 삭제.
+- 동일명 생성 요청에서 삭제된 메인 데이터가 있으면 기존 메인 row를 재사용.
+- 메인 row만 복구하고 과거 연관 데이터는 전부 `useYn=N`, `delYn=Y` 처리.
+- 연관 데이터는 새 row로 다시 생성.
+- 재생성 가능한 연관 테이블의 UNIQUE는 활성 row(`delYn='N'`) 기준 조건부 UNIQUE 사용.
 
-- [ ] 같은 월드 상위 항목, 1~3단계, 최상위 템플릿 연결 규칙 확정
-- [ ] 생성·수정·삭제·정렬·동일 이름 복구 서비스 테스트 및 구현
-- [ ] 카테고리 목록·생성·상세와 문서·템플릿 연결 UI 구현
-- [ ] 상위 삭제 시 하위 접근 차단 검증
-- [ ] 공통 검증 실행·결과 기록
-- [ ] 커밋: `yyyy MMdd feat: 카테고리 관리 추가`
+## API 응답
 
-## 단계 5 — 템플릿·섹션
+- HTTP Status는 애플리케이션 응답에서 항상 `200`.
+- 실제 성공/실패는 `BaseResponse.error`로 구분.
+- `code`는 숫자가 아니라 `responseCodeData`의 문자열 코드 사용.
 
-- [ ] 템플릿 버전·섹션 트리·필수 여부·카테고리 매핑 계약 확정
-- [ ] 템플릿·섹션 서비스와 API 테스트 작성 및 구현
-- [ ] 템플릿 목록·생성·상세·편집·카테고리·문서 UI 구현
-- [ ] 구버전 경고와 삭제 템플릿 섹션 표시 규칙 검증
-- [ ] 공통 검증 실행·결과 기록
-- [ ] 커밋: `yyyy MMdd feat: 템플릿 관리 추가`
+예:
 
-## 단계 6 — 설정 문서
+```json
+{
+  "data": null,
+  "error": true,
+  "code": "NOT_FOUND",
+  "message": "요청한 리소스를 찾을 수 없습니다."
+}
+```
 
-- [ ] 문서 CRUD, 정확히 하나의 1단계 카테고리, 템플릿 버전·섹션 계약 확정
-- [ ] Markdown 분해·재결합과 단일 본문 정본 서비스 테스트 작성 및 구현
-- [ ] 문서 목록·생성·상세·편집 UI 구현
-- [ ] 자동 저장 없이 명시적 저장만 수행하도록 검증
-- [ ] 공통 검증 실행·결과 기록
-- [ ] 커밋: `yyyy MMdd feat: 설정 문서 관리 추가`
+---
 
-## 단계 7 — 관계 타입·문서 관계
+# 2. 전체 진행 상태
 
-- [ ] 관계 타입, 역할, 허용 카테고리, 대상 수·필수 역할 계약 확정
-- [ ] 같은 월드·역할 호환성·대상 수 검증 트랜잭션 테스트 및 구현
-- [ ] 관계 타입·관계 목록·생성·상세·수정 UI 구현
-- [ ] 문서 중심 연결 문서 탐색 UI 구현
-- [ ] 공통 검증 실행·결과 기록
-- [ ] 커밋: `yyyy MMdd feat: 문서 관계 관리 추가`
+| 상태 | 단계 | 핵심 결과 |
+| --- | --- | --- |
+| 완료 | 0. 도메인 재설계 | World / Project / Category / Template / Document / Relationship 구조 확정 |
+| 완료 | 1. DB 명세 | 최신 20개 테이블 DB 명세 작성 |
+| 완료 | 2. API 명세 | HTTP 200 고정 및 문자열 ResponseCode 포함 API 계약 작성 |
+| 완료 | 3. Drizzle 스키마 정합화 | 최신 DB 명세에 맞춰 주요 테이블 및 조건부 UNIQUE 수정 |
+| 진행 전 | 4. 서버 공통 기반 | DB client, 공통 응답, 오류 처리, 인증 공통 유틸 |
+| 진행 전 | 5. 인증 / 관리자 | Auth, ADMIN 신청, Admin, SUB_ADMIN, Project Permission API |
+| 진행 전 | 6. World / Project | World와 Project CRUD 및 접근 범위 |
+| 진행 전 | 7. Category / Template | Category 트리, Template, Project 매핑 |
+| 진행 전 | 8. Document / Revision | Document CRUD, Revision 생성/복원 |
+| 진행 전 | 9. Relationship | Relationship Type, Role, World 설정, 실제 Relationship |
+| 진행 전 | 10. UI 연동 | Vue Query / Pinia / 관리 화면 연결 |
+| 진행 전 | 11. 통합 정합성 검토 | DB / API / UI / 권한 / 문서 최종 정합성 점검 |
 
-## 단계 8 — 관계 기반 표현
+---
 
-- [ ] 연표·가계도·관계 조회의 입력 데이터와 도출 규칙 확정
-- [ ] 별도 원본 데이터를 저장하지 않는 조회 서비스 테스트 및 구현
-- [ ] 프로젝트·월드·문서 범위 관계 표현 UI 구현
-- [ ] 범용 전체 그래프를 기본 기능으로 만들지 않는 범위 검증
-- [ ] 공통 검증 실행·결과 기록
-- [ ] 커밋: `yyyy MMdd feat: 관계 기반 표현 추가`
+# 3. 완료 — 도메인 재설계
 
-## 단계 9 — 파생 탐색
+- [x] World를 상위 범위로 확정
+- [x] Project를 World 종속으로 확정
+- [x] 사용자 정의 Category를 Project 종속으로 확정
+- [x] 사용자 정의 Template을 Project 종속으로 확정
+- [x] 사용자 정의 Relationship Type을 World 종속으로 확정
+- [x] 실제 Relationship을 World 종속으로 확정
+- [x] 같은 World의 다른 Project 문서 간 Relationship 허용
+- [x] ADMIN은 World 없이 존재 가능하도록 확정
+- [x] ADMIN이 직접 World를 생성하도록 확정
+- [x] SUB_ADMIN Project 접근을 `project_admin_permissions` 존재 여부로 제어하도록 확정
 
-- [ ] 검색·최근·즐겨찾기·활동·휴지통의 데이터 모델과 개인정보·권한 범위 설계 승인
-- [ ] 검색 대상과 정렬·필터·페이지 계약 구현
-- [ ] 파생 조회 API·UI·권한·테스트 구현
-- [ ] 공통 검증 실행·결과 기록
-- [ ] 커밋: `yyyy MMdd feat: 파생 탐색 기능 추가`
+---
 
-## 현재 상태
+# 4. 완료 — DB 명세
 
-- 마지막 완료: 단계 2 관리자·권한 후속 정정 완료
-- 현재 단계: 2.5. 관리자 CRUD 점검
-- 진행 위치: `admins` 테이블 CRUD와 최초 SUPER_ADMIN 초기 데이터 주입 경로 점검 전
-- 부가 완료: Vue Query 공통 QueryClient와 `useGet`·`usePost`·`usePut`·`usePatch`·`useDelete` 래퍼를 도입했고, 전역 재시도·자동 재요청은 비활성화했으며 stale·gc 시간은 10분으로 설정했다.
-- 다음 시작 항목: 단계 2.5 점검 범위 설계 승인 및 구현 계획 작성
-- 검증 결과: 전체 5개 테스트 파일·16개 테스트, lint, 타입 검사, 빌드를 통과했다. 인증 세션의 실제 SSR cookie 왕복도 확인했다.
-- 차단 사항: 없음.
+기준 문서:
 
-## 참고 문서
+```text
+references/옴니노드 데이터베이스 명세서.md
+```
 
-- `references/옴니노드 프로젝트 기본 지침.md`
-- `references/옴니노드 사이트맵 주소 후보.md`
-- `references/옴니노드_UI_API_통합_작업_설계서.md`
-- `docs/superpowers/specs/2026-08-15-development-roadmap-design.md`
-- `docs/superpowers/specs/2026-08-16-admin-permission-management-design.md` (정정 대상)
-- `docs/superpowers/specs/2026-08-16-stage2-permission-correction-followup-design.md`
+- [x] 20개 테이블 구조 정리
+- [x] 공통 감사 컬럼 정리
+- [x] 동일명 생성 / 삭제 데이터 복구 정책 정리
+- [x] Category Project 소속 매핑 정책 반영
+- [x] Template Project 소속 및 선택적 Category 적용 정책 반영
+- [x] Document Revision 구조 반영
+- [x] Relationship World 범위 반영
+- [x] 생성 후 변경 불가 데이터 정책 반영
+- [x] 조건부 UNIQUE 정책 실제 Drizzle 구현과 동기화
+
+---
+
+# 5. 완료 — API 명세
+
+기준 문서:
+
+```text
+references/옴니노드 API 명세서.md
+```
+
+- [x] 공통 응답 계약 작성
+- [x] HTTP Status 200 고정 규칙 반영
+- [x] 문자열 `ResponseCode` 규칙 반영
+- [x] 목록 응답 `ListData<T>` 구조 반영
+- [x] Auth API 정의
+- [x] ADMIN 신청 API 정의
+- [x] Admin / SUB_ADMIN / Project Permission API 정의
+- [x] World / Project API 정의
+- [x] Category / Template API 정의
+- [x] Document / Revision API 정의
+- [x] Relationship 관련 API 정의
+
+---
+
+# 6. 완료 — Drizzle 스키마 정합화
+
+대상:
+
+```text
+server/db/table/
+```
+
+## 주요 구조 변경
+
+- [x] `categories.worldId` 제거
+- [x] `categories.depth` 1~3 CHECK 추가
+- [x] `project_categories`를 사용자 정의 Category의 Project 소속 매핑으로 정합화
+- [x] `templates.worldId` 제거
+- [x] `project_templates.categoryId` NULL 허용
+- [x] Relationship Type / Relationship의 `worldId` 유지
+- [x] Document / Revision 구조 유지 확인
+
+## 조건부 UNIQUE
+
+- [x] `project_categories`
+- [x] `project_templates`
+- [x] `template_headings`
+- [x] `relationship_roles`
+- [x] `relationship_role_categories`
+- [x] `world_relationship_types`
+- [x] `world_relationship_role_categories`
+- [x] `relationship_targets`
+- [x] `world_admins`
+- [x] `project_admin_permissions`
+
+---
+
+# 7. 진행 전 — 서버 공통 기반
+
+완료 기준: 이후 모든 API가 공통 DB client와 응답/오류 계약을 재사용할 수 있어야 한다.
+
+- [ ] `server/db/client.ts` 실제 PostgreSQL Drizzle client 구현
+- [ ] 전체 table export 구조 정리
+- [ ] `BaseResponse<T>` 서버 응답 생성 유틸 작성
+- [ ] 모든 애플리케이션 응답 HTTP 200 고정 처리
+- [ ] 문자열 `ResponseCode` 기반 성공/오류 응답 유틸 작성
+- [ ] 목록 `ListData<T>` 생성 유틸 작성
+- [ ] 공통 ID / query / body 파싱 및 입력 검증 기준 작성
+- [ ] 인증 관리자 추출 공통 유틸 작성
+- [ ] 권한 판정 공통 유틸 작성
+- [ ] 소프트 삭제 / 복구 공통 처리 패턴 정리
+
+---
+
+# 8. 진행 전 — 인증 / 관리자
+
+## Auth
+
+- [ ] `POST /api/auth/signin`
+- [ ] `POST /api/auth/refresh`
+- [ ] `POST /api/auth/signout`
+- [ ] `GET /api/auth/me`
+- [ ] `PATCH /api/auth/password`
+- [ ] 최초 비밀번호 변경 전 일반 보호 API 접근 차단
+
+## ADMIN 신청
+
+- [ ] `POST /api/admin-requests`
+- [ ] `GET /api/admin-requests`
+- [ ] `GET /api/admin-requests/:requestId`
+- [ ] `POST /api/admin-requests/:requestId/approve`
+- [ ] `POST /api/admin-requests/:requestId/reject`
+- [ ] 승인 시 ADMIN 계정 + 임시 비밀번호 생성
+- [ ] 승인 시 World 자동 배정 금지
+
+## Admin
+
+- [ ] 관리자 목록
+- [ ] 관리자 상세
+- [ ] 관리자 수정
+- [ ] 관리자 활성 / 비활성
+- [ ] 관리자 소프트 삭제
+- [ ] 관리자 복원
+
+## SUB_ADMIN / World Admin
+
+- [ ] World 관리자 구성 조회
+- [ ] 신규 SUB_ADMIN 생성 및 World 배정
+- [ ] 기존 SUB_ADMIN World 배정
+- [ ] SUB_ADMIN World 배정 해제
+
+## Project Permission
+
+- [ ] Project별 SUB_ADMIN 권한 조회
+- [ ] Project별 21개 권한 전체 저장
+- [ ] 권한 세트 활성 / 비활성
+- [ ] 활성 권한 매핑이 없으면 Project 열람 차단
+
+---
+
+# 9. 진행 전 — World / Project
+
+## World
+
+- [ ] 목록
+- [ ] 생성
+- [ ] 상세
+- [ ] 수정
+- [ ] 활성 / 비활성
+- [ ] 소프트 삭제
+- [ ] 복원
+- [ ] ADMIN이 World 생성 시 `world_admins` 자동 생성
+
+## Project
+
+- [ ] World의 Project 목록
+- [ ] 생성
+- [ ] 상세
+- [ ] 수정
+- [ ] 활성 / 비활성
+- [ ] 소프트 삭제
+- [ ] 복원
+- [ ] 같은 World 내 활성 동일 이름 중복 방지
+- [ ] 삭제 동일 이름 생성 요청 시 메인 row 복구
+
+---
+
+# 10. 진행 전 — Category / Template
+
+## Category
+
+- [ ] Project에서 사용 가능한 Category 조회
+- [ ] World Relationship 설정용 Category 조회
+- [ ] 사용자 정의 Category 생성
+- [ ] 상세
+- [ ] 수정 가능한 값 범위 적용
+- [ ] 활성 / 비활성
+- [ ] 소프트 삭제
+- [ ] 복원
+- [ ] `parentId`, `depth` 생성 후 변경 금지
+- [ ] 기본 Category + 같은 Project 사용자 정의 Category만 부모 허용
+- [ ] 다른 Project 사용자 정의 Category 부모 금지
+
+## Template
+
+- [ ] Project에서 사용 가능한 Template 조회
+- [ ] 사용자 정의 Template 생성
+- [ ] 상세
+- [ ] Heading 전체 교체 저장
+- [ ] 활성 / 비활성
+- [ ] 소프트 삭제
+- [ ] 복원
+- [ ] Category 미할당 상태 지원
+- [ ] Category 할당 / 해제
+- [ ] 동일 Template의 여러 1단계 Category 적용 지원
+
+---
+
+# 11. 진행 전 — Document / Revision
+
+## Document
+
+- [ ] Project Document 목록
+- [ ] 생성
+- [ ] 상세
+- [ ] Category 수정
+- [ ] 활성 / 비활성
+- [ ] 소프트 삭제
+- [ ] 복원
+- [ ] 생성 후 `title` 변경 금지
+- [ ] 삭제 동일 title 생성 요청 시 메인 row 복구
+
+## Revision
+
+- [ ] Document 생성 시 최초 Revision 생성
+- [ ] 본문 변경 시 신규 Revision 생성
+- [ ] 기존 본문과 동일하면 Revision 생성하지 않음
+- [ ] Revision 목록
+- [ ] Revision 상세
+- [ ] 과거 Revision 복원
+- [ ] 복원 시 신규 Revision 생성하지 않고 `currentYn` 전환
+- [ ] Document 복구 시 기존 Revision 폐기 후 신규 최초 Revision 생성
+
+---
+
+# 12. 진행 전 — Relationship
+
+## Relationship Type
+
+- [ ] World에서 사용할 수 있는 Relationship Type 조회
+- [ ] 사용자 정의 Relationship Type 생성
+- [ ] 상세
+- [ ] 수정
+- [ ] 활성 / 비활성
+- [ ] 소프트 삭제
+- [ ] 복원
+- [ ] Role 2~4개 검증
+- [ ] Role 허용 Category 검증
+- [ ] 복구 시 기존 Role / Category 매핑 폐기 후 재생성
+
+## 기본 Relationship Type World 설정
+
+- [ ] 기본 Relationship Type 활성 / 비활성
+- [ ] 기본 Role의 World 추가 허용 Category 관리
+- [ ] 같은 World Project의 사용자 정의 Category만 허용
+
+## 실제 Relationship
+
+- [ ] World Relationship 목록
+- [ ] 생성
+- [ ] 상세
+- [ ] 대상 Document 수정
+- [ ] 활성 / 비활성
+- [ ] 소프트 삭제
+- [ ] 복원
+- [ ] 생성 후 `relationshipTypeId` 변경 금지
+- [ ] 서로 다른 Project Document 연결 지원
+- [ ] 모든 대상 Document가 같은 World인지 검증
+- [ ] Role / Relationship Type 일치 검증
+- [ ] Role별 허용 Category 검증
+
+---
+
+# 13. 진행 전 — UI 연동
+
+서버 API 구현이 완료된 도메인부터 순차 연결한다.
+
+- [ ] Auth 화면 / 상태 연결
+- [ ] ADMIN 신청 / 승인 관리 화면 연결
+- [ ] 관리자 / SUB_ADMIN / 권한 화면 연결
+- [ ] World 관리 화면 연결
+- [ ] Project 관리 화면 연결
+- [ ] Category 관리 화면 연결
+- [ ] Template 관리 화면 연결
+- [ ] Document / Revision 화면 연결
+- [ ] Relationship 설정 및 실제 관계 관리 화면 연결
+- [ ] 서버 조회는 Vue Query 사용
+- [ ] 조회 성공 데이터는 필요한 도메인만 Pinia에 동기화
+
+---
+
+# 14. 진행 전 — 최종 정합성 검토
+
+- [ ] DB 명세 ↔ Drizzle 스키마 대조
+- [ ] API 명세 ↔ 실제 API 대조
+- [ ] 권한 규칙 ↔ 실제 접근 제어 대조
+- [ ] 기본 / 사용자 정의 데이터 범위 대조
+- [ ] 소프트 삭제 / 동일명 복구 동작 대조
+- [ ] Category / Template Project 소속 검증
+- [ ] Relationship World 범위 검증
+- [ ] API 모든 응답 HTTP 200 / 문자열 `code` 검증
+- [ ] TODO 실제 진행 상태 갱신
+
+---
+
+# 15. 현재 상태
+
+```text
+설계 재정립
+→ 완료
+
+DB 명세
+→ 완료
+
+API 명세
+→ 완료
+
+Drizzle 스키마 정합화
+→ 완료
+
+서버 API 구현
+→ 시작 전
+
+UI 연동
+→ 시작 전
+```
+
+## 다음 시작 지점
+
+```text
+단계 7 — 서버 공통 기반
+```
+
+첫 작업:
+
+```text
+server/db/client.ts 구현
++
+공통 API 응답 유틸 구조 확정
+```
